@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  :root {
+    --background: 50 29% 95%;
+    --foreground: 40 5% 8%;
+    --card: 48 33% 97%;
+    --card-foreground: 40 5% 8%;
+    --popover: 48 33% 97%;
+    --popover-foreground: 40 5% 8%;
+    --primary: 18 54% 52%;
+    --primary-foreground: 48 33% 97%;
+    --secondary: 47 21% 89%;
+    --secondary-foreground: 35 5% 27%;
+    --muted: 50 16% 92%;
+    --muted-foreground: 42 4% 37%;
+    --accent: 47 21% 89%;
+    --accent-foreground: 35 5% 27%;
+    --destructive: 0 56% 45%;
+    --destructive-foreground: 48 33% 97%;
+    --border: 48 17% 86%;
+    --input: 48 17% 86%;
+    --ring: 18 54% 52%;
+    --chart-1: 18 54% 52%;
+    --chart-2: 41 23% 49%;
+    --chart-3: 38 11% 28%;
+    --chart-4: 46 20% 67%;
+    --chart-5: 39 13% 24%;
+    --radius: 0.625rem;
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ring-soft: 0 0 0 1px hsl(var(--border));
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer utilities {
+  .card-soft {
+    box-shadow:
+      var(--ring-soft),
+      0 8px 26px -14px rgb(20 20 19 / 0.3);
+  }
+
+  .nav-link {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 5px;
+    height: 1px;
+    background: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms var(--ease-out-quart);
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .reveal {
+    --delay: 0ms;
+    animation: reveal-up 760ms var(--ease-out-expo) both;
+    animation-delay: var(--delay);
+    will-change: transform, opacity;
+  }
+
+  .drift {
+    animation:
+      reveal-up 760ms var(--ease-out-expo) both,
+      drift 7.2s ease-in-out 1.1s infinite;
+    animation-delay: var(--delay), 1.1s;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    animation: none;
+  }
+
+  .drift {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
