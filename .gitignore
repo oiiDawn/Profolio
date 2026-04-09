@@ -12,6 +12,7 @@ pnpm-debug.log*
 # local env files
 .env
 .env.*.local
+.vercel/
 
 # OS/editor
 .DS_Store
