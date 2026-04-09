@@ -4,8 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "我的个人主页",
-  description: "自我介绍与个人分享"
+  title: "个人主页 | Terminal Architect",
+  description: "自我介绍、成长轨迹与个人分享"
 };
 
 export default function RootLayout({
@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="font-sans">
-      <body>
+    <html lang="zh-CN" className="dark">
+      <body className="min-h-screen font-sans">
         {children}
         <Analytics />
         <SpeedInsights />
