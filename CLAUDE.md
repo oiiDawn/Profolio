@@ -23,11 +23,17 @@ pnpm start
 
 ```text
 app/
-  layout.tsx        # root layout and metadata
-  page.tsx          # homepage content
+  layout.tsx        # root layout, metadata, Topbar + Footer
+  page.tsx          # hub homepage (hero + module entry cards)
+  about/page.tsx    # about + timeline
+  projects/page.tsx # project grid
+  writing/page.tsx  # shares / writing list
   globals.css       # global styles and design tokens
 components/
+  layout/           # Topbar, Footer, ContactLinksNav
   ui/               # reusable UI primitives
+lib/
+  site.ts           # shared site copy and data (contact, timeline, shares, projects)
 postcss.config.js
 package.json
 ```
@@ -49,7 +55,7 @@ package.json
 
 ## Content and Accessibility
 
-- Preserve section anchor navigation (`#about`, `#timeline`, `#shares`, `#top`).
+- Use route-based navigation (`/`, `/about`, `/projects`, `/writing`); top bar highlights the active page.
 - Keep button and link `aria-label` text meaningful.
 - Maintain heading hierarchy and readable line lengths.
 
@@ -61,5 +67,5 @@ package.json
 
 ## Notes for Future Work
 
-- If sections grow significantly, consider splitting homepage sections into `components/sections`.
+- Shared page chrome lives in `components/layout`; shared copy/data in `lib/site.ts`.
 - If design tokens expand, centralize them in `globals.css` with clear naming.
