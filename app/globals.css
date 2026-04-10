@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -33,10 +32,23 @@
   --radius-md: 0;
   --radius-lg: 0;
   --radius-xl: 0;
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /*
+   * Latin: Space Grotesk · CJK: Noto Sans SC（思源黑体系，与终端风协调）
+   * 浏览器按字形回退：英文走 Grotesk，中文走 Noto
+   */
+  --font-sans:
+    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* JetBrains 无 CJK 字形；中文回退到 Noto，避免顶栏/脚注等 font-mono 仍用系统丑字 */
+  --font-mono:
+    var(--font-jetbrains-mono), var(--font-noto-sans-sc), ui-monospace,
+    monospace;
+  --font-heading:
+    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-serif:
+    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-serif,
+    "PingFang SC", "Microsoft YaHei", serif;
 }
 
 @layer base {
@@ -128,10 +140,8 @@
    */
   .scanline-overlay {
     pointer-events: none;
-    background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.18) 50%
-      ),
+    background:
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%),
       linear-gradient(
         90deg,
         rgba(255, 0, 0, 0.04),
@@ -161,7 +171,7 @@
   }
 
   .nav-link-terminal:hover {
-    @apply text-primary skew-x-2;
+    @apply text-primary;
   }
 }
 

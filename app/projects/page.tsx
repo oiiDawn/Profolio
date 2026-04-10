@@ -21,19 +21,22 @@ export default function ProjectsPage() {
     <PageShell>
       <section className="relative px-4 py-16 sm:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <SectionLabel>[PROJECT_VAULT]</SectionLabel>
-          <h1 className="mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl">
+          <SectionLabel className="reveal [--delay:40ms]">
+            [PROJECT_VAULT]
+          </SectionLabel>
+          <h1 className="reveal mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl [--delay:80ms]">
             项目
           </h1>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
+          <p className="reveal mt-4 max-w-2xl text-muted-foreground [--delay:120ms]">
             这里是正在维护或近期完成的实验与作品；详情以仓库或线上地址为准，列表会随进度更新。
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
+            {projects.map((project, i) => (
               <Card
                 key={project.id}
-                className="group relative overflow-hidden border-white/10 bg-[hsl(0_0%_12.5%)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgb(143_245_255/0.25)]"
+                className="group relative overflow-hidden border-white/10 bg-[hsl(0_0%_12.5%)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgb(143_245_255/0.25)] reveal"
+                style={{ animationDelay: `${160 + i * 48}ms` }}
               >
                 <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary via-[hsl(286_100%_73%)] to-[hsl(353_100%_72%)]" />
                 <CardHeader>
