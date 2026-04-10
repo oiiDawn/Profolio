@@ -5,6 +5,10 @@ export function PageShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-[calc(100vh-4rem)]">
       <div className="circuit-bg pointer-events-none absolute inset-0 opacity-40" />
+      <div
+        className="scanline-overlay pointer-events-none fixed inset-0 z-[1]"
+        aria-hidden
+      />
       <div className="relative z-10">{children}</div>
     </div>
   );

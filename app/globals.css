@@ -173,6 +173,26 @@
   .nav-link-terminal:hover {
     @apply text-primary;
   }
+
+  /** 状态栏在线指示点 */
+  .status-dot {
+    animation: status-blink 2s ease-in-out infinite;
+  }
+
+  /** 主 CTA 微弱霓虹脉冲 */
+  .neon-pulse {
+    animation: neon-pulse 2.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-dot {
+      animation: none;
+    }
+
+    .neon-pulse {
+      animation: none;
+    }
+  }
 }
 
 @keyframes reveal-clip {
@@ -196,6 +216,32 @@
   50%,
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes status-blink {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgb(52 211 153 / 0.6);
+  }
+  50% {
+    opacity: 0.45;
+    box-shadow: 0 0 2px rgb(52 211 153 / 0.3);
+  }
+}
+
+@keyframes neon-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgb(143 245 255 / 0.25),
+      0 0 0 0 rgb(143 245 255 / 0.12);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgb(143 245 255 / 0.4),
+      0 0 0 1px rgb(143 245 255 / 0.2);
   }
 }
 
