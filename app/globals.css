@@ -33,22 +33,19 @@
   --radius-lg: 0;
   --radius-xl: 0;
   /*
-   * Latin: Space Grotesk · CJK: Noto Sans SC（思源黑体系，与终端风协调）
-   * 浏览器按字形回退：英文走 Grotesk，中文走 Noto
+   * 字体由 layout 中 @fontsource/* 注入（本地 woff2，不请求 Google）。
+   * 英文等宽：JetBrains Mono；中文：Noto Sans SC。
    */
   --font-sans:
-    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif,
-    "PingFang SC", "Microsoft YaHei", sans-serif;
-  /* JetBrains 无 CJK 字形；中文回退到 Noto，避免顶栏/脚注等 font-mono 仍用系统丑字 */
+    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
   --font-mono:
-    var(--font-jetbrains-mono), var(--font-noto-sans-sc), ui-monospace,
-    monospace;
+    "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
   --font-heading:
-    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif,
-    "PingFang SC", "Microsoft YaHei", sans-serif;
+    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
   --font-serif:
-    var(--font-space-grotesk), var(--font-noto-sans-sc), ui-serif,
-    "PingFang SC", "Microsoft YaHei", serif;
+    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC", serif;
 }
 
 @layer base {
@@ -97,15 +94,23 @@
 
   html {
     scroll-behavior: smooth;
+    font-family:
+      "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
+      "Microsoft YaHei", sans-serif;
   }
 
   body {
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: inherit;
     text-rendering: optimizeLegibility;
   }
 }
 
 @layer utilities {
+  .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
+  }
+
   .glass-panel {
     background: rgb(38 38 38 / 0.4);
     backdrop-filter: blur(20px);

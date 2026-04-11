@@ -3,13 +3,9 @@ import Link from "next/link";
 import { CursorGlow } from "@/components/cursor-glow";
 import { HeroTerminal } from "@/components/hero-terminal";
 import { PageShell } from "@/components/page-shell";
-import { QuickTerminal } from "@/components/quick-terminal";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
-import { StatusBar } from "@/components/status-bar";
 import { TiltCard } from "@/components/tilt-card";
 import { TypingCycle } from "@/components/typing-cycle";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { contactLinks, shares, siteOwner, stackTags } from "@/lib/site";
 
 const githubHref =
@@ -50,28 +46,13 @@ export default function HomePage() {
           </p>
 
           <div
-            className="reveal relative mt-10 max-w-3xl [--delay:160ms]"
+            className="reveal relative z-10 mt-12 mb-10 w-full [--delay:160ms] sm:mt-14 sm:mb-12"
             style={{ animationDelay: "160ms" }}
           >
             <HeroTerminal />
-            <div className="absolute -top-px left-0 h-0.5 w-full bg-primary/30 shadow-[0_0_10px_#8ff5ff]" />
-          </div>
-
-          <div className="reveal mt-8 flex flex-wrap gap-3 [--delay:200ms]">
-            <Link
-              href="/about"
-              className={cn(buttonVariants(), "neon-pulse")}
-            >
-              了解我
-            </Link>
-            <Link href="/writing" className={buttonVariants({ variant: "outline" })}>
-              看看分享
-            </Link>
           </div>
         </div>
       </section>
-
-      <StatusBar />
 
       {/* Bento Hub */}
       <section className="relative border-y border-white/5 bg-[hsl(0_0%_7.5%)] px-4 py-12 sm:px-8">
@@ -305,8 +286,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <QuickTerminal />
     </PageShell>
   );
 }

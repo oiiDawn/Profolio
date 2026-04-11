@@ -1,33 +1,21 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { JetBrains_Mono, Noto_Sans_SC, Space_Grotesk } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Topbar } from "@/components/layout/topbar";
 
+/* 本地字体（node_modules），不经过 next/font 拉 Google，避免网络超时 / AbortError */
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-700.css";
+import "@fontsource/noto-sans-sc/chinese-simplified-400.css";
+import "@fontsource/noto-sans-sc/chinese-simplified-500.css";
+import "@fontsource/noto-sans-sc/chinese-simplified-700.css";
+import "@fontsource/noto-sans-sc/latin-400.css";
+import "@fontsource/noto-sans-sc/latin-500.css";
+import "@fontsource/noto-sans-sc/latin-700.css";
+
 import "./globals.css";
-
-const notoSansSC = Noto_Sans_SC({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  variable: "--font-noto-sans-sc",
-  display: "swap"
-});
-
-const spaceGrotesk = Space_Grotesk({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap"
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  display: "swap"
-});
 
 export const metadata: Metadata = {
   title: {
@@ -43,11 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="zh-CN"
-      className={`dark ${notoSansSC.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
-    >
-      <body className="min-h-screen font-sans">
+    <html lang="zh-CN" className="dark">
+      <body className="min-h-screen">
         <div
           className="pointer-events-none fixed inset-0 z-[100] scanline-overlay"
           aria-hidden
