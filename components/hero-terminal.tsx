@@ -12,178 +12,159 @@ import {
 import { TerminalStatusStrip } from "@/components/status-bar";
 import { cn } from "@/lib/utils";
 
-const HELP_TEXT = `可用命令: help · about · projects · writing · hello · ls · clear · sudo rm -rf /`;
+type ChatLine =
+  | { role: "user"; text: string }
+  | { role: "assistant"; text: string };
 
-const BOOT_STEPS: { kind: "cmd" | "out"; text: string }[] = [
-  { kind: "cmd", text: "cat ./welcome.txt" },
-  {
-    kind: "out",
-    text: "portfolio shell — 输入命令并回车，试试 help"
-  }
+const GREETING: ChatLine = {
+  role: "assistant",
+  text: "嗨！有什么想了解的？\n试试 /about · /projects · /writing，或者直接跟我说话。"
+};
+
+const CMD_RESPONSES: Record<string, string> = {
+  "/help":
+    "可用命令：\n  /about      关于 oii\n  /projects   项目展示\n  /writing    文章 & 分享\n  /hello      打个招呼\n  /clear      清空对话",
+  "/about": "好，带你去认识一下 oii —",
+  "/projects": "来看看最近在做什么 —",
+  "/writing": "去翻翻他写的东西 —",
+  "/hello": "嗨嗨！你好呀 :)",
+  "/hi": "嗨嗨！你好呀 :)",
+  "/ls": "页面路由：/ · /about · /projects · /writing",
+  "/sudo rm -rf /": "想得美。此操作已被拒绝，并已记录在案。",
+  "/clear": ""
+};
+
+const NAV_CMDS: Record<string, string> = {
+  "/about": "/about",
+  "/projects": "/projects",
+  "/writing": "/writing"
+};
+
+const FALLBACKS = [
+  "嗯……这个我还不太懂，但你可以试试 /help。",
+  "这个问题有点难倒我了，输入 /help 看看有什么能帮到你。",
+  "我理解你说的，但目前还没法直接回应这个，试试 /about？",
+  "收到，不过这超出我的能力范围了 😅  试试斜杠命令。"
 ];
 
-const CMD_MS = 22;
-const OUT_MS = 14;
+/** 字体基础样式 */
+const mono = "font-mono text-xs leading-relaxed tracking-normal antialiased";
 
-/** 输出与输入共用：字号、行高、字重一致 */
-const shellLine =
-  "font-mono text-xs leading-relaxed tracking-normal antialiased";
+/** grid 布局：固定宽度的前缀列 + 内容列，基线完全对齐 */
+const rowGrid = "grid py-0.5" as const;
+const COL_STYLE = { gridTemplateColumns: "1.25rem 1fr" } as const;
 
-function LogLine({ text }: { text: string }) {
-  const base = cn(shellLine, "text-muted-foreground");
-  if (text.startsWith("$")) {
-    return (
-      <div className={cn(base, "whitespace-pre-wrap break-words")}>
-        <span className="text-[hsl(286_100%_73%)]">$</span>
-        <span className="text-foreground/90">{text.slice(1)}</span>
-      </div>
-    );
-  }
-  if (text.startsWith(">")) {
-    return (
-      <div className={cn(base, "whitespace-pre-wrap break-words")}>
-        <span className="text-[hsl(286_100%_73%)]">&gt;</span>
-        <span className="text-foreground/90">{text.slice(1)}</span>
-      </div>
-    );
-  }
+function AssistantLine({ text }: { text: string }) {
   return (
-    <div className={cn(base, "whitespace-pre-wrap break-words text-foreground/90")}>
-      {text}
+    <div className={cn(mono, rowGrid)} style={COL_STYLE}>
+      <span className="select-none text-[hsl(286_100%_73%)]" aria-hidden>
+        ◆
+      </span>
+      <pre className="min-w-0 whitespace-pre-wrap break-words text-foreground/85 font-[inherit] text-[inherit] leading-[inherit]">
+        {text}
+      </pre>
+    </div>
+  );
+}
+
+function UserLine({ text }: { text: string }) {
+  return (
+    <div className={cn(mono, rowGrid)} style={COL_STYLE}>
+      <span className="select-none text-muted-foreground/50" aria-hidden>
+        ›
+      </span>
+      <pre className="min-w-0 whitespace-pre-wrap break-words text-muted-foreground font-[inherit] text-[inherit] leading-[inherit]">
+        {text}
+      </pre>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div className={cn(mono, rowGrid)} style={COL_STYLE}>
+      <span className="select-none text-[hsl(286_100%_73%)]" aria-hidden>
+        ◆
+      </span>
+      <div className="flex items-center gap-1 self-center">
+        <span className="size-1 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0ms]" />
+        <span className="size-1 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:150ms]" />
+        <span className="size-1 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:300ms]" />
+      </div>
     </div>
   );
 }
 
 export function HeroTerminal() {
   const router = useRouter();
-  const [lines, setLines] = useState<string[]>([]);
-  const [bootPartial, setBootPartial] = useState("");
-  const [bootDone, setBootDone] = useState(false);
+  const [lines, setLines] = useState<ChatLine[]>([]);
   const [input, setInput] = useState("");
+  const [ready, setReady] = useState(false);
+  const [typing, setTyping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const reducedRef = useRef(false);
 
+  // Auto-scroll on new content
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [lines, bootPartial]);
+  }, [lines, typing]);
 
+  // Greeting on mount with a short delay, then focus input
   useEffect(() => {
-    reducedRef.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (reducedRef.current) {
-      const done: string[] = [];
-      for (const step of BOOT_STEPS) {
-        if (step.kind === "cmd") {
-          done.push(`$ ${step.text}`);
-        } else {
-          done.push(step.text);
-        }
-      }
-      setLines(done);
-      setBootDone(true);
-      return;
-    }
-
-    let cancelled = false;
-    const delay = (ms: number) =>
-      new Promise<void>((r) => {
-        setTimeout(r, ms);
-      });
-
-    const typeBoot = async () => {
-      for (const step of BOOT_STEPS) {
-        if (cancelled) return;
-        if (step.kind === "cmd") {
-          const full = `$ ${step.text}`;
-          for (let i = 0; i <= full.length; i += 1) {
-            if (cancelled) return;
-            setBootPartial(full.slice(0, i));
-            await delay(CMD_MS);
-          }
-          setLines((prev) => [...prev, full]);
-          setBootPartial("");
-        } else {
-          for (let i = 0; i <= step.text.length; i += 1) {
-            if (cancelled) return;
-            setBootPartial(step.text.slice(0, i));
-            await delay(OUT_MS);
-          }
-          setLines((prev) => [...prev, step.text]);
-          setBootPartial("");
-        }
-      }
-      if (!cancelled) {
-        setBootDone(true);
-      }
-    };
-
-    void typeBoot();
-
-    return () => {
-      cancelled = true;
-    };
+    const t = setTimeout(() => {
+      setLines([GREETING]);
+      setReady(true);
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }, 400);
+    return () => clearTimeout(t);
   }, []);
 
-  const runCommand = useCallback(
-    (raw: string) => {
-      const cmd = raw.trim().toLowerCase();
-      const push = (text: string) =>
-        setLines((prev) => [
-          ...prev.slice(-20),
-          `> ${raw || "(空)"}`,
-          text
-        ]);
+  const respond = useCallback(
+    (userText: string) => {
+      const raw = userText.trim();
+      const cmd = raw.toLowerCase();
 
-      switch (cmd) {
-        case "":
-          push("（空命令）");
-          break;
-        case "help":
-          push(HELP_TEXT);
-          break;
-        case "about":
-          push("跳转：关于页");
-          router.push("/about");
-          break;
-        case "projects":
-          push("跳转：项目页");
-          router.push("/projects");
-          break;
-        case "writing":
-        case "share":
-          push("跳转：分享页");
-          router.push("/writing");
-          break;
-        case "hello":
-        case "hi":
-          push("你好！输入 help 查看全部命令。");
-          break;
-        case "ls":
-          push(
-            "status_bar · bento_hub · nav: /about /projects /writing /contact"
-          );
-          break;
-        case "clear":
-          setLines([]);
-          break;
-        case "sudo rm -rf /":
-          push("想得美。系统已拒绝该操作，并记了一笔。");
-          break;
-        default:
-          push(`未知命令: ${cmd}。输入 help 查看列表。`);
+      setLines((prev) => [...prev.slice(-30), { role: "user", text: raw }]);
+
+      if (cmd === "/clear") {
+        setTimeout(() => {
+          setLines([GREETING]);
+        }, 200);
+        return;
       }
+
+      setTyping(true);
+
+      const delay = 420 + Math.random() * 180;
+
+      setTimeout(() => {
+        setTyping(false);
+
+        const reply =
+          CMD_RESPONSES[cmd] ??
+          FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)];
+
+        setLines((prev) => [...prev, { role: "assistant", text: reply }]);
+
+        // Re-focus input after AI replies
+        requestAnimationFrame(() => inputRef.current?.focus());
+
+        if (NAV_CMDS[cmd]) {
+          setTimeout(() => router.push(NAV_CMDS[cmd]), 600);
+        }
+      }, delay);
     },
     [router]
   );
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!bootDone) return;
-    runCommand(input);
+    const val = input.trim();
+    if (!ready || !val || typing) return;
     setInput("");
+    // Keep focus in the input immediately after clearing
+    requestAnimationFrame(() => inputRef.current?.focus());
+    respond(val);
   };
 
   return (
@@ -196,7 +177,7 @@ export function HeroTerminal() {
         "ring-1 ring-white/[0.06]"
       )}
     >
-      {/* macOS Terminal 风格标题栏：略浅、底部分隔柔和 */}
+      {/* Title bar */}
       <div
         className={cn(
           "flex items-center gap-3 px-4 py-2.5",
@@ -204,88 +185,81 @@ export function HeroTerminal() {
           "bg-[hsl(0_0%_15%)]"
         )}
       >
-        <div className="flex gap-2" aria-hidden title="窗口控制">
-          {/* 经典 close / minimize / zoom 三色 */}
+        <div className="flex gap-2" aria-hidden>
           <span className="size-3 shrink-0 rounded-full bg-[#ff5f57]" />
           <span className="size-3 shrink-0 rounded-full bg-[#febc2e]" />
           <span className="size-3 shrink-0 rounded-full bg-[#28c840]" />
         </div>
         <span
           className={cn(
-            shellLine,
+            mono,
             "min-w-0 flex-1 truncate text-center text-[11px] text-muted-foreground/90 sm:text-xs"
           )}
         >
-          user@portfolio — Terminal
+          oii — chat
         </span>
         <span className="w-[52px] shrink-0 sm:w-[60px]" aria-hidden />
       </div>
 
-      <div className="flex max-h-[min(52vh,28rem)] min-h-[14rem] flex-col bg-[hsl(0_0%_9%)]">
+      {/* Chat area — fixed height, scroll internally */}
+      <div className="flex h-[min(50vh,26rem)] flex-col bg-[hsl(0_0%_9%)]">
         <div
           ref={scrollRef}
-          className="min-h-0 flex-1 space-y-0 overflow-y-auto overscroll-contain px-4 py-3"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"
           role="log"
           aria-live="polite"
+          aria-label="对话记录"
         >
-          {lines.map((line, i) => (
-            <LogLine key={`${i}-${line.slice(0, 32)}`} text={line} />
-          ))}
-          {bootPartial !== "" && (
-            <div className={cn(shellLine, "text-foreground/90")}>
-              {bootPartial.startsWith("$") ? (
-                <>
-                  <span className="text-[hsl(286_100%_73%)]">$</span>
-                  <span>{bootPartial.slice(1)}</span>
-                  <span className="terminal-cursor ml-0.5 inline-block h-[1em] w-2 translate-y-[0.12em] bg-primary align-middle" />
-                </>
-              ) : (
-                <>
-                  <span className="text-muted-foreground">{bootPartial}</span>
-                  <span className="terminal-cursor ml-0.5 inline-block h-[1em] w-2 translate-y-[0.12em] bg-primary align-middle" />
-                </>
-              )}
-            </div>
+          {lines.map((line, i) =>
+            line.role === "assistant" ? (
+              <AssistantLine key={i} text={line.text} />
+            ) : (
+              <UserLine key={i} text={line.text} />
+            )
           )}
+          {typing && <TypingIndicator />}
         </div>
 
+        {/* Input */}
         <form
           onSubmit={onSubmit}
           className={cn(
-            shellLine,
-            "flex shrink-0 items-center gap-2 border-t border-white/[0.06] px-4 py-3",
+            mono,
+            "flex shrink-0 items-center gap-2.5",
+            "border-t border-white/[0.06] px-4 py-3",
             "bg-[hsl(0_0%_9%)] text-foreground/90"
           )}
         >
-          <label htmlFor="hero-shell-input" className="sr-only">
-            Shell 命令
+          <label htmlFor="hero-chat-input" className="sr-only">
+            输入消息
           </label>
           <span className="shrink-0 select-none text-[hsl(286_100%_73%)]">
-            $
+            ›
           </span>
           <input
-            id="hero-shell-input"
+            id="hero-chat-input"
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            disabled={!bootDone}
+            readOnly={!ready}
             className={cn(
-              shellLine,
+              mono,
               "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground/90",
-              "outline-none ring-0 placeholder:text-muted-foreground",
-              "focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              "outline-none ring-0 placeholder:text-muted-foreground/50",
+              "focus-visible:ring-0",
+              !ready && "opacity-40 cursor-not-allowed"
             )}
-            placeholder={bootDone ? "help — Enter 执行" : "…"}
+            placeholder={ready ? "/help · /about · /projects · /writing" : "…"}
             autoComplete="off"
             spellCheck={false}
-            aria-label="终端命令输入"
+            aria-label="输入消息或斜杠命令"
           />
-          <span className="hidden shrink-0 text-muted-foreground sm:inline">
+          <span className="hidden shrink-0 text-muted-foreground/50 sm:inline">
             ↵
           </span>
           <button type="submit" className="sr-only">
-            执行
+            发送
           </button>
         </form>
       </div>
