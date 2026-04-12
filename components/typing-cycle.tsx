@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const WORDS = ["未来", "产品", "体验", "可能性"] as const;
+const WORDS = ["写代码", "做产品", "撸铁", "在路上", "记想法"] as const;
 
 type TypingCycleProps = {
   className?: string;
@@ -79,7 +79,7 @@ export function TypingCycle({ className }: TypingCycleProps) {
   }, []);
 
   return (
-    <span className={`terminal-glow text-primary italic ${className ?? ""}`}>
+    <span className={`terminal-glow text-primary ${className ?? ""}`}>
       {display}
       <span
         className="terminal-cursor ml-0.5 inline-block h-[0.85em] w-0.5 align-[-0.1em] bg-primary"

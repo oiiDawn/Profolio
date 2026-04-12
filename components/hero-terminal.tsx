@@ -170,11 +170,11 @@ export function HeroTerminal() {
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-xl sm:rounded-2xl",
+        "group w-full overflow-hidden rounded-xl sm:rounded-2xl",
         "border border-white/[0.08]",
         "bg-[hsl(0_0%_11%)]",
         "shadow-[0_12px_40px_rgb(0_0_0/0.45),0_2px_8px_rgb(0_0_0/0.25)]",
-        "ring-1 ring-white/[0.06]"
+        "outline-none"
       )}
     >
       {/* Title bar */}
@@ -185,10 +185,11 @@ export function HeroTerminal() {
           "bg-[hsl(0_0%_15%)]"
         )}
       >
+        {/* 交通灯：窗口未聚焦时变灰，hover/focus-within 时还原彩色 */}
         <div className="flex gap-2" aria-hidden>
-          <span className="size-3 shrink-0 rounded-full bg-[#ff5f57]" />
-          <span className="size-3 shrink-0 rounded-full bg-[#febc2e]" />
-          <span className="size-3 shrink-0 rounded-full bg-[#28c840]" />
+          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#ff5f57]" />
+          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#febc2e]" />
+          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#28c840]" />
         </div>
         <span
           className={cn(
@@ -201,8 +202,8 @@ export function HeroTerminal() {
         <span className="w-[52px] shrink-0 sm:w-[60px]" aria-hidden />
       </div>
 
-      {/* Chat area — fixed height, scroll internally */}
-      <div className="flex h-[min(50vh,26rem)] flex-col bg-[hsl(0_0%_9%)]">
+      {/* Chat area — fixed height, scroll internally; shorter on lg so home fits one screen */}
+      <div className="flex h-[min(50vh,26rem)] flex-col bg-[hsl(0_0%_9%)] lg:h-[min(28vh,17rem)] xl:h-[min(30vh,18rem)]">
         <div
           ref={scrollRef}
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"

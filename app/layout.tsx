@@ -32,13 +32,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="dark">
-      <body className="min-h-screen">
+      <body className="flex min-h-screen flex-col">
         <div
           className="pointer-events-none fixed inset-0 z-[100] scanline-overlay"
           aria-hidden
         />
         <Topbar />
-        <main className="pt-16">{children}</main>
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto pt-16">
+          {children}
+        </main>
         <Footer />
         <Analytics />
         <SpeedInsights />
