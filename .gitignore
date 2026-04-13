@@ -9,9 +9,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# local env files
+# local env files (`.env*.local` matches `.env.local`, `.env.development.local`, etc.)
 .env
-.env.*.local
+.env*.local
 .vercel/
 
 # OS/editor

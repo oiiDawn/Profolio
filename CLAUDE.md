@@ -27,13 +27,20 @@ app/
   page.tsx          # hub homepage (hero + module entry cards)
   about/page.tsx    # about + timeline
   projects/page.tsx # project grid
+  learning/page.tsx # learning tracker (Supabase: projects + chapters + progress)
   writing/page.tsx  # shares / writing list
   globals.css       # global styles and design tokens
 components/
   layout/           # Topbar, Footer, ContactLinksNav
+  learning-chapters.tsx # expandable chapter list + share links
   ui/               # reusable UI primitives
 lib/
   site.ts           # shared site copy and data (contact, timeline, shares, projects)
+  supabase.ts       # Supabase browser/server client factory (env-gated)
+  learning.ts       # fetch learning projects from Supabase
+  types.ts          # shared types (learning tracker)
+supabase/
+  learning.sql      # DDL + RLS + optional seed (run in Supabase SQL editor)
 postcss.config.js
 package.json
 ```
@@ -55,7 +62,8 @@ package.json
 
 ## Content and Accessibility
 
-- Use route-based navigation (`/`, `/about`, `/projects`, `/writing`); top bar highlights the active page.
+- Use route-based navigation (`/`, `/about`, `/projects`, `/learning`, `/writing`); top bar highlights the active page.
+- Learning data: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see `.env.local.example`); run `supabase/learning.sql` once.
 - Keep button and link `aria-label` text meaningful.
 - Maintain heading hierarchy and readable line lengths.
 

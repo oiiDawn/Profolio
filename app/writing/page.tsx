@@ -39,7 +39,8 @@ export default function WritingPage() {
             {shares.map((share, i) => (
               <Card
                 key={share.title}
-                className="group relative overflow-hidden border-white/10 bg-[hsl(0_0%_12.5%)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgb(143_245_255/0.25)] reveal"
+                id={`share-${share.id}`}
+                className="group relative scroll-mt-24 overflow-hidden border-white/10 bg-[hsl(0_0%_12.5%)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgb(143_245_255/0.25)] reveal"
                 style={{ animationDelay: `${200 + i * 48}ms` }}
               >
                 <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary via-[hsl(286_100%_73%)] to-[hsl(353_100%_72%)]" />

@@ -16,33 +16,33 @@
 
 ### 能量色（Accent）
 
-| 角色 | 色名 | Hex | 用途 |
-|------|------|-----|------|
-| Primary | Electric Cyan | `#8ff5ff` | 主 CTA、高亮数据、链接、终端提示符 |
-| On Primary | Deep Teal | `#005d63` | 主按钮上的文字 |
-| Secondary | Neon Purple | `#d575ff` | 标签、副强调、侧栏光晕 |
-| Tertiary | Hot Pink | `#ff6e81` | 状态角标、警示性强调 |
+| 角色       | 色名          | Hex       | 用途                               |
+| ---------- | ------------- | --------- | ---------------------------------- |
+| Primary    | Electric Cyan | `#8ff5ff` | 主 CTA、高亮数据、链接、终端提示符 |
+| On Primary | Deep Teal     | `#005d63` | 主按钮上的文字                     |
+| Secondary  | Neon Purple   | `#d575ff` | 标签、副强调、侧栏光晕             |
+| Tertiary   | Hot Pink      | `#ff6e81` | 状态角标、警示性强调               |
 
 ### 表面层级（由深到浅）
 
-| Token | Hex | 用途 |
-|-------|-----|------|
-| surface / background | `#0e0e0e` | 页面背景 |
-| surface-container-lowest | `#000000` | 最深遮罩、渐变端点 |
-| surface-container-low | `#131313` | 次级区块 |
-| surface-container | `#1a1919` | 卡片默认 |
-| surface-container-high | `#201f1f` | 抬升卡片 |
-| surface-container-highest | `#262626` | 更高一层 |
-| surface-bright | `#2c2c2c` | 局部提亮 |
+| Token                     | Hex       | 用途               |
+| ------------------------- | --------- | ------------------ |
+| surface / background      | `#0e0e0e` | 页面背景           |
+| surface-container-lowest  | `#000000` | 最深遮罩、渐变端点 |
+| surface-container-low     | `#131313` | 次级区块           |
+| surface-container         | `#1a1919` | 卡片默认           |
+| surface-container-high    | `#201f1f` | 抬升卡片           |
+| surface-container-highest | `#262626` | 更高一层           |
+| surface-bright            | `#2c2c2c` | 局部提亮           |
 
 ### 文本与线
 
-| Token | Hex | 用途 |
-|-------|-----|------|
-| on-surface / foreground | `#ffffff` | 主正文 |
-| on-surface-variant | `#adaaaa` | 次要说明 |
-| outline | `#777575` | 弱分割线、输入底线 |
-| outline-variant | `#494847` | Ghost border（约 10–15% 透明度叠用时更弱） |
+| Token                   | Hex       | 用途                                       |
+| ----------------------- | --------- | ------------------------------------------ |
+| on-surface / foreground | `#ffffff` | 主正文                                     |
+| on-surface-variant      | `#adaaaa` | 次要说明                                   |
+| outline                 | `#777575` | 弱分割线、输入底线                         |
+| outline-variant         | `#494847` | Ghost border（约 10–15% 透明度叠用时更弱） |
 
 ### 深度与光
 
@@ -52,9 +52,9 @@
 
 ## 3. 字体
 
-| 角色 | 字体 | 回退 |
-|------|------|------|
-| 标题 / UI 标题 / 正文 UI | **Space Grotesk** | system-ui, sans-serif |
+| 角色                               | 字体               | 回退                    |
+| ---------------------------------- | ------------------ | ----------------------- |
+| 标题 / UI 标题 / 正文 UI           | **Space Grotesk**  | system-ui, sans-serif   |
 | 代码感标签、元数据、终端、年份标记 | **JetBrains Mono** | ui-monospace, monospace |
 
 ### 层级原则
@@ -96,7 +96,7 @@
 
 - **Bento / 不规则栅格**：大屏使用 `grid-cols-12` 与 `col-span` 制造不对称。
 - **留白**：在深色底上，留白是「黑空间」——靠层级与霓虹点题，而非大量装饰。
-- **路由**：主导航为 `/`、`/about`、`/projects`、`/writing`；子页共用顶栏与页脚。
+- **路由**：主导航为 `/`、`/about`、`/projects`、`/learning`、`/writing`；子页共用顶栏与页脚。
 
 ## 7. 动效
 
