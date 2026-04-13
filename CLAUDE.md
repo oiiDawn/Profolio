@@ -43,6 +43,9 @@ lib/
   types.ts             # shared types (`WritingShare`)
 scripts/
   upload-writing.ts    # upload MDX to Storage + upsert `writing_shares` (service role key)
+content/writing/       # optional local MDX drafts; `*.mdx` is gitignored (do not commit article sources)
+.agents/skills/        # agent skills (tracked in git)
+skills-lock.json       # skill lockfile (tracked)
 supabase/
   writing.sql          # DDL + RLS + seed (run in Supabase SQL editor; create Storage bucket `writing`)
   drop_learning.sql    # optional: drop legacy learning_* tables if still present
