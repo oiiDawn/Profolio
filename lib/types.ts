@@ -1,30 +1,12 @@
-/** Learning tracker: project-level status */
-export type ProjectStatus = "in_progress" | "completed" | "paused";
+/** Writing / shares metadata (Supabase `writing_shares`) */
 
-/** Learning tracker: chapter-level status */
-export type ChapterStatus = "not_started" | "in_progress" | "completed";
-
-export interface LearningProject {
+export interface WritingShare {
   id: string;
   title: string;
-  description: string;
-  tag: string;
-  status: ProjectStatus;
+  description: string | null;
+  tag: string | null;
+  type: "md" | "link";
+  url: string | null;
+  file_path: string | null;
   created_at: string;
-}
-
-export interface LearningChapter {
-  id: string;
-  project_id: string;
-  title: string;
-  status: ChapterStatus;
-  share_id: string | null;
-  share_url: string | null;
-  created_at: string;
-}
-
-export interface LearningProjectWithChapters extends LearningProject {
-  chapters: LearningChapter[];
-  /** 0–100 from completed chapters / total chapters */
-  progressPercent: number;
 }

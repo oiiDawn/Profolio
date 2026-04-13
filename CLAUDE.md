@@ -17,30 +17,35 @@ pnpm dev
 pnpm lint
 pnpm build
 pnpm start
+pnpm upload-writing ./path/to/article.mdx   # needs SUPABASE_SERVICE_ROLE_KEY in `.env.local`
 ```
 
 ## File Structure
 
 ```text
 app/
-  layout.tsx        # root layout, metadata, Topbar + Footer
-  page.tsx          # hub homepage (hero + module entry cards)
-  about/page.tsx    # about + timeline
-  projects/page.tsx # project grid
-  learning/page.tsx # learning tracker (Supabase: projects + chapters + progress)
-  writing/page.tsx  # shares / writing list
-  globals.css       # global styles and design tokens
+  layout.tsx           # root layout, metadata, Topbar + Footer
+  page.tsx             # hub homepage (hero + terminal)
+  about/page.tsx       # about + timeline
+  projects/page.tsx    # project grid
+  writing/page.tsx     # shares list (Supabase `writing_shares` only)
+  writing/[id]/page.tsx # MDX article (Storage bucket `writing`)
+  globals.css          # global styles and design tokens
 components/
-  layout/           # Topbar, Footer, ContactLinksNav
-  learning-chapters.tsx # expandable chapter list + share links
-  ui/               # reusable UI primitives
+  layout/              # Topbar, Footer, ContactLinksNav
+  mdx/mdx-components.tsx # MDX element styling for writing articles
+  ui/                  # reusable UI primitives
 lib/
-  site.ts           # shared site copy and data (contact, timeline, shares, projects)
-  supabase.ts       # Supabase browser/server client factory (env-gated)
-  learning.ts       # fetch learning projects from Supabase
-  types.ts          # shared types (learning tracker)
+  site.ts              # shared site copy and data (contact, timeline, projects)
+  supabase.ts          # Supabase server client factory (env-gated)
+  writing.ts           # fetch shares + MDX from Supabase
+  mdx-compile.ts       # next-mdx-remote + remark-gfm + rehype-pretty-code
+  types.ts             # shared types (`WritingShare`)
+scripts/
+  upload-writing.ts    # upload MDX to Storage + upsert `writing_shares` (service role key)
 supabase/
-  learning.sql      # DDL + RLS + optional seed (run in Supabase SQL editor)
+  writing.sql          # DDL + RLS + seed (run in Supabase SQL editor; create Storage bucket `writing`)
+  drop_learning.sql    # optional: drop legacy learning_* tables if still present
 postcss.config.js
 package.json
 ```
@@ -62,8 +67,8 @@ package.json
 
 ## Content and Accessibility
 
-- Use route-based navigation (`/`, `/about`, `/projects`, `/learning`, `/writing`); top bar highlights the active page.
-- Learning data: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see `.env.local.example`); run `supabase/learning.sql` once.
+- Use route-based navigation (`/`, `/about`, `/projects`, `/writing`); top bar highlights the active page.
+- Writing data: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see `.env.local.example`); run `supabase/writing.sql` once; create a **public** Storage bucket named `writing`. There is no local placeholder list—`/writing` shows only rows in `writing_shares`. Use `pnpm upload-writing <file.mdx>` (add `SUPABASE_SERVICE_ROLE_KEY` only in `.env.local`) to upload and upsert DB in one step.
 - Keep button and link `aria-label` text meaningful.
 - Maintain heading hierarchy and readable line lengths.
 

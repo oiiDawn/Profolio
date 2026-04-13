@@ -39,8 +39,7 @@
   --font-sans:
     "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
     "Microsoft YaHei", sans-serif;
-  --font-mono:
-    "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
   --font-heading:
     "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
     "Microsoft YaHei", sans-serif;
@@ -248,6 +247,17 @@
       0 0 28px rgb(143 245 255 / 0.4),
       0 0 0 1px rgb(143 245 255 / 0.2);
   }
+}
+
+/* MDX articles (/writing/[id]) — code figures from rehype-pretty-code */
+.mdx-article figure[data-rehype-pretty-code-figure] {
+  margin: 1.5rem 0;
+}
+
+.mdx-article figure[data-rehype-pretty-code-figure] pre {
+  margin: 0;
+  border: none;
+  background: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
