@@ -67,7 +67,8 @@ export const timeline = [
     to: "2022",
     org: "东京大学",
     role: "电子情报学 · 研究生（退学）",
-    summary: "因为Covid-19影响，前往学校遥遥无期，故退学，想要在工作上获得更多经验。",
+    summary:
+      "因为Covid-19影响，前往学校遥遥无期，故退学，想要在工作上获得更多经验。",
     logo: "/logos/utokyo.svg",
   },
   {
@@ -76,7 +77,8 @@ export const timeline = [
     to: "2023",
     org: "华为",
     role: "嵌入式软件工程师 & Web全栈工程师 · 飞虎队成员",
-    summary: "参与基站芯片物理层软件；主导负责内部研发平台。因为还是想要进修，加上疫情影响身体健康，所以决定离开。",
+    summary:
+      "参与基站芯片物理层软件；主导负责内部研发平台。因为还是想要进修，加上疫情影响身体健康，所以决定离开。",
     logo: "/logos/huawei.svg",
   },
   {
@@ -106,30 +108,6 @@ export const stackTags = [
   "PYTHON",
   "DOCKER",
   "MACHINE_LEARNING",
-] as const;
-
-export const shares = [
-  {
-    id: "01",
-    title: "我如何管理长期学习计划",
-    desc: "用季度目标 + 每周复盘，把「想学很多」变成「持续推进」。",
-    tag: "学习方法",
-    readTime: "约 6 分钟",
-  },
-  {
-    id: "02",
-    title: "做项目时最有用的 3 个习惯",
-    desc: "先定义问题、先做最小闭环、每次迭代只解决一个核心阻塞。",
-    tag: "项目实践",
-    readTime: "约 5 分钟",
-  },
-  {
-    id: "03",
-    title: "我的效率系统（工具 + 流程）",
-    desc: "从灵感收集到执行追踪，搭建一个不依赖意志力的工作流。",
-    tag: "个人效率",
-    readTime: "约 8 分钟",
-  },
 ] as const;
 
 export const projects = [
