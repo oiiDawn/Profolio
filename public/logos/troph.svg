@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="公司">
+  <rect x="5" y="22" width="11" height="18" rx="1" fill="#5f5f6a"/>
+  <rect x="18" y="8" width="12" height="32" rx="1" fill="#7a7a88"/>
+  <rect x="32" y="16" width="11" height="24" rx="1" fill="#656572"/>
+  <rect x="21" y="12" width="6" height="3" rx="0.5" fill="#3a3a44"/>
+  <rect x="21" y="18" width="6" height="3" rx="0.5" fill="#3a3a44"/>
+  <rect x="21" y="24" width="6" height="3" rx="0.5" fill="#3a3a44"/>
+  <rect x="21" y="30" width="6" height="3" rx="0.5" fill="#3a3a44"/>
+  <rect x="8" y="28" width="5" height="3" rx="0.5" fill="#2f2f38"/>
+  <rect x="8" y="33" width="5" height="3" rx="0.5" fill="#2f2f38"/>
+  <rect x="35" y="22" width="5" height="3" rx="0.5" fill="#2f2f38"/>
+  <rect x="35" y="27" width="5" height="3" rx="0.5" fill="#2f2f38"/>
+</svg>
