@@ -15,7 +15,7 @@ import {
 import { getShares } from "@/lib/writing";
 
 /** 列表依赖 Supabase 实时数据；静态预渲染会卡在构建时的快照，新文章不会出现。 */
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "分享",
@@ -78,7 +78,7 @@ export default async function WritingPage() {
                     <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-primary via-[hsl(286_100%_73%)] to-[hsl(353_100%_72%)]" />
                     <CardHeader>
                       <span className="font-mono text-[10px] text-primary">
-                        [{isMd ? "MDX" : "LINK"}_{share.id}]
+                        [{isMd ? "MDX" : "LINK"}]
                       </span>
                       <CardDescription className="font-mono text-[10px] uppercase tracking-wider text-[hsl(286_100%_73%)]">
                         {share.tag}

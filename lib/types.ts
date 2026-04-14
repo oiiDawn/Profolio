@@ -9,4 +9,5 @@ export interface WritingShare {
   url: string | null;
   file_path: string | null;
   created_at: string;
+  updated_at: string | null;
 }

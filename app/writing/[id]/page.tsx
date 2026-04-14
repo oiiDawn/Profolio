@@ -6,7 +6,9 @@ import type { ReactNode } from "react";
 import { PageShell } from "@/components/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { compileMdxSource } from "@/lib/mdx-compile";
-import { getShareById, getShareMdxContent } from "@/lib/writing";
+import { getShareById, getShareMdxContent, getShares } from "@/lib/writing";
+
+export const revalidate = 300;
 
 type PageProps = { params: { id: string } };
 
@@ -20,8 +22,20 @@ function formatDate(iso: string) {
   }
 }
 
+export async function generateStaticParams() {
+  const shares = await getShares();
+
+  return shares
+    .filter((share) => share.type === "md")
+    .map((share) => ({ id: share.id }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const metadataStart = performance.now();
   const share = await getShareById(params.id);
+  console.info(
+    `[writing] metadata:getShareById ${params.id} ${Math.round(performance.now() - metadataStart)}ms`,
+  );
   if (!share) {
     return { title: "未找到" };
   }
@@ -32,7 +46,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function WritingArticlePage({ params }: PageProps) {
+  const pageStart = performance.now();
+  const shareStart = performance.now();
   const share = await getShareById(params.id);
+  console.info(
+    `[writing] page:getShareById ${params.id} ${Math.round(performance.now() - shareStart)}ms`,
+  );
   if (!share) {
     notFound();
   }
@@ -44,6 +63,8 @@ export default async function WritingArticlePage({ params }: PageProps) {
     notFound();
   }
 
+  const version = share.updated_at ?? share.created_at;
+
   let body: ReactNode = (
     <p className="font-mono text-sm text-muted-foreground">
       暂无正文。请在 Supabase Storage 创建公开桶{" "}
@@ -53,10 +74,18 @@ export default async function WritingArticlePage({ params }: PageProps) {
   );
 
   if (share.file_path) {
-    const raw = await getShareMdxContent(share.file_path);
+    const contentStart = performance.now();
+    const raw = await getShareMdxContent(share.file_path, version);
+    console.info(
+      `[writing] getShareMdxContent ${share.file_path} ${Math.round(performance.now() - contentStart)}ms`,
+    );
     if (raw) {
       try {
+        const compileStart = performance.now();
         const { content } = await compileMdxSource(raw);
+        console.info(
+          `[writing] compileMdxSource ${share.file_path} ${Math.round(performance.now() - compileStart)}ms`,
+        );
         body = content;
       } catch (e) {
         console.error("[writing] MDX compile:", e);
@@ -68,6 +97,10 @@ export default async function WritingArticlePage({ params }: PageProps) {
       }
     }
   }
+
+  console.info(
+    `[writing] page:total ${params.id} ${Math.round(performance.now() - pageStart)}ms`,
+  );
 
   return (
     <PageShell>
