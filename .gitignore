@@ -7,6 +7,7 @@ playwright-report/
 test-results/
 .vitest/
 .pnpm-store/
+*.tsbuildinfo
 
 # logs
 npm-debug.log*
