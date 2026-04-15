@@ -1,86 +1,128 @@
 # CLAUDE.md
 
-This file provides guidance for Claude Code when working with this project.
+本文件用于说明 Claude Code 在本项目中的协作约定。
 
-## Project Overview
+## 项目概览
 
-- **Project**: Personal homepage
-- **Stack**: Next.js 14, React 18, TypeScript, Tailwind CSS
-- **Package manager**: pnpm (lockfile present)
-- **Language**: UI content is primarily Simplified Chinese
+- **项目类型**：个人主页 / 作品集站点，包含写作分享系统
+- **技术栈**：Next.js 14、React 18、TypeScript、Tailwind CSS
+- **包管理器**：统一使用 `pnpm`，不要混用 `npm` / `yarn`
+- **文档语言**：本项目 `CLAUDE.md` 统一使用中文编写
+- **路由结构**：主要页面位于 `/`、`/about`、`/projects`、`/writing`、`/writing/[id]`
 
-## Setup and Common Commands
+## 安装与常用命令
 
 ```bash
 pnpm install
 pnpm dev
-pnpm lint
 pnpm build
 pnpm start
-pnpm upload-writing ./path/to/article.mdx   # needs SUPABASE_SERVICE_ROLE_KEY in `.env.local`
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm check                 # lint + typecheck + test
+pnpm upload-writing ./path/to/article.mdx
 ```
 
-## File Structure
+## 目录结构
 
 ```text
 app/
-  layout.tsx           # root layout, metadata, Topbar + Footer
-  page.tsx             # hub homepage (hero + terminal)
-  about/page.tsx       # about + timeline
-  projects/page.tsx    # project grid
-  writing/page.tsx     # shares list (Supabase `writing_shares` only)
-  writing/[id]/page.tsx # MDX article (Storage bucket `writing`)
-  globals.css          # global styles and design tokens
+  layout.tsx               # 根布局，本地字体、Topbar/Footer、Vercel Analytics/SpeedInsights
+  page.tsx                 # 首页 / hero terminal 体验
+  about/page.tsx           # 关于我 + 时间线
+  projects/page.tsx        # 项目列表
+  writing/page.tsx         # 来自 Supabase `writing_shares` 的分享列表
+  writing/[id]/page.tsx    # MDX 文章页 / 外链跳转页
+  globals.css              # 全局样式与设计令牌
 components/
-  layout/              # Topbar, Footer, ContactLinksNav
-  mdx/mdx-components.tsx # MDX element styling for writing articles
-  ui/                  # reusable UI primitives
+  layout/                  # Topbar、Footer、ContactLinksNav
+  mdx/mdx-components.tsx   # 写作文章的 MDX 渲染样式
+  ui/                      # 可复用 UI 基础组件
 lib/
-  site.ts              # shared site copy and data (contact, timeline, projects)
-  supabase.ts          # Supabase server client factory (env-gated)
-  writing.ts           # fetch shares + MDX from Supabase
-  mdx-compile.ts       # next-mdx-remote + remark-gfm + rehype-pretty-code
-  types.ts             # shared types (`WritingShare`)
+  site.ts                  # 站点级静态内容（联系方式、时间线、项目、部署日期）
+  supabase.ts              # Supabase 服务端 client 工厂（按环境变量启用）
+  writing.ts               # 从 Supabase / Storage 读取分享数据并带缓存
+  mdx-compile.ts           # next-mdx-remote + remark-gfm + rehype-pretty-code
+  types.ts                 # 写作数据的共享 schema / 类型
 scripts/
-  upload-writing.ts    # upload MDX to Storage + upsert `writing_shares` (service role key)
-content/writing/       # optional local MDX drafts; `*.mdx` is gitignored (do not commit article sources)
-.agents/skills/        # agent skills (tracked in git)
-skills-lock.json       # skill lockfile (tracked)
+  upload-writing.ts        # 上传 MDX / 外链并 upsert `writing_shares`
+content/writing/           # 本地 MDX 草稿/源文件目录，仅作为上传输入，不是运行时内容源
+tests/
+  lib/types.test.ts
+  scripts/upload-writing.test.ts
+.agents/                   # 项目内 agent 相关资源
+skills-lock.json           # skill lockfile（已跟踪）
 supabase/
-  writing.sql          # DDL + RLS + seed (run in Supabase SQL editor; create Storage bucket `writing`)
-postcss.config.js
+  writing.sql              # `writing_shares` 的 DDL + RLS（无 seed 数据）
 package.json
 ```
 
-## Working Rules
+## 工作规则
 
-1. Keep changes focused and minimal; avoid broad refactors unless requested.
-2. Prefer TypeScript-safe updates and preserve existing component patterns.
-3. Keep copy consistent with current Chinese tone unless user requests English.
-4. Reuse existing UI components from `components/ui` before creating new ones.
-5. Run lint after substantive edits and fix introduced issues.
+1. 修改保持聚焦，除非用户明确要求，否则不要做大范围重构。
+2. 优先保持 TypeScript 安全，并沿用现有组件模式。
+3. 文案默认保持当前中文语气，除非用户明确要求英文。
+4. 新增 UI 前先检查 `components/ui` 是否已有可复用组件。
+5. 完成较大修改后优先运行 `pnpm check`；至少运行与你改动最相关的校验命令。
+6. 修改静态个人信息、项目、时间线、联系方式时，优先检查 `lib/site.ts`，不要把同类内容分散硬编码到页面文件。
+7. 涉及依赖安装、脚本执行、锁文件变更时，默认使用 `pnpm` 体系处理。
 
-## Styling Guidelines
+## 样式约定
 
-- Use utility-first classes and existing style conventions in `app/page.tsx`.
-- Prefer semantic spacing and typography changes over one-off magic values.
-- Keep visual behavior smooth; avoid heavy animation unless requested.
-- When changing global styles, verify impact on all sections of the homepage.
+- 优先沿用 `app/page.tsx` 中已有的 utility-first 风格。
+- 优先做语义化的间距、排版调整，避免零散 magic values。
+- 非必要不要加入过重动画。
+- 修改全局样式时，要检查主要页面，不要只看当前路由。
+- 字体通过 `app/layout.tsx` 中的本地 `@fontsource/*` 引入；除非明确需要，不要切换到远程字体加载。
 
-## Content and Accessibility
+## 写作数据流
 
-- Use route-based navigation (`/`, `/about`, `/projects`, `/writing`); top bar highlights the active page.
-- Writing data: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see `.env.local.example`); run `supabase/writing.sql` once; create a **public** Storage bucket named `writing`. There is no local placeholder list—`/writing` shows only rows in `writing_shares`. Use `pnpm upload-writing <file.mdx>` (add `SUPABASE_SERVICE_ROLE_KEY` only in `.env.local`) to upload and upsert DB in one step.
-- Keep button and link `aria-label` text meaningful.
-- Maintain heading hierarchy and readable line lengths.
+- `/writing` 只读取 Supabase 表 `public.writing_shares`；没有本地占位文章列表。
+- `/writing/[id]` 会先读取 share 行，再对 `md` 类型条目从公开 Storage bucket `writing` 下载原始 MDX，最后通过 `lib/mdx-compile.ts` 编译渲染。
+- `type = "link"` 的条目会跳转到 `url`；`type = "md"` 的条目依赖 `file_path`。
+- `content/writing/` 下的本地文件只是作者编写/上传输入，不会在运行时被应用直接读取。
+- About / Projects / 联系方式等静态站点内容统一维护在 `lib/site.ts`。
 
-## Git and Delivery
+## Supabase 与环境变量
 
-- Use small, descriptive commits.
-- Do not commit secrets or local-only env files.
-- For publish/release, confirm target platform (GitHub/Vercel/other) if not explicit.
+- 读取写作内容需要：
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- 仅本地发布写作用 `pnpm upload-writing` 时需要：
+  - `SUPABASE_SERVICE_ROLE_KEY`
+- 不要把 service role key 暴露到前端，也不要放进任何 `NEXT_PUBLIC_*` 变量。
+- 需要先在 Supabase SQL Editor 执行一次 `supabase/writing.sql`，然后创建名为 `writing` 的**公开** Storage bucket。
+- 如果环境变量未配置，`/writing` 可能显示空状态，文章页可能拿不到正文；先检查配置，不要先假设是前端 bug。
 
-## Notes for Future Work
+## 写作上传流程
 
-- Shared page chrome lives in `components/layout`; shared copy/data in `lib/site.ts`.
-- If design tokens expand, centralize them in `globals.css` with clear naming.
+- 新建 MDX 文章：
+  - `pnpm upload-writing ./path/to/article.mdx`
+- 更新已有文章：
+  - `pnpm upload-writing ./path/to/article.mdx --id <uuid>`
+- 创建或更新外链分享：
+  - `pnpm upload-writing --link --url <https://...> --title <title> [--description ...] [--tag ...] [--id <uuid>]`
+- 脚本支持的常用参数包括：`--dry-run`、`--strip-frontmatter`、`--file-path`
+- frontmatter / payload 校验复用 `lib/types.ts` 中的 Zod schema。
+
+## 缓存与验证说明
+
+- writing 相关页面使用 300 秒 revalidate 窗口；新上传内容不一定会立刻出现。
+- `lib/writing.ts` 使用了 `unstable_cache`，因此短时间内内容延迟可能是正常缓存行为。
+- 一般代码改动优先运行 `pnpm check`。
+- 修改写作系统后，至少手动验证：
+  - `/writing` 列表是否正常展示
+  - `/writing/[id]` 的 MDX 渲染或外链跳转是否正常
+- 当前自动化测试偏轻量，主要覆盖 schema 与上传脚本行为（`tests/lib/types.test.ts`、`tests/scripts/upload-writing.test.ts`）；UI 改动仍需要手动验证页面。
+
+## Git 与交付
+
+- 使用小而清晰的提交。
+- 不要提交 secrets、`.env` 或本地环境文件。
+- 项目当前面向 Vercel；如果后续涉及发布/部署操作，先确认目标平台再执行。
+
+## 后续维护提示
+
+- 共享页面框架主要在 `components/layout`；共享页面级数据主要在 `lib/site.ts`。
+- 如果设计令牌继续扩展，统一收敛到 `app/globals.css` 中管理并命名清晰。
