@@ -14,15 +14,33 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
+import { pathToFileURL } from "node:url";
 import { config as loadEnv } from "dotenv";
 import matter from "gray-matter";
 import { existsSync, readFileSync } from "fs";
 import path from "path";
 
-loadEnv({ path: ".env.local" });
-loadEnv({ path: ".env" });
+import {
+  writingFrontmatterSchema,
+  writingLinkInputSchema,
+} from "@/lib/types";
 
-function parseArgs(argv: string[]) {
+function loadEnvironment() {
+  loadEnv({ path: ".env.local" });
+  loadEnv({ path: ".env" });
+}
+
+export type ParsedArgs = ReturnType<typeof parseArgs>;
+type FileUploadInput = {
+  description: string | null;
+  explicitUuid: string | null;
+  storagePath: string;
+  tag: string | null;
+  title: string;
+  uploadSource: string;
+};
+
+export function parseArgs(argv: string[]) {
   const positional: string[] = [];
   const flags: Record<string, string | boolean> = {};
 
@@ -54,14 +72,96 @@ function requireEnv(name: string): string {
 }
 
 /** 宽松校验 UUID（含非 RFC 变体时仍放行常见 Postgres uuid 文本） */
-function isUuid(s: string): boolean {
+export function isUuid(s: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
     s.trim(),
   );
 }
 
-async function main() {
-  const { positional, flags } = parseArgs(process.argv);
+function getOptionalFlagString(value: string | boolean | undefined): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+export function parseLinkRowInput(flags: ParsedArgs["flags"]) {
+  const result = writingLinkInputSchema.safeParse({
+    id: getOptionalFlagString(flags.id),
+    title: String(flags.title ?? ""),
+    description: getOptionalFlagString(flags.description) ?? null,
+    tag: getOptionalFlagString(flags.tag) ?? null,
+    url: String(flags.url ?? ""),
+  });
+
+  if (!result.success) {
+    throw new Error(
+      result.error.flatten().formErrors[0] ??
+        "外链模式需要: --link --url <https://...> --title <标题> [--description] [--tag] [--id <uuid>]",
+    );
+  }
+
+  return {
+    description: result.data.description,
+    id: result.data.id ?? randomUUID(),
+    tag: result.data.tag,
+    title: result.data.title,
+    url: result.data.url,
+  };
+}
+
+export function parseFileUploadInput(
+  abs: string,
+  flags: ParsedArgs["flags"],
+  raw: string,
+): FileUploadInput {
+  const parsed = matter(raw);
+  const frontmatter = writingFrontmatterSchema.safeParse(parsed.data);
+
+  if (!frontmatter.success) {
+    throw new Error(
+      frontmatter.error.flatten().formErrors[0] ?? "frontmatter 格式无效",
+    );
+  }
+
+  const fm = frontmatter.data;
+  const basename = path.basename(abs);
+  const filePathFromFlag = getOptionalFlagString(flags["file-path"]);
+  const storagePath = fm.file_path ?? filePathFromFlag ?? basename;
+
+  const flagId = getOptionalFlagString(flags.id);
+  const explicitUuid = flagId ?? fm.id ?? null;
+
+  const title =
+    getOptionalFlagString(flags.title) ??
+    fm.title?.trim() ??
+    path.basename(abs, path.extname(abs));
+
+  const description = getOptionalFlagString(flags.description) ?? fm.description ?? null;
+  const tag = getOptionalFlagString(flags.tag) ?? fm.tag ?? null;
+
+  const uploadSource =
+    typeof flags["strip-frontmatter"] === "string" ||
+    flags["strip-frontmatter"] === true
+      ? parsed.content.trimStart()
+      : raw;
+
+  return {
+    description,
+    explicitUuid,
+    storagePath,
+    tag,
+    title,
+    uploadSource,
+  };
+}
+
+export async function main(argv: string[] = process.argv) {
+  loadEnvironment();
+
+  const { positional, flags } = parseArgs(argv);
   const dryRun = Boolean(flags["dry-run"]);
   const isLink = Boolean(flags.link);
 
@@ -72,33 +172,25 @@ async function main() {
   });
 
   if (isLink) {
-    const linkUrl = String(flags.url ?? "");
-    const title = String(flags.title ?? "");
-    if (!linkUrl || !title) {
+    let parsedLink;
+    try {
+      parsedLink = parseLinkRowInput(flags);
+    } catch (error) {
       console.error(
-        "外链模式需要: --link --url <https://...> --title <标题> [--description] [--tag] [--id <uuid>]",
+        error instanceof Error
+          ? error.message
+          : "外链模式需要: --link --url <https://...> --title <标题> [--description] [--tag] [--id <uuid>]",
       );
       process.exit(1);
     }
-    const description =
-      typeof flags.description === "string" ? flags.description : null;
-    const tag = typeof flags.tag === "string" ? flags.tag : null;
-
-    const idFlag =
-      typeof flags.id === "string" && flags.id.trim() ? flags.id.trim() : null;
-    if (idFlag && !isUuid(idFlag)) {
-      console.error("--id 必须是 UUID");
-      process.exit(1);
-    }
-    const id = idFlag ?? randomUUID();
 
     const row = {
-      id,
-      title,
-      description,
-      tag,
+      id: parsedLink.id,
+      title: parsedLink.title,
+      description: parsedLink.description,
+      tag: parsedLink.tag,
       type: "link" as const,
-      url: linkUrl,
+      url: parsedLink.url,
       file_path: null as string | null,
     };
 
@@ -110,7 +202,7 @@ async function main() {
     const { data: existing } = await supabase
       .from("writing_shares")
       .select("id")
-      .eq("id", id)
+      .eq("id", row.id)
       .maybeSingle();
 
     if (existing) {
@@ -124,7 +216,7 @@ async function main() {
           url: row.url,
           file_path: row.file_path,
         })
-        .eq("id", id);
+        .eq("id", row.id);
       if (error) {
         console.error("更新失败:", error.message);
         process.exit(1);
@@ -139,7 +231,7 @@ async function main() {
         process.exit(1);
       }
     }
-    console.log(`已保存外链条目: ${id} → ${linkUrl}`);
+    console.log(`已保存外链条目: ${row.id} → ${row.url}`);
     return;
   }
 
@@ -158,101 +250,48 @@ async function main() {
   }
 
   const raw = readFileSync(abs, "utf8");
-  const parsed = matter(raw);
-  const fm = parsed.data as Record<string, unknown>;
-  const bodyWithoutFm = parsed.content;
 
-  const basename = path.basename(abs);
-  const filePathFromFlag =
-    typeof flags["file-path"] === "string" ? flags["file-path"] : undefined;
+  let parsedFile;
+  try {
+    parsedFile = parseFileUploadInput(abs, flags, raw);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : "frontmatter 格式无效");
+    process.exit(1);
+  }
 
-  const fmFilePath =
-    typeof fm.file_path === "string"
-      ? fm.file_path.trim()
-      : typeof fm.file_path === "number"
-        ? String(fm.file_path)
-        : "";
-
-  const storagePath = fmFilePath || filePathFromFlag || basename;
-
-  const fmIdRaw =
-    typeof fm.id === "string" || typeof fm.id === "number"
-      ? String(fm.id).trim()
-      : "";
-  const flagId =
-    typeof flags.id === "string" && flags.id.trim() ? flags.id.trim() : "";
-
-  const explicitUuid =
-    (flagId && isUuid(flagId) ? flagId : null) ||
-    (fmIdRaw && isUuid(fmIdRaw) ? fmIdRaw : null);
-
-  if ((flagId && !isUuid(flagId)) || (fmIdRaw && !isUuid(fmIdRaw))) {
+  if (parsedFile.explicitUuid && !isUuid(parsedFile.explicitUuid)) {
     console.error(
       "id 必须为 UUID。新建文章请删除 frontmatter 中的 id 或 --id，上传后会打印新 id。",
     );
     process.exit(1);
   }
 
-  const fmTitle =
-    typeof fm.title === "string"
-      ? fm.title.trim()
-      : typeof fm.title === "number"
-        ? String(fm.title)
-        : "";
-
-  const title =
-    (typeof flags.title === "string" && flags.title) ||
-    fmTitle ||
-    path.basename(abs, path.extname(abs));
-
-  const description =
-    (typeof flags.description === "string" && flags.description) ||
-    (typeof fm.description === "string"
-      ? fm.description
-      : typeof fm.description === "number"
-        ? String(fm.description)
-        : null) ||
-    null;
-
-  const tag =
-    (typeof flags.tag === "string" && flags.tag) ||
-    (typeof fm.tag === "string"
-      ? fm.tag
-      : typeof fm.tag === "number"
-        ? String(fm.tag)
-        : null) ||
-    null;
-
-  const uploadSource =
-    typeof flags["strip-frontmatter"] === "string" ||
-    flags["strip-frontmatter"] === true
-      ? bodyWithoutFm.trimStart()
-      : raw;
-
   if (dryRun) {
-    console.log("[dry-run] Storage path:", storagePath);
+    console.log("[dry-run] Storage path:", parsedFile.storagePath);
     console.log(
       "[dry-run] mode:",
-      explicitUuid ? `update ${explicitUuid}` : "insert (new uuid)",
+      parsedFile.explicitUuid
+        ? `update ${parsedFile.explicitUuid}`
+        : "insert (new uuid)",
     );
     console.log("[dry-run] writing_shares row:", {
-      id: explicitUuid ?? "(generated)",
-      title,
-      description,
-      tag,
+      id: parsedFile.explicitUuid ?? "(generated)",
+      title: parsedFile.title,
+      description: parsedFile.description,
+      tag: parsedFile.tag,
       type: "md",
-      file_path: storagePath,
+      file_path: parsedFile.storagePath,
     });
     console.log(
       "[dry-run] upload bytes:",
-      Buffer.byteLength(uploadSource, "utf8"),
+      Buffer.byteLength(parsedFile.uploadSource, "utf8"),
     );
     return;
   }
 
   const { error: upErr } = await supabase.storage
     .from("writing")
-    .upload(storagePath, uploadSource, {
+    .upload(parsedFile.storagePath, parsedFile.uploadSource, {
       upsert: true,
       contentType: "text/plain; charset=utf-8",
       cacheControl: "3600",
@@ -264,25 +303,25 @@ async function main() {
   }
 
   const payload = {
-    title,
-    description,
-    tag,
+    title: parsedFile.title,
+    description: parsedFile.description,
+    tag: parsedFile.tag,
     type: "md" as const,
     url: null as string | null,
-    file_path: storagePath,
+    file_path: parsedFile.storagePath,
   };
 
-  if (explicitUuid) {
+  if (parsedFile.explicitUuid) {
     const { error } = await supabase
       .from("writing_shares")
       .update(payload)
-      .eq("id", explicitUuid);
+      .eq("id", parsedFile.explicitUuid);
     if (error) {
       console.error("writing_shares 更新失败:", error.message);
       process.exit(1);
     }
     console.log(
-      `完成: id=${explicitUuid} file_path=${storagePath}（Storage 已 upsert，数据库已更新）`,
+      `完成: id=${parsedFile.explicitUuid} file_path=${parsedFile.storagePath}（Storage 已 upsert，数据库已更新）`,
     );
     return;
   }
@@ -302,11 +341,22 @@ async function main() {
   }
 
   console.log(
-    `完成: id=${inserted.id} file_path=${storagePath}（新建行；可把此 id 写入 frontmatter 的 id 以便下次覆盖）`,
+    `完成: id=${inserted.id} file_path=${parsedFile.storagePath}（新建行；可把此 id 写入 frontmatter 的 id 以便下次覆盖）`,
   );
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+function isDirectExecution() {
+  const entry = process.argv[1];
+  if (!entry) {
+    return false;
+  }
+
+  return import.meta.url === pathToFileURL(entry).href;
+}
+
+if (isDirectExecution()) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

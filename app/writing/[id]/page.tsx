@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import type { ReactNode } from "react";
+import { cache, type ReactNode } from "react";
 
 import { PageShell } from "@/components/page-shell";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ import { getShareById, getShareMdxContent, getShares } from "@/lib/writing";
 export const revalidate = 300;
 
 type PageProps = { params: { id: string } };
+
+const getCachedShareById = cache(async (id: string) => getShareById(id));
 
 function formatDate(iso: string) {
   try {
@@ -32,7 +34,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const metadataStart = performance.now();
-  const share = await getShareById(params.id);
+  const share = await getCachedShareById(params.id);
   console.info(
     `[writing] metadata:getShareById ${params.id} ${Math.round(performance.now() - metadataStart)}ms`,
   );
@@ -48,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function WritingArticlePage({ params }: PageProps) {
   const pageStart = performance.now();
   const shareStart = performance.now();
-  const share = await getShareById(params.id);
+  const share = await getCachedShareById(params.id);
   console.info(
     `[writing] page:getShareById ${params.id} ${Math.round(performance.now() - shareStart)}ms`,
   );

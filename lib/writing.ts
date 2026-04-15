@@ -2,31 +2,23 @@ import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
 import { createSupabaseServerClient } from "@/lib/supabase";
-import type { WritingShare } from "@/lib/types";
+import {
+  type WritingShare,
+  writingShareRowSchema,
+} from "@/lib/types";
 
-function mapRow(row: {
-  id: string;
-  title: string;
-  description: string | null;
-  tag: string | null;
-  type: string;
-  url: string | null;
-  file_path: string | null;
-  created_at: string;
-  updated_at: string | null;
-}): WritingShare {
-  const t = row.type === "link" ? "link" : "md";
-  return {
-    id: row.id,
-    title: row.title,
-    description: row.description,
-    tag: row.tag,
-    type: t,
-    url: row.url,
-    file_path: row.file_path,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
-  };
+function parseWritingShareRow(
+  row: unknown,
+  context: string,
+): WritingShare | null {
+  const result = writingShareRowSchema.safeParse(row);
+
+  if (!result.success) {
+    console.error(`[writing] invalid row (${context}):`, result.error.flatten());
+    return null;
+  }
+
+  return result.data;
 }
 
 async function getSharesUncached(): Promise<WritingShare[]> {
@@ -48,7 +40,10 @@ async function getSharesUncached(): Promise<WritingShare[]> {
     return [];
   }
 
-  return data.map((row) => mapRow(row as Parameters<typeof mapRow>[0]));
+  return data.flatMap((row, index) => {
+    const share = parseWritingShareRow(row, `getShares:${index}`);
+    return share ? [share] : [];
+  });
 }
 
 async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
@@ -72,7 +67,7 @@ async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
     return null;
   }
 
-  return mapRow(data as Parameters<typeof mapRow>[0]);
+  return parseWritingShareRow(data, `getShareById:${id}`);
 }
 
 /**
