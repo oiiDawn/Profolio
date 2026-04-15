@@ -204,6 +204,14 @@ export function HeroTerminal() {
   };
 
   const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const isComposing =
+      e.nativeEvent.isComposing ||
+      ("keyCode" in e.nativeEvent && e.nativeEvent.keyCode === 229);
+
+    if (isComposing) {
+      return;
+    }
+
     if (e.key !== "Enter") {
       return;
     }

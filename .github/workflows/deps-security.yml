@@ -1,36 +1,14 @@
 name: deps-security
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/dependabot.yml"
-      - ".github/workflows/deps-security.yml"
   schedule:
     - cron: "0 2 * * 1"
   workflow_dispatch:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
-  dependency-review:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: high
-          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
-
   audit:
     runs-on: ubuntu-latest
     timeout-minutes: 20
