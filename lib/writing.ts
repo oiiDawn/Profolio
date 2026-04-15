@@ -1,11 +1,28 @@
 import { unstable_cache } from "next/cache";
-import { cache } from "react";
+import { cache as reactCache } from "react";
 
 import { createSupabaseServerClient } from "@/lib/supabase";
 import {
   type WritingShare,
   writingShareRowSchema,
 } from "@/lib/types";
+
+type SupabaseServerClient = NonNullable<
+  ReturnType<typeof createSupabaseServerClient>
+>;
+type SupabaseServerClientFactory = () => SupabaseServerClient | null;
+
+let supabaseServerClientFactory: SupabaseServerClientFactory =
+  createSupabaseServerClient;
+
+function getSupabaseServerClient() {
+  return supabaseServerClientFactory();
+}
+
+const cacheFn: typeof reactCache =
+  typeof reactCache === "function"
+    ? reactCache
+    : ((fn: (...args: unknown[]) => unknown) => fn) as typeof reactCache;
 
 function parseWritingShareRow(
   row: unknown,
@@ -22,7 +39,7 @@ function parseWritingShareRow(
 }
 
 async function getSharesUncached(): Promise<WritingShare[]> {
-  const supabase = createSupabaseServerClient();
+  const supabase = getSupabaseServerClient();
   if (!supabase) {
     return [];
   }
@@ -47,7 +64,7 @@ async function getSharesUncached(): Promise<WritingShare[]> {
 }
 
 async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
-  const supabase = createSupabaseServerClient();
+  const supabase = getSupabaseServerClient();
   if (!supabase) {
     return null;
   }
@@ -76,7 +93,7 @@ async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
 async function getShareMdxContentUncached(
   filePath: string,
 ): Promise<string | null> {
-  const supabase = createSupabaseServerClient();
+  const supabase = getSupabaseServerClient();
   if (!supabase) {
     return null;
   }
@@ -105,13 +122,10 @@ const getSharesCached = unstable_cache(getSharesUncached, ["writing-shares"], {
   tags: ["writing-shares"],
 });
 
-const getShareByIdCached = cache(async (id: string) => getShareByIdUncached(id));
+const getShareByIdCached = cacheFn(async (id: string) => getShareByIdUncached(id));
 
 const getShareMdxContentCached = unstable_cache(
-  async (filePath: string, version: string) => {
-    void version;
-    return getShareMdxContentUncached(filePath);
-  },
+  async (filePath: string) => getShareMdxContentUncached(filePath),
   ["writing-share-mdx"],
   {
     revalidate: 300,
@@ -135,7 +149,23 @@ export async function getShareById(id: string): Promise<WritingShare | null> {
  */
 export async function getShareMdxContent(
   filePath: string,
-  version: string,
 ): Promise<string | null> {
-  return getShareMdxContentCached(filePath, version);
+  return getShareMdxContentCached(filePath);
 }
+
+export function __setSupabaseServerClientFactoryForTests(
+  factory: SupabaseServerClientFactory,
+) {
+  supabaseServerClientFactory = factory;
+}
+
+export function __resetSupabaseServerClientFactoryForTests() {
+  supabaseServerClientFactory = createSupabaseServerClient;
+}
+
+export const __writingInternals = {
+  getShareByIdUncached,
+  getShareMdxContentUncached,
+  getSharesUncached,
+  parseWritingShareRow,
+};

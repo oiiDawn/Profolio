@@ -1,0 +1,10 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "title": "External Resource",
+  "description": "A valid link row",
+  "tag": "link",
+  "type": "link",
+  "url": "https://example.com/article",
+  "file_path": null,
+  "created_at": "2026-04-10T00:00:00.000Z"
+}

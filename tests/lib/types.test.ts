@@ -1,4 +1,4 @@
-import test from "node:test";
+import { test } from "vitest";
 import assert from "node:assert/strict";
 
 import {
@@ -17,7 +17,6 @@ test("writingShareRowSchema normalizes non-link types to md", () => {
     url: null,
     file_path: "article.mdx",
     created_at: "2026-04-14T00:00:00.000Z",
-    updated_at: null,
   });
 
   assert.equal(result.type, "md");
@@ -33,7 +32,6 @@ test("writingShareRowSchema rejects invalid ids", () => {
     url: null,
     file_path: "article.mdx",
     created_at: "2026-04-14T00:00:00.000Z",
-    updated_at: null,
   });
 
   assert.equal(result.success, false);

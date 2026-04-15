@@ -4,7 +4,11 @@ import { Badge } from "@/components/ui/badge";
 export default function Loading() {
   return (
     <PageShell>
-      <article className="relative px-4 py-16 sm:px-8 lg:py-20">
+      <article
+        className="relative px-4 py-16 sm:px-8 lg:py-20"
+        data-testid="writing-article-loading"
+        aria-busy="true"
+      >
         <div className="mx-auto max-w-3xl animate-pulse">
           <div className="mb-8 h-4 w-28 rounded bg-white/10" />
           <Badge variant="outline" className="mb-4">

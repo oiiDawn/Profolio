@@ -39,6 +39,29 @@ type FileUploadInput = {
   title: string;
   uploadSource: string;
 };
+type UploadSupabaseClient = {
+  from: (table: string) => any;
+  storage: {
+    from: (bucket: string) => {
+      upload: (
+        path: string,
+        body: string,
+        options: { upsert: boolean; contentType: string; cacheControl: string },
+      ) => Promise<{ error: { message: string } | null }>;
+    };
+  };
+};
+
+type LinkPersistResult = {
+  id: string;
+  operation: "insert" | "update";
+};
+
+type MdxPersistResult = {
+  id: string;
+  operation: "insert" | "update";
+  storagePath: string;
+};
 
 export function parseArgs(argv: string[]) {
   const positional: string[] = [];
@@ -129,7 +152,7 @@ export function parseFileUploadInput(
   const fm = frontmatter.data;
   const basename = path.basename(abs);
   const filePathFromFlag = getOptionalFlagString(flags["file-path"]);
-  const storagePath = fm.file_path ?? filePathFromFlag ?? basename;
+  const storagePath = filePathFromFlag ?? fm.file_path ?? basename;
 
   const flagId = getOptionalFlagString(flags.id);
   const explicitUuid = flagId ?? fm.id ?? null;
@@ -155,6 +178,156 @@ export function parseFileUploadInput(
     tag,
     title,
     uploadSource,
+  };
+}
+
+export async function upsertLinkShareRow(
+  supabase: UploadSupabaseClient,
+  row: ReturnType<typeof parseLinkRowInput>,
+  nowIso: string = new Date().toISOString(),
+): Promise<LinkPersistResult> {
+  const { data: existing, error: existingError } = await supabase
+    .from("writing_shares")
+    .select("id")
+    .eq("id", row.id)
+    .maybeSingle();
+
+  if (existingError) {
+    throw new Error(`读取 writing_shares 失败: ${existingError.message}`);
+  }
+
+  if (existing) {
+    const { data: updated, error } = await supabase
+      .from("writing_shares")
+      .update({
+        title: row.title,
+        description: row.description,
+        tag: row.tag,
+        type: "link" as const,
+        url: row.url,
+        file_path: null as string | null,
+      })
+      .eq("id", row.id)
+      .select("id")
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`更新失败: ${error.message}`);
+    }
+
+    if (!updated?.id) {
+      throw new Error("更新失败: 未命中任何 writing_shares 行");
+    }
+
+    return { id: row.id, operation: "update" };
+  }
+
+  const { data: inserted, error } = await supabase
+    .from("writing_shares")
+    .insert({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      tag: row.tag,
+      type: "link" as const,
+      url: row.url,
+      file_path: null as string | null,
+      created_at: nowIso,
+    })
+    .select("id")
+    .single();
+
+  if (error || !inserted?.id) {
+    throw new Error(`插入失败: ${error?.message ?? "缺少返回 id"}`);
+  }
+
+  return { id: inserted.id, operation: "insert" };
+}
+
+export async function upsertMdxShareRow(
+  supabase: UploadSupabaseClient,
+  input: FileUploadInput,
+  nowIso: string = new Date().toISOString(),
+): Promise<MdxPersistResult> {
+  if (input.explicitUuid) {
+    const { data: existing, error: existingError } = await supabase
+      .from("writing_shares")
+      .select("id")
+      .eq("id", input.explicitUuid)
+      .maybeSingle();
+
+    if (existingError) {
+      throw new Error(`读取 writing_shares 失败: ${existingError.message}`);
+    }
+
+    if (!existing?.id) {
+      throw new Error(
+        `未找到 id=${input.explicitUuid} 的 writing_shares 行，已终止上传以避免孤儿文件`,
+      );
+    }
+  }
+
+  const { error: upErr } = await supabase.storage
+    .from("writing")
+    .upload(input.storagePath, input.uploadSource, {
+      upsert: true,
+      contentType: "text/plain; charset=utf-8",
+      cacheControl: "3600",
+    });
+
+  if (upErr) {
+    throw new Error(`Storage 上传失败: ${upErr.message}`);
+  }
+
+  const payload = {
+    title: input.title,
+    description: input.description,
+    tag: input.tag,
+    type: "md" as const,
+    url: null as string | null,
+    file_path: input.storagePath,
+  };
+
+  if (input.explicitUuid) {
+    const { data: updated, error } = await supabase
+      .from("writing_shares")
+      .update(payload)
+      .eq("id", input.explicitUuid)
+      .select("id")
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`writing_shares 更新失败: ${error.message}`);
+    }
+
+    if (!updated?.id) {
+      throw new Error("writing_shares 更新失败: 未命中任何行");
+    }
+
+    return {
+      id: input.explicitUuid,
+      operation: "update",
+      storagePath: input.storagePath,
+    };
+  }
+
+  const { data: inserted, error: insErr } = await supabase
+    .from("writing_shares")
+    .insert({
+      ...payload,
+      created_at: nowIso,
+    })
+    .select("id")
+    .single();
+
+  if (insErr || !inserted?.id) {
+    throw new Error(`writing_shares 插入失败: ${insErr?.message ?? "缺少返回 id"}`);
+  }
+
+  return {
+    id: inserted.id,
+    operation: "insert",
+    storagePath: input.storagePath,
   };
 }
 
@@ -195,43 +368,20 @@ export async function main(argv: string[] = process.argv) {
     };
 
     if (dryRun) {
-      console.log("[dry-run] upsert writing_shares:", row);
+      console.log("[dry-run] upsert writing_shares:", {
+        ...row,
+      });
       return;
     }
 
-    const { data: existing } = await supabase
-      .from("writing_shares")
-      .select("id")
-      .eq("id", row.id)
-      .maybeSingle();
-
-    if (existing) {
-      const { error } = await supabase
-        .from("writing_shares")
-        .update({
-          title: row.title,
-          description: row.description,
-          tag: row.tag,
-          type: row.type,
-          url: row.url,
-          file_path: row.file_path,
-        })
-        .eq("id", row.id);
-      if (error) {
-        console.error("更新失败:", error.message);
-        process.exit(1);
-      }
-    } else {
-      const { error } = await supabase.from("writing_shares").insert({
-        ...row,
-        created_at: new Date().toISOString(),
-      });
-      if (error) {
-        console.error("插入失败:", error.message);
-        process.exit(1);
-      }
+    try {
+      const result = await upsertLinkShareRow(supabase, parsedLink);
+      console.log(`已保存外链条目(${result.operation}): ${result.id} → ${row.url}`);
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "外链写入失败");
+      process.exit(1);
     }
-    console.log(`已保存外链条目: ${row.id} → ${row.url}`);
+
     return;
   }
 
@@ -289,60 +439,22 @@ export async function main(argv: string[] = process.argv) {
     return;
   }
 
-  const { error: upErr } = await supabase.storage
-    .from("writing")
-    .upload(parsedFile.storagePath, parsedFile.uploadSource, {
-      upsert: true,
-      contentType: "text/plain; charset=utf-8",
-      cacheControl: "3600",
-    });
-
-  if (upErr) {
-    console.error("Storage 上传失败:", upErr.message);
-    process.exit(1);
-  }
-
-  const payload = {
-    title: parsedFile.title,
-    description: parsedFile.description,
-    tag: parsedFile.tag,
-    type: "md" as const,
-    url: null as string | null,
-    file_path: parsedFile.storagePath,
-  };
-
-  if (parsedFile.explicitUuid) {
-    const { error } = await supabase
-      .from("writing_shares")
-      .update(payload)
-      .eq("id", parsedFile.explicitUuid);
-    if (error) {
-      console.error("writing_shares 更新失败:", error.message);
-      process.exit(1);
+  try {
+    const result = await upsertMdxShareRow(supabase, parsedFile);
+    if (result.operation === "update") {
+      console.log(
+        `完成: id=${result.id} file_path=${result.storagePath}（Storage 已 upsert，数据库已更新）`,
+      );
+      return;
     }
+
     console.log(
-      `完成: id=${parsedFile.explicitUuid} file_path=${parsedFile.storagePath}（Storage 已 upsert，数据库已更新）`,
+      `完成: id=${result.id} file_path=${result.storagePath}（新建行；可把此 id 写入 frontmatter 的 id 以便下次覆盖）`,
     );
-    return;
-  }
-
-  const { data: inserted, error: insErr } = await supabase
-    .from("writing_shares")
-    .insert({
-      ...payload,
-      created_at: new Date().toISOString(),
-    })
-    .select("id")
-    .single();
-
-  if (insErr || !inserted?.id) {
-    console.error("writing_shares 插入失败:", insErr?.message);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : "写入失败");
     process.exit(1);
   }
-
-  console.log(
-    `完成: id=${inserted.id} file_path=${parsedFile.storagePath}（新建行；可把此 id 写入 frontmatter 的 id 以便下次覆盖）`,
-  );
 }
 
 function isDirectExecution() {

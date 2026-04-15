@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -f "$(dirname -- "$0")/_/husky.sh" ]; then
+  . "$(dirname -- "$0")/_/husky.sh"
+fi
+
+if node -e "const s=require('./package.json').scripts||{};process.exit(s['check:fast']?0:1)"; then
+  pnpm check:fast
+else
+  echo "check:fast is not defined yet, fallback to pnpm check"
+  pnpm check
+fi

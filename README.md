@@ -35,9 +35,32 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 ```bash
 pnpm dev
 pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:unit
+pnpm test:component
+pnpm test:data
+pnpm test:e2e
+pnpm test:visual
+pnpm test:a11y
+pnpm check:fast
+pnpm check:full
 pnpm build
 pnpm start
 ```
+
+## Testing and Local Quality Gates
+
+- Test runner baseline is now based on `vitest.config.ts` with:
+  - Node-oriented tests (`tests/lib`, `tests/scripts`, `tests/data`)
+  - JSDOM-oriented tests (`tests/frontend`)
+  - Shared setup in `tests/setup/node.ts` and `tests/setup/jsdom.ts`
+- Local hooks draft:
+  - `.husky/pre-commit` runs `lint-staged` (fallback: `pnpm lint`)
+  - `.husky/pre-push` runs `pnpm check:fast` (fallback: `pnpm check`)
+- Lint-staged config lives in `.lintstagedrc.json`.
+
+Note: the command set above requires matching `package.json` scripts and devDependencies to be wired by the integrating worker.
 
 ## Project Structure
 

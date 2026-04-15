@@ -18,9 +18,16 @@ pnpm dev
 pnpm build
 pnpm start
 pnpm lint
-pnpm typecheck
+pnpm typecheck              # 建议指向 `tsc -p tsconfig.typecheck.json --noEmit`
 pnpm test
-pnpm check                 # lint + typecheck + test
+pnpm test:unit
+pnpm test:component
+pnpm test:data
+pnpm test:e2e
+pnpm test:visual
+pnpm test:a11y
+pnpm check:fast            # lint + typecheck + unit/component/data
+pnpm check:full            # check:fast + build + e2e/a11y/visual（按 CI 策略）
 pnpm upload-writing ./path/to/article.mdx
 ```
 
@@ -51,6 +58,15 @@ content/writing/           # 本地 MDX 草稿/源文件目录，仅作为上传
 tests/
   lib/types.test.ts
   scripts/upload-writing.test.ts
+  setup/node.ts            # Vitest Node 测试环境 setup
+  setup/jsdom.ts           # Vitest + Testing Library 的 JSDOM setup
+vitest.config.ts           # Vitest 根配置（Node/JSDOM 分流、coverage）
+tsconfig.typecheck.json    # 不依赖 `.next/types` 的类型检查配置
+tsconfig.vitest.json       # 测试类型环境配置
+.lintstagedrc.json         # lint-staged 规则
+.husky/
+  pre-commit               # lint-staged（若未安装则回退 lint）
+  pre-push                 # 优先 check:fast（若未定义则回退 check）
 .agents/                   # 项目内 agent 相关资源
 skills-lock.json           # skill lockfile（已跟踪）
 supabase/
@@ -64,7 +80,7 @@ package.json
 2. 优先保持 TypeScript 安全，并沿用现有组件模式。
 3. 文案默认保持当前中文语气，除非用户明确要求英文。
 4. 新增 UI 前先检查 `components/ui` 是否已有可复用组件。
-5. 完成较大修改后优先运行 `pnpm check`；至少运行与你改动最相关的校验命令。
+5. 完成较大修改后优先运行 `pnpm check:fast`（若尚未接入则回退 `pnpm check`）；至少运行与你改动最相关的校验命令。
 6. 修改静态个人信息、项目、时间线、联系方式时，优先检查 `lib/site.ts`，不要把同类内容分散硬编码到页面文件。
 7. 涉及依赖安装、脚本执行、锁文件变更时，默认使用 `pnpm` 体系处理。
 
@@ -110,11 +126,12 @@ package.json
 
 - writing 相关页面使用 300 秒 revalidate 窗口；新上传内容不一定会立刻出现。
 - `lib/writing.ts` 使用了 `unstable_cache`，因此短时间内内容延迟可能是正常缓存行为。
-- 一般代码改动优先运行 `pnpm check`。
+- 一般代码改动优先运行 `pnpm check:fast`（若尚未接入则回退 `pnpm check`）。
+- 新测试体系下优先运行 `pnpm check:fast`；涉及部署链路或发布前再跑 `pnpm check:full`。
 - 修改写作系统后，至少手动验证：
   - `/writing` 列表是否正常展示
   - `/writing/[id]` 的 MDX 渲染或外链跳转是否正常
-- 当前自动化测试偏轻量，主要覆盖 schema 与上传脚本行为（`tests/lib/types.test.ts`、`tests/scripts/upload-writing.test.ts`）；UI 改动仍需要手动验证页面。
+- `vitest.config.ts` 已提供 Node/JSDOM 双环境基础配置，后续新增组件/路由测试优先放到 `tests/frontend/`，数据与契约测试优先放到 `tests/data/`。
 
 ## Git 与交付
 

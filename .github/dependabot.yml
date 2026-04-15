@@ -1,0 +1,42 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "automerge-candidate"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      react-stack:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "next"
+      testing:
+        patterns:
+          - "@playwright/*"
+          - "@axe-core/*"
+          - "vitest"
+          - "@vitest/*"
+      supabase:
+        patterns:
+          - "@supabase/*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:30"
+      timezone: "Asia/Shanghai"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"

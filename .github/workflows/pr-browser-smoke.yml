@@ -1,0 +1,62 @@
+name: pr-browser-smoke
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-browser-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser smoke suite
+        shell: bash
+        run: |
+          if node -e "const s=require('./package.json').scripts||{}; process.exit(s['test:e2e:smoke'] ? 0 : 1)"; then
+            pnpm run test:e2e:smoke
+            exit 0
+          fi
+          if node -e "const s=require('./package.json').scripts||{}; process.exit(s['test:e2e'] ? 0 : 1)"; then
+            pnpm run test:e2e -- tests/e2e/smoke.spec.ts --project=desktop-chromium --project=mobile-chrome
+            exit 0
+          fi
+          pnpm exec playwright test tests/e2e/smoke.spec.ts --project=desktop-chromium --project=mobile-chrome
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-pr-browser-smoke
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore

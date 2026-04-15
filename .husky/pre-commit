@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -f "$(dirname -- "$0")/_/husky.sh" ]; then
+  . "$(dirname -- "$0")/_/husky.sh"
+fi
+
+if pnpm exec lint-staged --version >/dev/null 2>&1; then
+  pnpm exec lint-staged
+else
+  echo "lint-staged is not installed yet, fallback to pnpm lint"
+  pnpm lint
+fi
