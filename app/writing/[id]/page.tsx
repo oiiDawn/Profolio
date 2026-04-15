@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { cache, type ReactNode } from "react";
+import { cache } from "react";
 
+import {
+  renderWritingArticleBody,
+  resolveWritingArticleBody,
+  resolveWritingArticleRoute,
+} from "@/app/writing/[id]/article-helpers";
 import { PageShell } from "@/components/page-shell";
 import { Badge } from "@/components/ui/badge";
-import { compileMdxSource } from "@/lib/mdx-compile";
-import { getShareById, getShareMdxContent, getShares } from "@/lib/writing";
+import { getShareById, getShares } from "@/lib/writing";
 
 export const revalidate = 300;
 
@@ -17,7 +21,7 @@ const getCachedShareById = cache(async (id: string) => getShareById(id));
 function formatDate(iso: string) {
   try {
     return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium" }).format(
-      new Date(iso)
+      new Date(iso),
     );
   } catch {
     return iso;
@@ -50,55 +54,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function WritingArticlePage({ params }: PageProps) {
   const pageStart = performance.now();
   const shareStart = performance.now();
-  const share = await getCachedShareById(params.id);
+  const shareCandidate = await getCachedShareById(params.id);
   console.info(
     `[writing] page:getShareById ${params.id} ${Math.round(performance.now() - shareStart)}ms`,
   );
-  if (!share) {
+
+  const routeDecision = resolveWritingArticleRoute(shareCandidate);
+  if (routeDecision.kind === "not-found") {
     notFound();
   }
 
-  if (share.type === "link") {
-    if (share.url) {
-      redirect(share.url);
-    }
-    notFound();
+  if (routeDecision.kind === "redirect") {
+    redirect(routeDecision.url);
   }
 
-  const version = share.updated_at ?? share.created_at;
-
-  let body: ReactNode = (
-    <p className="font-mono text-sm text-muted-foreground">
-      暂无正文。请在 Supabase Storage 创建公开桶{" "}
-      <code className="text-primary">writing</code>，上传与{" "}
-      <code className="text-primary">file_path</code> 同名的 MDX 文件。
-    </p>
+  const share = routeDecision.share;
+  const { state: bodyState, content } = await resolveWritingArticleBody(
+    share,
   );
-
-  if (share.file_path) {
-    const contentStart = performance.now();
-    const raw = await getShareMdxContent(share.file_path, version);
-    console.info(
-      `[writing] getShareMdxContent ${share.file_path} ${Math.round(performance.now() - contentStart)}ms`,
-    );
-    if (raw) {
-      try {
-        const compileStart = performance.now();
-        const { content } = await compileMdxSource(raw);
-        console.info(
-          `[writing] compileMdxSource ${share.file_path} ${Math.round(performance.now() - compileStart)}ms`,
-        );
-        body = content;
-      } catch (e) {
-        console.error("[writing] MDX compile:", e);
-        body = (
-          <p className="text-destructive">
-            正文解析失败，请检查 MDX 语法或稍后重试。
-          </p>
-        );
-      }
-    }
-  }
+  const body = renderWritingArticleBody(bodyState, content);
 
   console.info(
     `[writing] page:total ${params.id} ${Math.round(performance.now() - pageStart)}ms`,
@@ -130,7 +104,13 @@ export default async function WritingArticlePage({ params }: PageProps) {
             </p>
           ) : null}
 
-          <div className="mdx-article reveal mt-12 [--delay:240ms]">{body}</div>
+          <div
+            className="mdx-article reveal mt-12 [--delay:240ms]"
+            data-testid="writing-article-body"
+            data-body-state={bodyState}
+          >
+            {body}
+          </div>
         </div>
       </article>
     </PageShell>

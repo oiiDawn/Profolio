@@ -17,6 +17,33 @@ const nullableStringFromUnknown = z.preprocess((value: UnknownInput) => {
   return value;
 }, z.string().nullable());
 
+const nullableTrimmedStringFromUnknown = z.preprocess((value: UnknownInput) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : null;
+  }
+  if (typeof value === "number") {
+    return String(value);
+  }
+  return value;
+}, z.string().trim().min(1).nullable());
+
+const nullableUrlFromUnknown = z.preprocess((value: UnknownInput) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (typeof value === "string") {
+    return value.trim();
+  }
+  if (typeof value === "number") {
+    return String(value);
+  }
+  return value;
+}, z.url().nullable());
+
 const uuidString = z.uuid();
 
 const nonEmptyTrimmedString = z.string().trim().min(1);
@@ -28,13 +55,46 @@ const normalizedWritingType = z
 export const writingShareRowSchema = z.object({
   id: uuidString,
   title: nonEmptyTrimmedString,
-  description: nullableStringFromUnknown,
-  tag: nullableStringFromUnknown,
+  description: nullableTrimmedStringFromUnknown,
+  tag: nullableTrimmedStringFromUnknown,
   type: normalizedWritingType,
-  url: nullableStringFromUnknown,
-  file_path: nullableStringFromUnknown,
+  url: nullableUrlFromUnknown,
+  file_path: nullableTrimmedStringFromUnknown,
   created_at: nonEmptyTrimmedString,
-  updated_at: nullableStringFromUnknown,
+}).superRefine((value, ctx) => {
+  if (value.type === "md") {
+    if (!value.file_path) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "md 类型必须提供 file_path",
+        path: ["file_path"],
+      });
+    }
+    if (value.url !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "md 类型不允许设置 url",
+        path: ["url"],
+      });
+    }
+    return;
+  }
+
+  if (!value.url) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "link 类型必须提供 url",
+      path: ["url"],
+    });
+  }
+
+  if (value.file_path !== null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "link 类型不允许设置 file_path",
+      path: ["file_path"],
+    });
+  }
 });
 
 export const writingShareSchema = writingShareRowSchema;

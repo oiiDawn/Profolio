@@ -1,5 +1,5 @@
 import { compileMDX } from "next-mdx-remote/rsc";
-import { cache } from "react";
+import { cache as reactCache } from "react";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 
@@ -26,6 +26,11 @@ export async function compileMdxSourceUncached(source: string) {
   });
 }
 
-export const compileMdxSource = cache(async (source: string) =>
+const cacheFn: typeof reactCache =
+  typeof reactCache === "function"
+    ? reactCache
+    : ((fn: (...args: unknown[]) => unknown) => fn) as typeof reactCache;
+
+export const compileMdxSource = cacheFn(async (source: string) =>
   compileMdxSourceUncached(source),
 );

@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef, HTMLAttributes, ReactNode } from "react"
 
 import { cn } from "@/lib/utils";
 
-function slugifyHeading(children: ReactNode): string {
+export function slugifyHeading(children: ReactNode): string {
   const text = flattenText(children)
     .toLowerCase()
     .replace(/\s+/g, "-")
@@ -11,7 +11,7 @@ function slugifyHeading(children: ReactNode): string {
   return text || "section";
 }
 
-function flattenText(node: ReactNode): string {
+export function flattenText(node: ReactNode): string {
   if (node == null || typeof node === "boolean") return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(flattenText).join("");
@@ -20,6 +20,14 @@ function flattenText(node: ReactNode): string {
     return flattenText(p.children);
   }
   return "";
+}
+
+export function isExternalHref(href: string) {
+  return (
+    href.startsWith("http://") ||
+    href.startsWith("https://") ||
+    href.startsWith("//")
+  );
 }
 
 function makeHeading(Tag: "h1" | "h2" | "h3" | "h4") {
@@ -103,10 +111,7 @@ export const mdxComponents = {
         </a>
       );
     }
-    const external =
-      href.startsWith("http://") ||
-      href.startsWith("https://") ||
-      href.startsWith("//");
+    const external = isExternalHref(href);
     if (external) {
       return (
         <a

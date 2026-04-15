@@ -12,7 +12,7 @@ const navItems = [
   { label: "分享", href: "/writing" }
 ] as const;
 
-function navIsActive(pathname: string, href: string) {
+export function navIsActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
