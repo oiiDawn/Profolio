@@ -40,7 +40,7 @@ export const timeline = [
     to: "2020",
     org: "北京航空航天大学",
     role: "软件工程 · 学士",
-    summary: "",
+    summary: "在系统训练里打下工程基础，也开始意识到自己真正想做的，不只是把功能写出来。",
     logo: "/logos/buaa.svg",
   },
   {
@@ -49,7 +49,7 @@ export const timeline = [
     to: "2020",
     org: "九州大学",
     role: "电气情报工学 · 交换",
-    summary: "",
+    summary: "第一次更直接地站在不同文化和学科语境里看待技术，也让后来的很多选择不再只沿着惯性走。",
     logo: "/logos/kyushu.svg",
   },
   {
@@ -58,7 +58,7 @@ export const timeline = [
     to: "2021",
     org: "Troph Inc.",
     role: "Web全栈工程师 & 产品经理",
-    summary: "Kupo World 游戏社交平台（上线初期访问量破万）与 ACG 社区侧项目。",
+    summary: "在真实产品节奏里同时处理实现与表达，开始确认自己更在意有想法、也能落地的作品。",
     logo: "/logos/troph.svg",
   },
   {
@@ -68,7 +68,7 @@ export const timeline = [
     org: "东京大学",
     role: "电子情报学 · 研究生（退学）",
     summary:
-      "因为Covid-19影响，前往学校遥遥无期，故退学，想要在工作上获得更多经验。",
+      "主动结束一条看起来更标准的路径，也因此更清楚地认识到：重要的不是履历完整，而是是否忠于自己的判断。",
     logo: "/logos/utokyo.svg",
   },
   {
@@ -78,7 +78,7 @@ export const timeline = [
     org: "华为",
     role: "嵌入式软件工程师 & Web全栈工程师 · 飞虎队成员",
     summary:
-      "参与基站芯片物理层软件；主导负责内部研发平台。因为还是想要进修，加上疫情影响身体健康，所以决定离开。",
+      "参与基站芯片物理层软件与内部研发平台，也在高压环境里学会把长期健康和持续成长放回更优先的位置。",
     logo: "/logos/huawei.svg",
   },
   {
@@ -87,7 +87,7 @@ export const timeline = [
     to: "2025",
     org: "昆士兰大学",
     role: "软件工程 · 硕士",
-    summary: "基于LLM的隐私政策领域词典构建",
+    summary: "重新出发之后继续进修，在研究中把技术能力和更长期的问题意识重新接上。",
     logo: "/logos/uq.svg",
   },
   {
@@ -96,7 +96,7 @@ export const timeline = [
     to: "至今",
     org: "微光医疗",
     role: "软件开发工程师",
-    summary: "独立搭建AI数据标注平台；主导负责基于AI的冠脉造影影像分析系统。",
+    summary: "独立搭建AI数据标注平台，并主导基于AI的冠脉造影影像分析系统，把判断力和执行力放进真实场景里验证。",
     logo: "/logos/weiguang.svg",
   },
 ] as const;

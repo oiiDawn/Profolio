@@ -14,10 +14,8 @@ export default function HomePage() {
             className="reveal mb-4 flex items-center gap-2 [--delay:40ms] lg:mb-3"
             style={{ animationDelay: "40ms" }}
           >
-            <span className="h-px w-8 bg-[hsl(286_100%_73%)]" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[hsl(286_100%_73%)]">
-              welcome
-            </span>
+            <span className="h-px w-8 bg-accent" />
+            <span className="text-label">welcome</span>
           </div>
           <h1
             className="reveal max-w-[100vw] font-heading text-4xl font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-6xl [--delay:80ms]"
@@ -30,7 +28,7 @@ export default function HomePage() {
             className="reveal mt-3 flex items-center gap-2 font-mono text-sm text-muted-foreground sm:text-base [--delay:100ms]"
             style={{ animationDelay: "100ms" }}
           >
-            <span className="text-[hsl(286_100%_73%)]">▍</span>
+            <span className="text-accent">▍</span>
             正在<TypingCycle className="inline-block" />
           </p>
           <p className="reveal mt-4 w-full text-base leading-relaxed text-muted-foreground sm:text-lg lg:mt-3 [--delay:120ms]">

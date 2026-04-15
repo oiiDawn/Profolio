@@ -39,7 +39,7 @@ export default async function WritingPage() {
     <PageShell>
       <section className="relative px-4 py-16 sm:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <Badge variant="outline" className="reveal mb-4 [--delay:40ms]">
+          <Badge variant="meta" className="reveal mb-4 [--delay:40ms]">
             SHARES
           </Badge>
           <SectionLabel className="reveal [--delay:80ms]">
@@ -66,49 +66,54 @@ export default async function WritingPage() {
             <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
               {shares.map((share, i) => {
                 const isMd = share.type === "md";
-                const href = isMd
-                  ? `/writing/${share.id}`
-                  : share.url ?? "#";
+                const href = isMd ? `/writing/${share.id}` : share.url ?? "#";
                 const card = (
                   <Card
                     id={`share-${share.id}`}
-                    className="group relative h-full scroll-mt-24 overflow-hidden border-white/10 bg-[hsl(0_0%_12.5%)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgb(143_245_255/0.25)] reveal"
+                    variant="editorial"
+                    className="reveal h-full scroll-mt-24"
                     style={{ animationDelay: `${200 + i * 48}ms` }}
                   >
-                    <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-primary via-[hsl(286_100%_73%)] to-[hsl(353_100%_72%)]" />
-                    <CardHeader>
-                      <span className="font-mono text-[10px] text-primary">
-                        [{isMd ? "MDX" : "LINK"}]
-                      </span>
-                      <CardDescription className="font-mono text-[10px] uppercase tracking-wider text-[hsl(286_100%_73%)]">
-                        {share.tag}
-                      </CardDescription>
-                      <CardTitle className="text-xl uppercase leading-snug">
-                        {share.title}
-                      </CardTitle>
-                      <p className="font-mono text-[10px] text-muted-foreground">
-                        {formatDate(share.created_at)}
-                      </p>
+                    <CardHeader className="gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={isMd ? "terminal" : "meta"}>
+                          {isMd ? "MDX" : "LINK"}
+                        </Badge>
+                        {share.tag ? (
+                          <Badge variant="label">{share.tag}</Badge>
+                        ) : null}
+                      </div>
+                      <div className="space-y-2">
+                        <CardDescription className="text-micro text-primary/80">
+                          {formatDate(share.created_at)}
+                        </CardDescription>
+                        <CardTitle className="text-xl leading-snug">
+                          {share.title}
+                        </CardTitle>
+                      </div>
                     </CardHeader>
-                    <CardContent className="flex flex-col gap-4">
-                      {share.description ? (
-                        <p className="text-sm leading-relaxed text-muted-foreground">
-                          {share.description}
-                        </p>
-                      ) : null}
-                      <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-primary">
-                        {isMd ? (
-                          "站内阅读 →"
-                        ) : (
-                          <>
-                            外链
-                            <ExternalLink
-                              className="size-3.5 opacity-80"
-                              aria-hidden
-                            />
-                          </>
-                        )}
+                    <CardContent className="flex flex-1 flex-col gap-5">
+                      <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+                        {share.description ?? "打开条目查看正文、外链或延伸阅读。"}
                       </p>
+                      <div className="flex items-center justify-between gap-3 border-t border-white/8 pt-4">
+                        <span className="text-micro text-primary/75">
+                          {isMd ? "longform note" : "external reference"}
+                        </span>
+                        <span className="inline-flex items-center gap-2 text-label">
+                          {isMd ? (
+                            "站内阅读 →"
+                          ) : (
+                            <>
+                              外链
+                              <ExternalLink
+                                className="size-3.5 opacity-80"
+                                aria-hidden
+                              />
+                            </>
+                          )}
+                        </span>
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -118,7 +123,7 @@ export default async function WritingPage() {
                     <Link
                       key={share.id}
                       href={href}
-                      className="block outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+                      className="focus-terminal block"
                       aria-label={`阅读：${share.title}`}
                     >
                       {card}
@@ -132,7 +137,7 @@ export default async function WritingPage() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+                    className="focus-terminal block"
                     aria-label={`在新标签页打开：${share.title}`}
                   >
                     {card}

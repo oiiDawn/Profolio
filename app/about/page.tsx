@@ -3,13 +3,7 @@ import Image from "next/image";
 
 import { PageShell } from "@/components/page-shell";
 import { SectionLabel } from "@/components/section-label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { timeline } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -29,78 +23,41 @@ export default function AboutPage() {
             我在做什么
           </h1>
           <p className="reveal mt-4 max-w-2xl text-muted-foreground [--delay:120ms]">
-            全栈与产品我都玩：从底层到界面、从工具到一点点「像产品」的体验；也会写 AI
-            辅助的东西。这里主要用来介绍自己，顺便放点笔记和分享。
+            这里更像一份持续更新的公开档案：记录我怎么理解自己、怎么做东西，
+            以及这些标准是如何被一步步建立起来的。
           </p>
 
-          <div className="reveal mt-10 grid grid-cols-1 gap-6 lg:grid-cols-12 [--delay:160ms]">
-            <div className="space-y-4 lg:col-span-7">
+          <div className="reveal mt-10 [--delay:160ms]">
+            <div className="max-w-3xl space-y-4">
               <p className="leading-relaxed text-muted-foreground">
-                技术上从嵌入式（C++/QT）到 Web（React、Node、Django、Vue）再到 AI
-                工具（Python、ML）都碰过：做过基站芯片相关的东西，也做过游戏社交平台和社区。没有单一「标签」，更像是哪里有意思就往哪里钻一点。
+                这些年的经历并不总是顺利，但我越来越觉得，真正重要的不是路径是否标准，而是有没有在每一次选择里更认识自己一点。主动从东大退学、因为健康和长期发展停下来调整、再重新出发——这些决定都不算轻松，却让我慢慢确认了自己相信什么，不愿意成为什么样的人。
               </p>
               <p className="leading-relaxed text-muted-foreground">
-                生活轨迹上在北京、东京、福冈、布里斯班都住过一阵子，中英日都能聊。喜欢把学到的东西写下来，本站用
-                Next.js 自建，既是公开档案，也是实验场。
+                所以比起把自己包装成什么都会的人，我更在意按自己的标准做东西：做有想法的作品，保持对完成度和工程质量的要求，也真的把事情往前推进。这个网站对我来说，不只是展示页面，更是我持续整理判断、表达思考、留下作品痕迹的地方。
               </p>
             </div>
-            <Card className="border-white/10 bg-[hsl(0_0%_12.5%)] lg:col-span-5">
-              <CardHeader>
-                <span className="font-mono text-[10px] text-primary">
-                  CORE_STACK
-                </span>
-                <CardTitle className="text-lg uppercase">关键词</CardTitle>
-                <CardDescription>常折腾的方向。</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 font-mono text-xs">
-                <div className="flex justify-between border-b border-white/5 py-2">
-                  <span className="text-muted-foreground">Web 全栈</span>
-                  <span className="text-right text-primary">
-                    React / Node.js / Django
-                  </span>
-                </div>
-                <div className="flex justify-between border-b border-white/5 py-2">
-                  <span className="text-muted-foreground">系统开发</span>
-                  <span className="text-right text-primary">
-                    C++ / QT / Python
-                  </span>
-                </div>
-                <div className="flex justify-between border-b border-white/5 py-2">
-                  <span className="text-muted-foreground">AI 工具</span>
-                  <span className="text-right text-primary">ML / 数据标注</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-muted-foreground">语言</span>
-                  <span className="text-right text-primary">
-                    中文 / English / 日本語
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-white/5 bg-[hsl(0_0%_7.5%)] px-4 py-16 sm:px-8">
+      <section className="border-t border-white/5 bg-muted px-4 py-16 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <SectionLabel className="reveal [--delay:200ms]">
             [TIMELINE_LOG]
           </SectionLabel>
-          <h2 className="reveal mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl [--delay:240ms]">
-            成长轨迹
-          </h2>
-          <div
-            className="reveal mt-10 overflow-hidden border border-white/10 bg-[rgb(38_38_38_/_0.35)] shadow-[0_0_40px_-12px_rgba(143,245,255,0.08)] backdrop-blur-md [--delay:280ms]"
-          >
-            <div className="border-l-2 border-[hsl(185_100%_78%_/_0.45)]">
+          <p className="reveal mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground [--delay:280ms]">
+            现在回头看，这些节点更像是在一点点塑造我今天的判断、行动方式，以及我做东西时真正坚持的标准。
+          </p>
+          <div className="reveal mt-10 overflow-hidden rounded-none surface-panel [--delay:320ms]">
+            <div className="timeline-rail">
               {timeline.map((item) => (
                 <div
                   key={item.id}
-                  className="border-b border-white/[0.06] px-4 py-5 transition-colors last:border-b-0 hover:bg-[hsl(185_100%_78%_/_0.04)] sm:px-6 sm:py-6"
+                  className="timeline-entry px-4 py-5 last:border-b-0 sm:px-6 sm:py-6"
                 >
                   <div className="flex items-start gap-5 sm:gap-6">
                     <div
-                      className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden border border-white/10 bg-[hsl(0_0%_9%)] shadow-[inset_0_0_0_1px_rgba(143,245,255,0.07)]"
+                      className="timeline-logo relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden"
                       aria-hidden
                     >
                       <Image
@@ -113,27 +70,24 @@ export default function AboutPage() {
                         sizes="72px"
                       />
                     </div>
-                    <div className="min-w-0 flex-1 space-y-2 pt-0.5">
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-                        <div className="min-w-0 space-y-0.5">
+                    <div className="min-w-0 flex-1 space-y-3 pt-0.5">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                        <div className="min-w-0 space-y-1">
                           <span className="block font-mono text-sm font-medium text-foreground">
                             {item.org}
                           </span>
-                          <span className="block font-mono text-xs text-muted-foreground">
+                          <span className="block text-sm text-muted-foreground">
                             {item.role}
                           </span>
                         </div>
-                        <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.12em] text-primary/90 sm:text-xs">
+                        <Badge variant="meta" className="w-fit shrink-0 sm:mt-0.5">
                           {item.from}
-                          <span className="mx-1.5 text-muted-foreground/50">
-                            —
-                          </span>
+                          <span className="text-muted-foreground/60">—</span>
                           {item.to}
-                        </span>
+                        </Badge>
                       </div>
-                      <p className="font-mono text-sm leading-relaxed text-muted-foreground">
-                        <span className="text-[hsl(286_100%_73%)]">$</span>{" "}
-                        {item.summary}
+                      <p className="timeline-summary font-mono text-sm leading-relaxed">
+                        <span className="text-accent">$</span> {item.summary}
                       </p>
                     </div>
                   </div>

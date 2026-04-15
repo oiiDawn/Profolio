@@ -1,20 +1,40 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+
+const cardVariants = cva(
+  "group/card relative flex flex-col gap-4 overflow-hidden rounded-none py-4 text-sm text-card-foreground has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-none *:[img:last-child]:rounded-none",
+  {
+    variants: {
+      variant: {
+        default: "border border-white/5 bg-card shadow-none",
+        project:
+          "surface-panel hover-glow-soft border-primary/14 bg-[hsl(var(--surface-raised))]/78 shadow-[0_0_0_1px_hsl(var(--border)_/_0.5)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-primary/90 before:via-accent before:to-[hsl(var(--destructive))]/85 before:content-['']",
+        editorial:
+          "surface-panel-soft hover-glow-soft border-white/8 bg-[linear-gradient(180deg,hsl(var(--surface-soft))/_0.9,transparent_100px),hsl(var(--surface-raised))/_0.78)] shadow-[0_14px_40px_-20px_rgb(var(--neon-cyan)_/_0.16)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-primary/65 before:via-white/15 before:to-transparent before:content-['']",
+        panel: "surface-panel border-border/70",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
 
 function Card({
   className,
   size = "default",
+  variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof cardVariants> & { size?: "default" | "sm" }) {
   return (
     <div
       data-slot="card"
       data-size={size}
-      className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-none border border-white/5 bg-card py-4 text-sm text-card-foreground shadow-none has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-none *:[img:last-child]:rounded-none",
-        className
-      )}
+      data-variant={variant}
+      className={cn(cardVariants({ variant }), className)}
       {...props}
     />
   )

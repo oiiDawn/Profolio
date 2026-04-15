@@ -57,7 +57,7 @@ const COL_STYLE = { gridTemplateColumns: "1.25rem 1fr" } as const;
 function AssistantLine({ text }: { text: string }) {
   return (
     <div className={cn(mono, rowGrid)} style={COL_STYLE}>
-      <span className="select-none text-[hsl(286_100%_73%)]" aria-hidden>
+      <span className="select-none text-accent" aria-hidden>
         ◆
       </span>
       <pre className="min-w-0 whitespace-pre-wrap break-words text-foreground/85 font-[inherit] text-[inherit] leading-[inherit]">
@@ -83,7 +83,7 @@ function UserLine({ text }: { text: string }) {
 function TypingIndicator() {
   return (
     <div className={cn(mono, rowGrid)} style={COL_STYLE}>
-      <span className="select-none text-[hsl(286_100%_73%)]" aria-hidden>
+      <span className="select-none text-accent" aria-hidden>
         ◆
       </span>
       <div className="flex items-center gap-1 self-center">
@@ -170,26 +170,17 @@ export function HeroTerminal() {
   return (
     <div
       className={cn(
-        "group w-full overflow-hidden rounded-xl sm:rounded-2xl",
-        "border border-white/[0.08]",
-        "bg-[hsl(0_0%_11%)]",
-        "shadow-[0_12px_40px_rgb(0_0_0/0.45),0_2px_8px_rgb(0_0_0/0.25)]",
+        "group focus-terminal-within w-full overflow-hidden rounded-xl border border-border/70 bg-[hsl(var(--surface-soft))]/92 shadow-[0_12px_40px_rgb(0_0_0/0.45),0_2px_8px_rgb(0_0_0/0.25)] sm:rounded-2xl",
         "outline-none"
       )}
     >
       {/* Title bar */}
-      <div
-        className={cn(
-          "flex items-center gap-3 px-4 py-2.5",
-          "border-b border-white/[0.06]",
-          "bg-[hsl(0_0%_15%)]"
-        )}
-      >
-        {/* 交通灯：窗口未聚焦时变灰，hover/focus-within 时还原彩色 */}
+      <div className={cn("terminal-bar flex items-center gap-3 px-4 py-2.5")}>
+        {/* 交通灯：窗口未聚焦时变灰，focus-within 时还原彩色 */}
         <div className="flex gap-2" aria-hidden>
-          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#ff5f57]" />
-          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#febc2e]" />
-          <span className="size-3 shrink-0 rounded-full bg-[hsl(0_0%_32%)] transition-colors duration-150 group-focus-within:bg-[#28c840]" />
+          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-red" />
+          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-yellow" />
+          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-green" />
         </div>
         <span
           className={cn(
@@ -203,7 +194,7 @@ export function HeroTerminal() {
       </div>
 
       {/* Chat area — fixed height, scroll internally; shorter on lg so home fits one screen */}
-      <div className="flex h-[min(50vh,26rem)] flex-col bg-[hsl(0_0%_9%)] lg:h-[min(28vh,17rem)] xl:h-[min(30vh,18rem)]">
+      <div className="flex h-[min(50vh,26rem)] flex-col bg-surface-base lg:h-[min(28vh,17rem)] xl:h-[min(30vh,18rem)]">
         <div
           ref={scrollRef}
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"
@@ -226,17 +217,13 @@ export function HeroTerminal() {
           onSubmit={onSubmit}
           className={cn(
             mono,
-            "flex shrink-0 items-center gap-2.5",
-            "border-t border-white/[0.06] px-4 py-3",
-            "bg-[hsl(0_0%_9%)] text-foreground/90"
+            "focus-terminal-within flex shrink-0 items-center gap-2.5 border-t border-border/70 bg-surface-base px-4 py-3 text-foreground/90"
           )}
         >
           <label htmlFor="hero-chat-input" className="sr-only">
             输入消息
           </label>
-          <span className="shrink-0 select-none text-[hsl(286_100%_73%)]">
-            ›
-          </span>
+          <span className="shrink-0 select-none text-accent">›</span>
           <input
             id="hero-chat-input"
             ref={inputRef}
@@ -246,10 +233,8 @@ export function HeroTerminal() {
             readOnly={!ready}
             className={cn(
               mono,
-              "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground/90",
-              "outline-none ring-0 placeholder:text-muted-foreground/50",
-              "focus-visible:ring-0",
-              !ready && "opacity-40 cursor-not-allowed"
+              "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground/90 outline-none ring-0 placeholder:text-muted-foreground/50 focus-visible:ring-0",
+              !ready && "cursor-not-allowed opacity-40"
             )}
             placeholder={ready ? "/help · /about · /projects · /writing" : "…"}
             autoComplete="off"

@@ -25,21 +25,22 @@ export function TerminalStatusStrip() {
 
   return (
     <div
-      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-white/[0.08] bg-[hsl(0_0%_7%/0.95)] px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border/70 bg-[hsl(var(--surface-base))]/95 px-4 py-2.5 text-micro text-muted-foreground"
       role="status"
-      aria-live="polite"
     >
       <div className="flex min-w-0 items-center gap-2">
         <span
-          className="status-dot size-2 shrink-0 rounded-full bg-emerald-400/90"
+          className="status-dot size-2 shrink-0 rounded-full bg-terminal-green/90"
           aria-hidden
         />
-        <span className="text-[hsl(286_100%_73%)]">[SYSTEM]</span>
+        <span className="text-accent">[SYSTEM]</span>
         <span className="truncate text-foreground/90">STATUS: ONLINE</span>
       </div>
-      <div className="shrink-0">
-        <span className="text-[hsl(286_100%_73%)]">[TIME]</span> UTC+8{" "}
-        <span className="tabular-nums text-foreground/90">{time}</span>
+      <div className="shrink-0" aria-label={`当前时间 UTC+8 ${time}`}>
+        <span className="text-accent">[TIME]</span> UTC+8{" "}
+        <span className="tabular-nums text-foreground/90" aria-hidden>
+          {time}
+        </span>
       </div>
     </div>
   );

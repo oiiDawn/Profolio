@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { contactLinks } from "@/lib/site";
 
 export function ContactLinksNav({
@@ -15,10 +16,10 @@ export function ContactLinksNav({
         <a
           key={link.label}
           href={link.href}
-          className={
-            itemClassName ??
-            "font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-primary"
-          }
+          className={cn(
+            "text-micro focus-terminal inline-flex items-center px-1 py-1 text-muted-foreground transition-colors hover:text-primary",
+            itemClassName
+          )}
           aria-label={link.ariaLabel}
           {...(link.external
             ? { target: "_blank", rel: "noopener noreferrer" }
