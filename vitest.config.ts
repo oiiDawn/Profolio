@@ -6,27 +6,48 @@ const enforceCoverageThresholds =
   process.env.VITEST_ENFORCE_THRESHOLDS === "1";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@": path.resolve(process.cwd(), "."),
-    },
-  },
   test: {
     globals: true,
     passWithNoTests: false,
-    environment: "node",
-    environmentMatchGlobs: [
-      ["tests/frontend/**", "jsdom"],
-    ],
-    include: ["tests/**/*.{test,spec}.{ts,tsx}"],
     exclude: [
       "tests/e2e/**",
       "node_modules/**",
       ".next/**",
     ],
-    setupFiles: ["tests/setup/node.ts", "tests/setup/jsdom.ts"],
     clearMocks: true,
     restoreMocks: true,
+    projects: [
+      {
+        resolve: {
+          alias: {
+            "@": path.resolve(process.cwd(), "."),
+          },
+        },
+        test: {
+          name: "node",
+          environment: "node",
+          include: [
+            "tests/lib/**/*.{test,spec}.{ts,tsx}",
+            "tests/scripts/**/*.{test,spec}.{ts,tsx}",
+            "tests/data/**/*.{test,spec}.{ts,tsx}",
+          ],
+          setupFiles: ["tests/setup/node.ts"],
+        },
+      },
+      {
+        resolve: {
+          alias: {
+            "@": path.resolve(process.cwd(), "."),
+          },
+        },
+        test: {
+          name: "frontend",
+          environment: "jsdom",
+          include: ["tests/frontend/**/*.{test,spec}.{ts,tsx}"],
+          setupFiles: ["tests/setup/node.ts", "tests/setup/jsdom.ts"],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
