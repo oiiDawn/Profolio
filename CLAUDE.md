@@ -48,7 +48,6 @@ content/writing/       # optional local MDX drafts; `*.mdx` is gitignored (do no
 skills-lock.json       # skill lockfile (tracked)
 supabase/
   writing.sql          # DDL + RLS + seed (run in Supabase SQL editor; create Storage bucket `writing`)
-  drop_learning.sql    # optional: drop legacy learning_* tables if still present
 postcss.config.js
 package.json
 ```
