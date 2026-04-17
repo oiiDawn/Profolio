@@ -1,4 +1,3 @@
-import { CursorGlow } from "@/components/cursor-glow";
 import { HeroTerminal } from "@/components/hero-terminal";
 import { PageShell } from "@/components/page-shell";
 import { TypingCycle } from "@/components/typing-cycle";
@@ -6,8 +5,6 @@ import { TypingCycle } from "@/components/typing-cycle";
 export default function HomePage() {
   return (
     <PageShell>
-      <CursorGlow />
-
       <section className="relative flex min-h-0 flex-1 flex-col px-4 py-10 sm:px-8 lg:min-h-0 lg:justify-center lg:py-6">
         <div className="relative z-10 mx-auto w-full max-w-5xl">
           <div

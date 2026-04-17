@@ -218,13 +218,133 @@
     border-left: 2px solid hsl(var(--primary));
   }
 
-  .circuit-bg {
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      hsl(0 0% 29% / 0.12) 1px,
-      transparent 0
-    );
-    background-size: 30px 30px;
+  /**
+   * PCB 风格：主网格走线 + 细副网格 + 焊盘；暗层 / 亮层共用同一 tiling，仅透明度不同。
+   */
+  .circuit-bg-dim,
+  .circuit-bg-bright {
+    background-color: hsl(var(--background));
+    background-image:
+      /* 焊盘（节点） */
+      radial-gradient(
+        circle at 50% 50%,
+        hsl(var(--primary) / 0.22) 0%,
+        transparent 2px
+      ),
+      /* 主水平走线 */
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 30px,
+          hsl(var(--primary) / 0.09) 30px,
+          hsl(var(--primary) / 0.09) 31px,
+          transparent 31px,
+          transparent 62px
+        ),
+      /* 主垂直走线 */
+        repeating-linear-gradient(
+          to right,
+          transparent 0,
+          transparent 30px,
+          hsl(var(--primary) / 0.08) 30px,
+          hsl(var(--primary) / 0.08) 31px,
+          transparent 31px,
+          transparent 62px
+        ),
+      /* 错位副网格（更像双层板） */
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 14px,
+          hsl(var(--accent) / 0.06) 14px,
+          hsl(var(--accent) / 0.06) 15px,
+          transparent 15px,
+          transparent 30px
+        ),
+      repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent 14px,
+        hsl(var(--accent) / 0.05) 14px,
+        hsl(var(--accent) / 0.05) 15px,
+        transparent 15px,
+        transparent 30px
+      );
+    background-size:
+      62px 62px,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      11px 7px,
+      11px 7px;
+  }
+
+  .circuit-bg-dim {
+    opacity: 0.55;
+  }
+
+  .circuit-bg-bright {
+    opacity: 1;
+    filter: saturate(1.15);
+    background-image:
+      radial-gradient(
+        circle at 50% 50%,
+        hsl(var(--primary) / 0.55) 0%,
+        transparent 2.5px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 30px,
+        hsl(var(--primary) / 0.32) 30px,
+        hsl(var(--primary) / 0.32) 31px,
+        transparent 31px,
+        transparent 62px
+      ),
+      repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent 30px,
+        hsl(var(--primary) / 0.28) 30px,
+        hsl(var(--primary) / 0.28) 31px,
+        transparent 31px,
+        transparent 62px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 14px,
+        hsl(var(--accent) / 0.22) 14px,
+        hsl(var(--accent) / 0.22) 15px,
+        transparent 15px,
+        transparent 30px
+      ),
+      repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent 14px,
+        hsl(var(--accent) / 0.18) 14px,
+        hsl(var(--accent) / 0.18) 15px,
+        transparent 15px,
+        transparent 30px
+      );
+    background-size:
+      62px 62px,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      11px 7px,
+      11px 7px;
   }
 
   .terminal-glow {
