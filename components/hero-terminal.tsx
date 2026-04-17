@@ -226,90 +226,92 @@ export function HeroTerminal() {
       role="region"
       aria-label="首页终端交互面板"
       className={cn(
-        "group focus-terminal-within w-full overflow-hidden rounded-xl border border-border/70 bg-[hsl(var(--surface-soft))]/92 shadow-[0_12px_40px_rgb(0_0_0/0.45),0_2px_8px_rgb(0_0_0/0.25)] sm:rounded-2xl",
+        "group focus-terminal-within w-full rounded-xl border border-border/70 bg-[hsl(var(--surface-soft))]/92 shadow-[0_12px_40px_rgb(0_0_0/0.45),0_2px_8px_rgb(0_0_0/0.25)] sm:rounded-2xl",
         "outline-none"
       )}
     >
-      {/* Title bar */}
-      <div className={cn("terminal-bar flex items-center gap-3 px-4 py-2.5")}>
-        {/* 交通灯：窗口未聚焦时变灰，focus-within 时还原彩色 */}
-        <div className="flex gap-2" aria-hidden>
-          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-red" />
-          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-yellow" />
-          <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-green" />
-        </div>
-        <span
-          className={cn(
-            mono,
-            "min-w-0 flex-1 truncate text-center text-[11px] text-muted-foreground/90 sm:text-xs"
-          )}
-        >
-          oii — chat
-        </span>
-        <span className="w-[52px] shrink-0 sm:w-[60px]" aria-hidden />
-      </div>
-
-      {/* Chat area — fixed height, scroll internally; shorter on lg so home fits one screen */}
-      <div className="flex h-[min(50vh,26rem)] flex-col bg-surface-base lg:h-[min(28vh,17rem)] xl:h-[min(30vh,18rem)]">
-        <div
-          ref={scrollRef}
-          data-testid="hero-chat-log"
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"
-          role="log"
-          aria-live="polite"
-          aria-label="对话记录"
-        >
-          {lines.map((line, i) =>
-            line.role === "assistant" ? (
-              <AssistantLine key={i} text={line.text} />
-            ) : (
-              <UserLine key={i} text={line.text} />
-            )
-          )}
-          {typing && <TypingIndicator />}
-        </div>
-
-        {/* Input */}
-        <form
-          onSubmit={onSubmit}
-          aria-label="终端命令输入"
-          className={cn(
-            mono,
-            "focus-terminal-within flex shrink-0 items-center gap-2.5 border-t border-border/70 bg-surface-base px-4 py-3 text-foreground/90"
-          )}
-        >
-          <label htmlFor="hero-chat-input" className="sr-only">
-            输入消息
-          </label>
-          <span className="shrink-0 select-none text-accent">›</span>
-          <input
-            id="hero-chat-input"
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onInputKeyDown}
+      <div className="overflow-hidden rounded-xl sm:rounded-2xl">
+        {/* Title bar */}
+        <div className={cn("terminal-bar flex items-center gap-3 px-4 py-2.5")}>
+          {/* 交通灯：窗口未聚焦时变灰，focus-within 时还原彩色 */}
+          <div className="flex gap-2" aria-hidden>
+            <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-red" />
+            <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-yellow" />
+            <span className="size-3 shrink-0 rounded-full bg-white/20 transition-colors duration-150 group-focus-within:bg-terminal-green" />
+          </div>
+          <span
             className={cn(
               mono,
-              "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground/90 outline-none ring-0 placeholder:text-muted-foreground/50 focus-visible:ring-0",
-              !ready && "cursor-not-allowed opacity-40"
+              "min-w-0 flex-1 truncate text-center text-[11px] text-muted-foreground/90 sm:text-xs"
             )}
-            placeholder={ready ? "/help · /about · /projects · /writing" : "…"}
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="输入消息或斜杠命令"
-            data-testid="hero-chat-input"
-          />
-          <span className="hidden shrink-0 text-muted-foreground/50 sm:inline">
-            ↵
+          >
+            oii — chat
           </span>
-          <button type="submit" className="sr-only">
-            发送
-          </button>
-        </form>
-      </div>
+          <span className="w-[52px] shrink-0 sm:w-[60px]" aria-hidden />
+        </div>
 
-      <TerminalStatusStrip />
+        {/* Chat area — fixed height, scroll internally; shorter on lg so home fits one screen */}
+        <div className="flex h-[min(50vh,26rem)] flex-col bg-surface-base lg:h-[min(28vh,17rem)] xl:h-[min(30vh,18rem)]">
+          <div
+            ref={scrollRef}
+            data-testid="hero-chat-log"
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"
+            role="log"
+            aria-live="polite"
+            aria-label="对话记录"
+          >
+            {lines.map((line, i) =>
+              line.role === "assistant" ? (
+                <AssistantLine key={i} text={line.text} />
+              ) : (
+                <UserLine key={i} text={line.text} />
+              )
+            )}
+            {typing && <TypingIndicator />}
+          </div>
+
+          {/* Input */}
+          <form
+            onSubmit={onSubmit}
+            aria-label="终端命令输入"
+            className={cn(
+              mono,
+              "flex shrink-0 items-center gap-2.5 border-t border-border/70 bg-surface-base px-4 py-3 text-foreground/90"
+            )}
+          >
+            <label htmlFor="hero-chat-input" className="sr-only">
+              输入消息
+            </label>
+            <span className="shrink-0 select-none text-accent">›</span>
+            <input
+              id="hero-chat-input"
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={onInputKeyDown}
+              className={cn(
+                mono,
+                "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground/90 outline-none ring-0 placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                !ready && "cursor-not-allowed opacity-40"
+              )}
+              placeholder={ready ? "/help · /about · /projects · /writing" : "…"}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label="输入消息或斜杠命令"
+              data-testid="hero-chat-input"
+            />
+            <span className="hidden shrink-0 text-muted-foreground/50 sm:inline">
+              ↵
+            </span>
+            <button type="submit" className="sr-only">
+              发送
+            </button>
+          </form>
+        </div>
+
+        <TerminalStatusStrip />
+      </div>
     </div>
   );
 }

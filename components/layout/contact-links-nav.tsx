@@ -17,7 +17,7 @@ export function ContactLinksNav({
           key={link.label}
           href={link.href}
           className={cn(
-            "text-micro focus-terminal inline-flex items-center px-1 py-1 text-muted-foreground transition-colors hover:text-primary",
+            "focus-terminal inline-flex items-center px-1 py-1 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary sm:tracking-[0.18em]",
             itemClassName
           )}
           aria-label={link.ariaLabel}

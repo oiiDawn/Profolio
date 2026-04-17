@@ -38,7 +38,7 @@ export default function RootLayout({
           aria-hidden
         />
         <Topbar />
-        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto pt-16">
+        <main className="flex min-h-0 flex-1 flex-col pt-16">
           {children}
         </main>
         <Footer />

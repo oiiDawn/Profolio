@@ -45,7 +45,7 @@ export function Topbar() {
                 className={[
                   "focus-terminal relative px-2 py-1.5 font-mono text-xs uppercase tracking-[0.16em] outline-none sm:px-2.5 sm:tracking-[0.18em]",
                   "transition-[color,text-shadow,background-color] duration-200 ease-out",
-                  "before:absolute before:bottom-0 before:left-2 before:right-2 before:h-px",
+                  "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-px",
                   "before:bg-primary before:[box-shadow:0_0_8px_2px_rgb(143_245_255/0.45)]",
                   "before:origin-left before:content-['']",
                   "before:transition-[transform,opacity] before:duration-200 before:ease-out",

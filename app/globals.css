@@ -194,8 +194,10 @@
   .focus-terminal-within:focus-within {
     border-color: hsl(var(--ring) / 0.8);
     box-shadow:
-      0 0 0 1px hsl(var(--ring) / 0.2),
-      0 0 26px rgb(var(--neon-cyan) / 0.14);
+      0 0 0 1px hsl(var(--ring) / 0.22),
+      0 0 28px 5px rgb(var(--neon-cyan) / 0.13),
+      0 0 56px 14px rgb(var(--neon-cyan) / 0.08),
+      0 0 96px 28px rgb(var(--neon-cyan) / 0.04);
   }
 
   .hover-glow-soft {
@@ -305,10 +307,16 @@
     transform: translate3d(-8px, 0, 0);
     clip-path: inset(0 100% 0 0);
   }
-  to {
+  /* inset 插值到 99.99%，最后一帧再 none，避免 inset→none 发僵并保留光晕 */
+  99.99% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
     clip-path: inset(0 0 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    clip-path: none;
   }
 }
 
