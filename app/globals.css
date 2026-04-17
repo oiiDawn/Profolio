@@ -149,20 +149,119 @@
     backdrop-filter: blur(16px);
   }
 
+  /**
+   * Timeline — Terminal Architect 垂直时间线
+   * 结构：[time] | [rail + node] | [card]
+   * 轨道贴在 content 列左侧 border，节点在 rail 上绝对定位。
+   */
   .timeline-rail {
-    border-left: 2px solid hsl(var(--ring) / 0.42);
+    position: relative;
   }
 
-  .timeline-entry {
-    border-bottom: 1px solid hsl(var(--border) / 0.45);
+  .timeline-rail::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: hsl(var(--ring) / 0.28);
+    box-shadow: 0 0 8px rgb(var(--neon-cyan) / 0.12);
+  }
+
+  /* 第一个条目顶部与最后一个条目底部的轨道做自然淡出 */
+  .timeline-entry:first-child .timeline-rail::before {
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      hsl(var(--ring) / 0.28) 14px,
+      hsl(var(--ring) / 0.28) 100%
+    );
+  }
+
+  .timeline-entry:last-child .timeline-rail::before {
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--ring) / 0.28) 0,
+      hsl(var(--ring) / 0.28) 40%,
+      transparent 100%
+    );
+  }
+
+  .timeline-entry:first-child:last-child .timeline-rail::before {
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      hsl(var(--ring) / 0.28) 14px,
+      hsl(var(--ring) / 0.28) 60%,
+      transparent 100%
+    );
+  }
+
+  .timeline-node {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: hsl(var(--surface-base));
+    border: 1px solid hsl(var(--ring) / 0.75);
+    box-shadow:
+      inset 0 0 0 2px hsl(var(--background)),
+      0 0 0 1px hsl(var(--ring) / 0.25),
+      0 0 12px rgb(var(--neon-cyan) / 0.35);
     transition:
-      background-color 180ms var(--ease-out-quart),
-      border-color 180ms var(--ease-out-quart);
+      box-shadow 220ms var(--ease-out-quart),
+      border-color 220ms var(--ease-out-quart);
   }
 
-  .timeline-entry:hover {
-    background: hsl(var(--surface-soft) / 0.52);
-    border-color: hsl(var(--ring) / 0.18);
+  .timeline-node::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 9999px;
+    background: hsl(var(--ring));
+    opacity: 0.85;
+  }
+
+  .timeline-node-active {
+    border-color: hsl(var(--accent) / 0.8);
+    box-shadow:
+      inset 0 0 0 2px hsl(var(--background)),
+      0 0 0 1px hsl(var(--accent) / 0.35),
+      0 0 18px rgb(var(--neon-purple) / 0.55);
+  }
+
+  .timeline-node-active::after {
+    background: hsl(var(--accent));
+    animation: timeline-pulse 2s ease-in-out infinite;
+  }
+
+  .timeline-entry:hover .timeline-node {
+    box-shadow:
+      inset 0 0 0 2px hsl(var(--background)),
+      0 0 0 1px hsl(var(--ring) / 0.5),
+      0 0 22px rgb(var(--neon-cyan) / 0.55);
+  }
+
+  .timeline-card {
+    background: hsl(var(--surface-raised) / 0.6);
+    border: 1px solid hsl(var(--border) / 0.55);
+    backdrop-filter: blur(14px);
+    transition:
+      background-color 220ms var(--ease-out-quart),
+      border-color 220ms var(--ease-out-quart),
+      box-shadow 220ms var(--ease-out-quart),
+      transform 220ms var(--ease-out-quart);
+  }
+
+  .timeline-entry:hover .timeline-card {
+    background: hsl(var(--surface-raised) / 0.82);
+    border-color: hsl(var(--ring) / 0.32);
+    box-shadow: 0 14px 48px -18px rgb(var(--neon-cyan) / 0.22);
+    transform: translateX(2px);
   }
 
   .timeline-logo {
@@ -171,8 +270,27 @@
     box-shadow: inset 0 0 0 1px rgb(var(--neon-cyan) / 0.07);
   }
 
+  .timeline-time {
+    font-family: var(--font-mono);
+    color: hsl(var(--meta-foreground));
+  }
+
+  .timeline-time-from {
+    color: hsl(var(--foreground));
+  }
+
+  .timeline-time-to-active {
+    color: hsl(var(--accent));
+  }
+
   .timeline-summary {
     color: hsl(var(--muted-foreground));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-node-active::after {
+      animation: none;
+    }
   }
 
   .terminal-bar {
@@ -460,6 +578,18 @@
   50% {
     opacity: 0.45;
     box-shadow: 0 0 2px rgb(52 211 153 / 0.3);
+  }
+}
+
+@keyframes timeline-pulse {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
   }
 }
 

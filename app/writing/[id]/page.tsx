@@ -105,7 +105,7 @@ export default async function WritingArticlePage({ params }: PageProps) {
           ) : null}
 
           <div
-            className="mdx-article reveal mt-12 [--delay:240ms]"
+            className="mdx-article reveal mt-12 border border-border/45 bg-background/90 px-5 py-8 shadow-[0_0_0_1px_hsl(0_0%_100%_/0.03)] backdrop-blur-md sm:px-8 sm:py-10 [--delay:240ms]"
             data-testid="writing-article-body"
             data-body-state={bodyState}
           >

@@ -32,7 +32,7 @@ export const contactLinks = [
 
 export const siteOwner = "Zhang JM";
 
-/** 成长轨迹：起止时间 + 机构 + 学位/职位 + 一句摘要；logo 为 public/logos 下静态资源 */
+/** About 页时间线数据：时间、机构、身份、一句话描述；logo 放在 public/logos/ */
 export const timeline = [
   {
     id: "buaa",
@@ -40,7 +40,8 @@ export const timeline = [
     to: "2020",
     org: "北京航空航天大学",
     role: "软件工程 · 学士",
-    summary: "在系统训练里打下工程基础，也开始意识到自己真正想做的，不只是把功能写出来。",
+    summary:
+      "系统地打了一遍工程基础，也慢慢发现自己想做的不止是把功能写出来而已。",
     logo: "/logos/buaa.svg",
   },
   {
@@ -49,7 +50,8 @@ export const timeline = [
     to: "2020",
     org: "九州大学",
     role: "电气情报工学 · 交换",
-    summary: "第一次更直接地站在不同文化和学科语境里看待技术，也让后来的很多选择不再只沿着惯性走。",
+    summary:
+      "第一次在另一种文化和学科环境里看待技术，后面的很多选择就不太愿意再顺着惯性走了。",
     logo: "/logos/kyushu.svg",
   },
   {
@@ -58,7 +60,8 @@ export const timeline = [
     to: "2021",
     org: "Troph Inc.",
     role: "Web全栈工程师 & 产品经理",
-    summary: "在真实产品节奏里同时处理实现与表达，开始确认自己更在意有想法、也能落地的作品。",
+    summary:
+      "一边写代码一边参与产品判断，第一次真正确认自己想做的是那种既有想法、又能真的跑起来的东西。",
     logo: "/logos/troph.svg",
   },
   {
@@ -68,7 +71,7 @@ export const timeline = [
     org: "东京大学",
     role: "电子情报学 · 研究生（退学）",
     summary:
-      "主动结束一条看起来更标准的路径，也因此更清楚地认识到：重要的不是履历完整，而是是否忠于自己的判断。",
+      "自己选择了退学，结束了一条看起来更稳妥的路。那之后我开始想清楚一件事：履历好不好看不是我最在意的事情。",
     logo: "/logos/utokyo.svg",
   },
   {
@@ -78,7 +81,7 @@ export const timeline = [
     org: "华为",
     role: "嵌入式软件工程师 & Web全栈工程师 · 飞虎队成员",
     summary:
-      "参与基站芯片物理层软件与内部研发平台，也在高压环境里学会把长期健康和持续成长放回更优先的位置。",
+      "做基站芯片物理层软件，也写过内部研发平台。那段节奏把身体拖得不轻，后来我把它和一些长期的事重新放回了前面。",
     logo: "/logos/huawei.svg",
   },
   {
@@ -87,7 +90,8 @@ export const timeline = [
     to: "2025",
     org: "昆士兰大学",
     role: "软件工程 · 硕士",
-    summary: "重新出发之后继续进修，在研究中把技术能力和更长期的问题意识重新接上。",
+    summary:
+      "重新出发之后继续读书，借研究把写代码这条线和自己真正想追的问题重新接起来。",
     logo: "/logos/uq.svg",
   },
   {
@@ -96,7 +100,8 @@ export const timeline = [
     to: "至今",
     org: "微光医疗",
     role: "软件开发工程师",
-    summary: "独立搭建AI数据标注平台，并主导基于AI的冠脉造影影像分析系统，把判断力和执行力放进真实场景里验证。",
+    summary:
+      "独立搭了一套AI数据标注平台，后来接手一个基于AI的冠脉造影影像分析系统，在真的会被医生用到的产品里磨自己的判断和手感。",
     logo: "/logos/weiguang.svg",
   },
 ] as const;

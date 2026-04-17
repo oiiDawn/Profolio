@@ -3,12 +3,11 @@ import Image from "next/image";
 
 import { PageShell } from "@/components/page-shell";
 import { SectionLabel } from "@/components/section-label";
-import { Badge } from "@/components/ui/badge";
 import { timeline } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "关于我",
-  description: "个人简介、成长轨迹与当前关注的技术与分享方向",
+  description: "个人简介、过往经历，和我现在在做的事",
 };
 
 export default function AboutPage() {
@@ -23,17 +22,16 @@ export default function AboutPage() {
             我在做什么
           </h1>
           <p className="reveal mt-4 max-w-2xl text-muted-foreground [--delay:120ms]">
-            这里更像一份持续更新的公开档案：记录我怎么理解自己、怎么做东西，
-            以及这些标准是如何被一步步建立起来的。
+            这里其实就是一份我一直在写的笔记，记我这些年是怎么想事、怎么做东西的。
           </p>
 
           <div className="reveal mt-10 [--delay:160ms]">
             <div className="max-w-3xl space-y-4">
               <p className="leading-relaxed text-muted-foreground">
-                这些年的经历并不总是顺利，但我越来越觉得，真正重要的不是路径是否标准，而是有没有在每一次选择里更认识自己一点。主动从东大退学、因为健康和长期发展停下来调整、再重新出发——这些决定都不算轻松，却让我慢慢确认了自己相信什么，不愿意成为什么样的人。
+                这些年走得不算顺。东大那边是我自己选择退学的，后来又因为身体和一些更长线的打算停下来调整了不短时间才重新出发。每一次决定都不轻松，不过也正是走过这几步，我才比以前清楚自己在意什么。
               </p>
               <p className="leading-relaxed text-muted-foreground">
-                所以比起把自己包装成什么都会的人，我更在意按自己的标准做东西：做有想法的作品，保持对完成度和工程质量的要求，也真的把事情往前推进。这个网站对我来说，不只是展示页面，更是我持续整理判断、表达思考、留下作品痕迹的地方。
+                所以我不太想把自己包装成什么都懂的样子。更在意的是按自己的标准去做东西：有自己想法的作品，能做到我自己认可的完成度。这个网站就是放这些东西的地方，顺便也是我自己的一块前端实验场。
               </p>
             </div>
           </div>
@@ -46,55 +44,86 @@ export default function AboutPage() {
             [TIMELINE_LOG]
           </SectionLabel>
           <p className="reveal mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground [--delay:280ms]">
-            现在回头看，这些节点更像是在一点点塑造我今天的判断、行动方式，以及我做东西时真正坚持的标准。
+            现在回头看，这些节点一直在慢慢塑造我今天的判断和做事方式。
           </p>
-          <div className="reveal mt-10 overflow-hidden rounded-none surface-panel [--delay:320ms]">
-            <div className="timeline-rail">
-              {timeline.map((item) => (
-                <div
+          <ol className="reveal mt-12 [--delay:320ms]">
+            {timeline.map((item, i) => {
+              const isActive = item.to === "至今";
+              return (
+                <li
                   key={item.id}
-                  className="timeline-entry px-4 py-5 last:border-b-0 sm:px-6 sm:py-6"
+                  className="timeline-entry reveal grid grid-cols-[3.25rem_1fr] gap-x-4 sm:grid-cols-[6.5rem_1fr] sm:gap-x-6"
+                  style={{ animationDelay: `${360 + i * 70}ms` }}
                 >
-                  <div className="flex items-start gap-5 sm:gap-6">
-                    <div
-                      className="timeline-logo relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden"
+                  <div className="timeline-time flex flex-col items-end justify-start pt-2 text-[11px] uppercase leading-tight tracking-[0.16em] sm:text-xs">
+                    <span className="timeline-time-from text-sm font-semibold tracking-wider sm:text-base">
+                      {item.from}
+                    </span>
+                    <span
                       aria-hidden
+                      className="my-1 h-3 w-px bg-border/60 sm:my-1.5 sm:h-4"
+                    />
+                    <span
+                      className={
+                        isActive ? "timeline-time-to-active font-medium" : ""
+                      }
                     >
-                      <Image
-                        src={item.logo}
-                        alt=""
-                        width={72}
-                        height={72}
-                        unoptimized
-                        className="h-full w-full object-contain p-2"
-                        sizes="72px"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-3 pt-0.5">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                        <div className="min-w-0 space-y-1">
-                          <span className="block font-mono text-sm font-medium text-foreground">
+                      {item.to}
+                    </span>
+                  </div>
+
+                  <div
+                    className={`timeline-rail relative pb-10 pl-5 sm:pl-8 ${i === timeline.length - 1 ? "pb-2" : ""
+                      }`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`timeline-node ${isActive ? "timeline-node-active" : ""
+                        }`}
+                    />
+
+                    <article className="timeline-card flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5">
+                      <div
+                        className="timeline-logo relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden sm:h-16 sm:w-16"
+                        aria-hidden
+                      >
+                        <Image
+                          src={item.logo}
+                          alt=""
+                          width={64}
+                          height={64}
+                          unoptimized
+                          className="h-full w-full object-contain p-2"
+                          sizes="64px"
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1 space-y-2.5">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <span className="font-mono text-[13px] font-semibold text-foreground sm:text-sm">
                             {item.org}
                           </span>
-                          <span className="block text-sm text-muted-foreground">
-                            {item.role}
-                          </span>
+                          {isActive ? (
+                            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+                              <span className="h-1.5 w-1.5 rounded-full bg-accent status-dot" />
+                              active
+                            </span>
+                          ) : null}
                         </div>
-                        <Badge variant="meta" className="w-fit shrink-0 sm:mt-0.5">
-                          {item.from}
-                          <span className="text-muted-foreground/60">—</span>
-                          {item.to}
-                        </Badge>
+                        <span className="block text-[13px] text-muted-foreground sm:text-sm">
+                          {item.role}
+                        </span>
+                        <p className="timeline-summary pt-0.5 font-mono text-[13px] leading-relaxed sm:text-sm">
+                          <span className="mr-1 text-accent">$</span>
+                          {item.summary}
+                        </p>
                       </div>
-                      <p className="timeline-summary font-mono text-sm leading-relaxed">
-                        <span className="text-accent">$</span> {item.summary}
-                      </p>
-                    </div>
+                    </article>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </section>
     </PageShell>
