@@ -38,16 +38,18 @@ app/
   layout.tsx               # 根布局，本地字体、Topbar/Footer、Vercel Analytics/SpeedInsights
   page.tsx                 # 首页 / hero terminal 体验
   about/page.tsx           # 关于我 + 时间线
-  projects/page.tsx        # 项目列表
+  projects/page.tsx        # 项目列表 + 贡献热力图（仓库见 lib/github.ts；热力图见 components/github-contribution-calendar.tsx）
   writing/page.tsx         # 来自 Supabase `writing_shares` 的分享列表
   writing/[id]/page.tsx    # MDX 文章页 / 外链跳转页
   globals.css              # 全局样式与设计令牌
 components/
+  github-contribution-calendar.tsx  # react-github-calendar 封装（贡献数据来自第三方 API）
   layout/                  # Topbar、Footer、ContactLinksNav
   mdx/mdx-components.tsx   # 写作文章的 MDX 渲染样式
   ui/                      # 可复用 UI 基础组件
 lib/
-  site.ts                  # 站点级静态内容（联系方式、时间线、项目、部署日期）
+  site.ts                  # 站点级静态内容（联系方式、时间线、部署日期）
+  github.ts                # GitHub API 拉取公开仓库，供 /projects 使用
   supabase.ts              # Supabase 服务端 client 工厂（按环境变量启用）
   writing.ts               # 从 Supabase / Storage 读取分享数据并带缓存
   mdx-compile.ts           # next-mdx-remote + remark-gfm + rehype-pretty-code
@@ -98,10 +100,14 @@ package.json
 - `/writing/[id]` 会先读取 share 行，再对 `md` 类型条目从公开 Storage bucket `writing` 下载原始 MDX，最后通过 `lib/mdx-compile.ts` 编译渲染。
 - `type = "link"` 的条目会跳转到 `url`；`type = "md"` 的条目依赖 `file_path`。
 - `content/writing/` 下的本地文件只是作者编写/上传输入，不会在运行时被应用直接读取。
-- About / Projects / 联系方式等静态站点内容统一维护在 `lib/site.ts`。
+- About / 联系方式等静态站点内容统一维护在 `lib/site.ts`；`/projects` 仅从 GitHub 拉取公开仓库，失败或无可用仓库时显示说明，不维护本地备用列表。
+- `/projects` 贡献热力图使用 npm 包 `react-github-calendar`（依赖 `react-activity-calendar`），数据由 `github-contributions-api.jogruber.de` 提供，非 GitHub 官方 GraphQL；与 GitHub 网页上的格子可能略有差异。
 
 ## Supabase 与环境变量
 
+- 项目页（GitHub）可选环境变量：
+  - `GITHUB_USERNAME`：要列出的 GitHub 用户名（未设置时使用 `lib/site.ts` 的 `siteGithubUsername`）
+  - `GITHUB_TOKEN`：可选，仅服务端使用，用于提高 GitHub API 速率限制；勿放入 `NEXT_PUBLIC_*`
 - 读取写作内容需要：
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`

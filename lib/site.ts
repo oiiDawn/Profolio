@@ -32,6 +32,9 @@ export const contactLinks = [
 
 export const siteOwner = "Zhang JM";
 
+/** 默认 GitHub 用户名（项目页拉取公开仓库；可被环境变量 GITHUB_USERNAME 覆盖） */
+export const siteGithubUsername = "oiidawn";
+
 /** About 页时间线数据：时间、机构、身份、一句话描述；logo 放在 public/logos/ */
 export const timeline = [
   {
@@ -113,31 +116,4 @@ export const stackTags = [
   "PYTHON",
   "DOCKER",
   "MACHINE_LEARNING",
-] as const;
-
-export const projects = [
-  {
-    id: "P01",
-    title: "Kupo World",
-    desc: "游戏玩家招募与社交平台，上线三天访问量破万，在微博、NGA、Twitter 等社区也传开了。React + Node.js + MongoDB。",
-    tag: "Side project",
-    href: "https://github.com/oiidawn",
-    linkLabel: "GitHub",
-  },
-  {
-    id: "P02",
-    title: "AI 数据标注平台",
-    desc: "替代手工文件流程，让内部标注效率提升约 10 倍。React + Node.js + MySQL + Docker。",
-    tag: "工具",
-    href: "mailto:oii.zhangjm@gmail.com",
-    linkLabel: "联系",
-  },
-  {
-    id: "P03",
-    title: "Profolio · 个人主页",
-    desc: "就是本站：Next.js 14 + TypeScript + Tailwind，Terminal Architect 视觉，多页路由与部署。也是我的前端实验场。",
-    tag: "本站",
-    href: "https://github.com/oiidawn",
-    linkLabel: "仓库",
-  },
 ] as const;
