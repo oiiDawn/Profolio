@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 172 32" role="img" aria-label="OII_DAWN wordmark">
+  <title>OII_DAWN</title>
+  <desc>Wordmark: bracketed monospace lockup with a magenta terminal cursor.</desc>
+
+  <!-- Left bracket -->
+  <path d="M12 2 H4 V30 H12" fill="none" stroke="#8ff5ff" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" />
+
+  <!-- OII_DAWN wordmark -->
+  <text
+    x="14"
+    y="25"
+    fill="#8ff5ff"
+    font-family='"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace'
+    font-weight="900"
+    font-size="28"
+    letter-spacing="-1.5"
+  >OII_DAWN</text>
+
+  <!-- Trailing cursor block -->
+  <rect x="138" y="26" width="16" height="4" fill="#d575ff" />
+
+  <!-- Right bracket -->
+  <path d="M160 2 H168 V30 H160" fill="none" stroke="#8ff5ff" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" />
+</svg>

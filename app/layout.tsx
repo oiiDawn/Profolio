@@ -17,12 +17,30 @@ import "@fontsource/noto-sans-sc/latin-700.css";
 
 import "./globals.css";
 
+const siteTitleDefault = "个人主页 · Terminal Architect";
+const siteDescription = "自我介绍、成长轨迹与个人分享";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "个人主页 · Terminal Architect",
-    template: "%s · Terminal Architect"
+    default: siteTitleDefault,
+    template: "%s · Terminal Architect",
   },
-  description: "自我介绍、成长轨迹与个人分享"
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    locale: "zh_CN",
+    siteName: "OII_DAWN",
+    title: siteTitleDefault,
+    description: siteDescription,
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitleDefault,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({

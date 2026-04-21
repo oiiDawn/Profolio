@@ -25,10 +25,19 @@ export function Topbar() {
       <div className="flex min-w-0 items-center gap-3 md:gap-6">
         <Link
           href="/"
-          className="focus-terminal font-mono text-lg font-black tracking-[-0.05em] text-primary"
+          className="focus-terminal inline-flex items-center transition-[filter] duration-200 hover:filter-[drop-shadow(0_0_10px_rgb(143_245_255/0.45))]"
           aria-label="返回主页"
         >
-          [OII_DAWN]
+          {/* 单一事实来源：public/logo-wordmark.svg；plain img 避免 next/image 对 SVG 的额外配置 */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- static SVG wordmark from /public */}
+          <img
+            src="/logo-wordmark.svg"
+            alt=""
+            width={172}
+            height={32}
+            className="block h-5 w-auto sm:h-[22px]"
+            aria-hidden
+          />
         </Link>
         <span className="hidden h-4 w-px bg-white/10 sm:block" aria-hidden />
         <nav
