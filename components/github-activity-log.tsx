@@ -32,8 +32,6 @@ function buildRowLine(r: ActivityRow): string {
 type Props = {
   rows: readonly ActivityRow[];
   notice?: string;
-  /** 与左侧热力图同高（由父级 ResizeObserver 传入） */
-  maxHeightPx?: number;
   className?: string;
 };
 
@@ -44,12 +42,7 @@ const CURSOR = (
   />
 );
 
-export function GitHubActivityLog({
-  rows,
-  notice,
-  maxHeightPx,
-  className,
-}: Props) {
+export function GitHubActivityLog({ rows, notice, className }: Props) {
   const fullLines = useMemo(
     () => rows.map((r) => buildRowLine(r)),
     [rows],
@@ -183,11 +176,6 @@ export function GitHubActivityLog({
     return false;
   };
 
-  const scrollStyle =
-    maxHeightPx != null && maxHeightPx > 0
-      ? ({ maxHeight: maxHeightPx } as const)
-      : undefined;
-
   return (
     <section
       aria-label="GitHub 近期活动"
@@ -220,10 +208,8 @@ export function GitHubActivityLog({
             ref={scrollRef}
             className={cn(
               mono,
-              "overflow-y-auto overflow-x-auto [-webkit-overflow-scrolling:touch]",
-              maxHeightPx == null ? "max-h-32 lg:max-h-36" : "min-h-0",
+              "min-w-0 overflow-x-auto [-webkit-overflow-scrolling:touch]",
             )}
-            style={scrollStyle}
             role="log"
             aria-live={live}
           >

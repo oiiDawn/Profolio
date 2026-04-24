@@ -124,7 +124,7 @@ export type RepoActivityBar = {
 };
 
 const ACTIVITY_LIMIT = 5;
-const TOP_REPOS_LIMIT = 5;
+const TOP_REPOS_LIMIT = 3;
 const EVENTS_PER_PAGE = 30;
 
 function firstLine(text: string): string {

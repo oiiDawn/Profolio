@@ -8,27 +8,16 @@ const mono =
 
 type Props = {
   items: readonly RepoActivityBar[];
-  /** 与左侧热力图同高（由父级 ResizeObserver 传入） */
-  maxHeightPx?: number;
   className?: string;
 };
 
-export function GitHubTopReposChart({
-  items,
-  maxHeightPx,
-  className,
-}: Props) {
+export function GitHubTopReposChart({ items, className }: Props) {
   const maxCount =
     items.length > 0 ? Math.max(...items.map((it) => it.count), 1) : 1;
 
-  const scrollStyle =
-    maxHeightPx != null && maxHeightPx > 0
-      ? ({ maxHeight: maxHeightPx } as const)
-      : undefined;
-
   return (
     <section
-      aria-label="近期仓库活动排名"
+      aria-label="近期仓库活动排名 Top 3"
       className={cn("min-w-0", className)}
     >
       <header
@@ -37,21 +26,14 @@ export function GitHubTopReposChart({
           "mb-2 flex items-baseline justify-between text-muted-foreground",
         )}
       >
-        <span>TOP REPOS</span>
+        <span>TOP 3</span>
         <span className="tabular-nums">[30 EVT]</span>
       </header>
 
       {items.length === 0 ? (
         <p className={cn(mono, "text-muted-foreground")}>暂无活动数据</p>
       ) : (
-        <ul
-          className={cn(
-            mono,
-            "space-y-1.5 overflow-y-auto overflow-x-hidden [-webkit-overflow-scrolling:touch]",
-            maxHeightPx == null ? "max-h-32 lg:max-h-36" : "min-h-0",
-          )}
-          style={scrollStyle}
-        >
+        <ul className={cn(mono, "space-y-1.5 overflow-x-hidden")}>
           {items.map((it) => {
             const pct = (it.count / maxCount) * 100;
             return (
