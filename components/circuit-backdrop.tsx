@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Pos = { x: number; y: number };
 
@@ -68,10 +68,10 @@ export function CircuitBackdrop() {
         className="circuit-bg-bright absolute inset-0 transition-opacity duration-300"
         style={{
           opacity: spotlight ? 1 : 0,
-          WebkitMaskImage: spotlight ? mask : undefined,
+          WebkitMaskImage: mask,
           WebkitMaskRepeat: "no-repeat",
           WebkitMaskSize: "100% 100%",
-          maskImage: spotlight ? mask : undefined,
+          maskImage: mask,
           maskRepeat: "no-repeat",
           maskSize: "100% 100%"
         }}

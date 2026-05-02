@@ -2,31 +2,78 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { ActivityKind, ActivityRow } from "@/lib/github";
+import type { ActivityRow } from "@/lib/github";
 import { cn } from "@/lib/utils";
 
 const mono =
-  "font-mono text-[11px] leading-snug tracking-normal antialiased sm:text-xs";
+  "font-mono text-xs leading-snug tracking-normal antialiased sm:text-sm";
 
-const KIND_LABEL: Record<ActivityKind, string> = {
-  push: "push",
-  pr: "pr",
-  issue: "issue",
-  star: "star",
-  fork: "fork",
-  release: "rel",
-  branch: "branch",
-  tag: "tag",
-};
+/** 终端/Git UI 常见的星标与推送前缀 */
+const EMO_STARRED = "\u{2b50}";
+const EMO_PUSHED = "\u{1f680}";
 
 function truncate(s: string, max: number): string {
   if (s.length <= max) return s;
   return `${s.slice(0, Math.max(0, max - 1))}…`;
 }
 
+/** 与其它类事件一致：(5d ago)、(12h ago)，异常时间则省略后缀 */
+function timeSuffix(relTime: string): string {
+  if (!relTime.trim() || relTime === "—") return "";
+  return ` (${relTime} ago)`;
+}
+
+function truncateDetail(message: string, max = 52): string {
+  return truncate(message.trim(), max);
+}
+
+/** 单行终端风格：动词 + repo + (相对时间) [· 简要补充] */
 function buildRowLine(r: ActivityRow): string {
-  const kind = KIND_LABEL[r.kind];
-  return `${r.sha.padEnd(7)} ${kind.padEnd(7)} ${truncate(r.repo, 18)} ${truncate(r.message, 48)} ${r.relTime}`;
+  const repo = truncate(r.repo, 32);
+  const t = timeSuffix(r.relTime);
+  const dot = (s: string) => (s ? ` · ${truncateDetail(s)}` : "");
+
+  switch (r.kind) {
+    case "star":
+      return `${EMO_STARRED} starred ${repo}${t}`;
+    case "push": {
+      const msg = truncateDetail(r.message, 54);
+      return msg
+        ? `${EMO_PUSHED} pushed ${repo}${t} · ${msg}`
+        : `${EMO_PUSHED} pushed ${repo}${t}`;
+    }
+    case "pr":
+      return `pr ${repo}${t}${dot(r.message)}`;
+    case "issue":
+      return `issue ${repo}${t}${dot(r.message)}`;
+    case "fork":
+      return `forked ${repo}${t}`;
+    case "release":
+      return `release ${repo}${t}${dot(r.message)}`;
+    case "branch":
+    case "tag":
+      return `created ${repo}${t}${dot(r.message)}`;
+  }
+}
+
+function accessibilityLabel(row: ActivityRow): string {
+  switch (row.kind) {
+    case "star":
+      return `Starred repository ${row.repo}`;
+    case "push":
+      return `Pushed to ${row.repo}: ${row.message}`;
+    case "pr":
+      return `Pull request on ${row.repo}: ${row.message}`;
+    case "issue":
+      return `Issue on ${row.repo}: ${row.message}`;
+    case "fork":
+      return `Forked ${row.repo}`;
+    case "release":
+      return `Release on ${row.repo}: ${row.message}`;
+    case "branch":
+    case "tag":
+      return `Created ${row.message} on ${row.repo}`;
+  }
 }
 
 type Props = {
@@ -179,16 +226,21 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
   return (
     <section
       aria-label="GitHub 近期活动"
-      className={cn("min-w-0", className)}
+      className={cn("flex min-h-0 w-full flex-col", className)}
     >
       {notice ? (
-        <p className="mb-2 text-xs text-amber-100/95" role="status">
+        <p
+          className="mb-2 shrink-0 text-xs text-amber-100/95"
+          role="status"
+        >
           {notice}
         </p>
       ) : null}
 
       {rows.length === 0 && !notice ? (
-        <p className={cn(mono, "text-muted-foreground")}>暂无活动数据</p>
+        <p className={cn(mono, "shrink-0 text-muted-foreground")}>
+          暂无活动数据
+        </p>
       ) : null}
 
       {rows.length > 0 ? (
@@ -208,7 +260,7 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
             ref={scrollRef}
             className={cn(
               mono,
-              "min-w-0 overflow-x-auto [-webkit-overflow-scrolling:touch]",
+              "min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]",
             )}
             role="log"
             aria-live={live}
@@ -224,7 +276,7 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground/90 focus-visible:ring-2 focus-visible:ring-primary"
-                    aria-label={`${row.kind} ${row.repo}: ${row.message}`}
+                    aria-label={accessibilityLabel(row)}
                   >
                     {text}
                     {cursor ? CURSOR : null}

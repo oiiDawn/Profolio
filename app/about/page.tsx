@@ -113,10 +113,6 @@ export default function AboutPage() {
                         <span className="block text-[13px] text-muted-foreground sm:text-sm">
                           {item.role}
                         </span>
-                        <p className="timeline-summary pt-0.5 font-mono text-[13px] leading-relaxed sm:text-sm">
-                          <span className="mr-1 text-accent">$</span>
-                          {item.summary}
-                        </p>
                       </div>
                     </article>
                   </div>

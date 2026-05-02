@@ -123,7 +123,7 @@ export type RepoActivityBar = {
   href: string;
 };
 
-const ACTIVITY_LIMIT = 5;
+const ACTIVITY_LIMIT = 6;
 const TOP_REPOS_LIMIT = 3;
 const EVENTS_PER_PAGE = 30;
 
@@ -203,13 +203,11 @@ function mapEventToRow(
         : fullSha.length > 0
           ? fullSha
           : "—";
-    const msg = firstLine(
+    const rawMsg =
       typeof last?.message === "string" && last.message.trim()
         ? last.message
-        : typeof p.ref === "string" && p.ref.startsWith("refs/")
-          ? `push ${p.ref.replace("refs/heads/", "")}`
-          : "push",
-    );
+        : "";
+    const msg = rawMsg ? firstLine(rawMsg) : "";
     const href =
       fullSha.length >= 7
         ? commitWebUrl(repoName, fullSha)
@@ -332,7 +330,7 @@ function mapEventToRow(
       sha: "—",
       kind: "fork",
       repo: repoShort,
-      message: "forked",
+      message: "",
       relTime,
       href,
     };
@@ -344,7 +342,7 @@ function mapEventToRow(
       sha: "—",
       kind: "star",
       repo: repoShort,
-      message: "starred",
+      message: "",
       relTime,
       href: `https://github.com/${repoName}`,
     };

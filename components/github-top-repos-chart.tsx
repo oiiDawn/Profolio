@@ -4,7 +4,7 @@ import type { RepoActivityBar } from "@/lib/github";
 import { cn } from "@/lib/utils";
 
 const mono =
-  "font-mono text-[11px] leading-snug tracking-normal antialiased sm:text-xs";
+  "font-mono text-xs leading-snug tracking-normal antialiased sm:text-sm";
 
 type Props = {
   items: readonly RepoActivityBar[];
