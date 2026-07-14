@@ -30,11 +30,8 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Approve build scripts
-        run: pnpm approve-builds esbuild unrs-resolver
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Lint
         run: pnpm lint
