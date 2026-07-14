@@ -1,5 +1,5 @@
 {
   "framework": "nextjs",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --ignore-scripts",
   "buildCommand": "pnpm build"
 }

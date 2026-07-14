@@ -1,32 +1,29 @@
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { contactLinks } from "@/lib/site";
 
 export function ContactLinksNav({
   className,
   id,
-  itemClassName
 }: {
   className?: string;
   id?: string;
-  itemClassName?: string;
 }) {
   return (
-    <nav id={id} className={className} aria-label="联系方式与社交媒体">
+    <nav id={id} className={cn("items-center gap-1", className)} aria-label="联系方式与社交媒体">
       {contactLinks.map((link) => (
-        <a
-          key={link.label}
-          href={link.href}
-          className={cn(
-            "focus-terminal inline-flex items-center px-1 py-1 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary sm:tracking-[0.18em]",
-            itemClassName
-          )}
-          aria-label={link.ariaLabel}
-          {...(link.external
-            ? { target: "_blank", rel: "noopener noreferrer" }
-            : {})}
-        >
-          {link.label}
-        </a>
+        <Button key={link.label} variant="ghost" size="sm" asChild>
+          <Link
+            href={link.href}
+            aria-label={link.ariaLabel}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+          >
+            {link.label}
+          </Link>
+        </Button>
       ))}
     </nav>
   );

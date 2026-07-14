@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { PageShell } from "@/components/page-shell";
 import { SectionLabel } from "@/components/section-label";
 import { timeline } from "@/lib/site";
@@ -13,19 +16,17 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <PageShell>
-      <section className="relative px-4 py-16 sm:px-8 lg:py-20">
+      <section className="px-4 py-16 sm:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <SectionLabel className="reveal [--delay:40ms]">
-            [MODULE_ABOUT]
-          </SectionLabel>
-          <h1 className="reveal mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl [--delay:80ms]">
+          <SectionLabel>about</SectionLabel>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">
             我在做什么
           </h1>
-          <p className="reveal mt-4 max-w-2xl text-muted-foreground [--delay:120ms]">
+          <p className="mt-4 max-w-2xl text-muted-foreground">
             这里其实就是一份我一直在写的笔记，记我这些年是怎么想事、怎么做东西的。
           </p>
 
-          <div className="reveal mt-10 [--delay:160ms]">
+          <div className="mt-10">
             <div className="max-w-3xl space-y-4">
               <p className="leading-relaxed text-muted-foreground">
                 这些年走得不算顺。东大那边是我自己选择退学的，后来又因为身体和一些更长线的打算停下来调整了不短时间才重新出发。每一次决定都不轻松，不过也正是走过这几步，我才比以前清楚自己在意什么。
@@ -38,84 +39,60 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/5 bg-muted px-4 py-16 sm:px-8">
+      <Separator />
+
+      <section className="bg-muted/50 px-4 py-16 sm:px-8">
         <div className="mx-auto max-w-6xl">
-          <SectionLabel className="reveal [--delay:200ms]">
-            [TIMELINE_LOG]
-          </SectionLabel>
-          <p className="reveal mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground [--delay:280ms]">
+          <SectionLabel>timeline</SectionLabel>
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
             现在回头看，这些节点一直在慢慢塑造我今天的判断和做事方式。
           </p>
-          <ol className="reveal mt-12 [--delay:320ms]">
-            {timeline.map((item, i) => {
+          <ol className="mt-12 space-y-6">
+            {timeline.map((item) => {
               const isActive = item.to === "至今";
               return (
-                <li
-                  key={item.id}
-                  className="timeline-entry reveal grid grid-cols-[3.25rem_1fr] gap-x-4 sm:grid-cols-[6.5rem_1fr] sm:gap-x-6"
-                  style={{ animationDelay: `${360 + i * 70}ms` }}
-                >
-                  <div className="timeline-time flex flex-col items-end justify-start pt-2 text-[11px] uppercase leading-tight tracking-[0.16em] sm:text-xs">
-                    <span className="timeline-time-from text-sm font-semibold tracking-wider sm:text-base">
+                <li key={item.id} className="flex gap-4 sm:gap-6">
+                  <div className="flex w-16 shrink-0 flex-col items-end text-xs text-muted-foreground sm:w-24">
+                    <span className="font-semibold text-foreground text-sm sm:text-base">
                       {item.from}
                     </span>
-                    <span
-                      aria-hidden
-                      className="my-1 h-3 w-px bg-border/60 sm:my-1.5 sm:h-4"
-                    />
-                    <span
-                      className={
-                        isActive ? "timeline-time-to-active font-medium" : ""
-                      }
-                    >
+                    <span className="my-1 h-3 w-px bg-border" />
+                    <span className={isActive ? "text-primary font-medium" : ""}>
                       {item.to}
                     </span>
                   </div>
 
-                  <div
-                    className={`timeline-rail relative pb-10 pl-5 sm:pl-8 ${i === timeline.length - 1 ? "pb-2" : ""
-                      }`}
-                  >
-                    <span
-                      aria-hidden
-                      className={`timeline-node ${isActive ? "timeline-node-active" : ""
-                        }`}
-                    />
-
-                    <article className="timeline-card flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5">
-                      <div
-                        className="timeline-logo relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden sm:h-16 sm:w-16"
-                        aria-hidden
-                      >
+                  <Card className="flex-1">
+                    <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5">
+                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted sm:h-14 sm:w-14">
                         <Image
                           src={item.logo}
                           alt=""
-                          width={64}
-                          height={64}
+                          width={56}
+                          height={56}
                           unoptimized
-                          className="h-full w-full object-contain p-2"
-                          sizes="64px"
+                          className="h-full w-full object-contain p-1.5"
+                          sizes="56px"
                         />
                       </div>
 
-                      <div className="min-w-0 flex-1 space-y-2.5">
+                      <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                          <span className="font-mono text-[13px] font-semibold text-foreground sm:text-sm">
+                          <span className="font-semibold text-sm sm:text-base">
                             {item.org}
                           </span>
                           {isActive ? (
-                            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
-                              <span className="h-1.5 w-1.5 rounded-full bg-accent status-dot" />
+                            <Badge variant="default" className="text-xs">
                               active
-                            </span>
+                            </Badge>
                           ) : null}
                         </div>
-                        <span className="block text-[13px] text-muted-foreground sm:text-sm">
+                        <span className="block text-sm text-muted-foreground">
                           {item.role}
                         </span>
                       </div>
-                    </article>
-                  </div>
+                    </CardContent>
+                  </Card>
                 </li>
               );
             })}

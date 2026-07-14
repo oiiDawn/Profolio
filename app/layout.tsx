@@ -1,31 +1,24 @@
 import type { Metadata } from "next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Footer } from "@/components/layout/footer";
 import { Topbar } from "@/components/layout/topbar";
-
-/* 本地字体（node_modules），不经过 next/font 拉 Google，避免网络超时 / AbortError */
-import "@fontsource/jetbrains-mono/latin-400.css";
-import "@fontsource/jetbrains-mono/latin-700.css";
-import "@fontsource/noto-sans-sc/chinese-simplified-400.css";
-import "@fontsource/noto-sans-sc/chinese-simplified-500.css";
-import "@fontsource/noto-sans-sc/chinese-simplified-700.css";
-import "@fontsource/noto-sans-sc/latin-400.css";
-import "@fontsource/noto-sans-sc/latin-500.css";
-import "@fontsource/noto-sans-sc/latin-700.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
-const siteTitleDefault = "个人主页 · Terminal Architect";
+const siteTitleDefault = "个人主页";
 const siteDescription = "自我介绍、成长轨迹与个人分享";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
   title: {
     default: siteTitleDefault,
-    template: "%s · Terminal Architect",
+    template: "%s · OII_DAWN",
   },
   description: siteDescription,
   openGraph: {
@@ -44,22 +37,29 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="dark">
-      <body className="flex min-h-screen flex-col">
-        <div
-          className="pointer-events-none fixed inset-0 z-[100] scanline-overlay"
-          aria-hidden
-        />
-        <Topbar />
-        <main className="flex min-h-0 flex-1 flex-col pt-16">
-          {children}
-        </main>
-        <Footer />
+    <html
+      lang="zh-CN"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-screen flex-col font-sans antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Topbar />
+          <main className="flex min-h-0 flex-1 flex-col pt-16">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>
