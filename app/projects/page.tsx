@@ -12,9 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ProjectsCalendarLogRow } from "@/components/projects-calendar-log-row";
-import { getProjectsForPage, getRecentActivityForPage } from "@/lib/github";
-import { siteGithubUsername } from "@/lib/site";
+import { getProjectsForPage } from "@/lib/github";
 
 export const metadata: Metadata = {
   title: "项目",
@@ -24,12 +22,7 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function ProjectsPage() {
-  const [
-    { projects, notice },
-    { rows: activityRows, topRepos, notice: activityNotice },
-  ] = await Promise.all([getProjectsForPage(), getRecentActivityForPage()]);
-  const contributionUsername =
-    process.env.GITHUB_USERNAME?.trim() || siteGithubUsername;
+  const { projects, notice } = await getProjectsForPage();
 
   return (
     <PageShell>
@@ -44,15 +37,6 @@ export default async function ProjectsPage() {
               <AlertDescription>{notice}</AlertDescription>
             </Alert>
           ) : null}
-
-          <div className="mt-10">
-            <ProjectsCalendarLogRow
-              username={contributionUsername}
-              rows={activityRows}
-              topRepos={topRepos}
-              notice={activityNotice}
-            />
-          </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
