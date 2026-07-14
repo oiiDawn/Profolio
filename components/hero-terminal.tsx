@@ -17,8 +17,6 @@ type ChatLine =
   | { role: "user"; text: string }
   | { role: "assistant"; text: string };
 
-export type TerminalFallbackPicker = (randomValue: number) => string;
-
 const GREETING: ChatLine = {
   role: "assistant",
   text: "嗨！有什么想了解的？\n试试 /about · /projects · /writing，或者直接跟我说话。"
@@ -49,32 +47,6 @@ const FALLBACKS = [
   "我理解你说的，但目前还没法直接回应这个，试试 /about？",
   "收到，不过这超出我的能力范围了 😅  试试斜杠命令。"
 ];
-
-export function normalizeTerminalInput(value: string) {
-  return value.trim();
-}
-
-export function getTerminalNavigationTarget(cmd: string) {
-  return NAV_CMDS[cmd];
-}
-
-export function pickTerminalFallback(
-  randomValue: number,
-  picker: TerminalFallbackPicker = (value) => {
-    const index = Math.floor(value * FALLBACKS.length);
-    return FALLBACKS[index] ?? FALLBACKS[0];
-  }
-) {
-  return picker(randomValue);
-}
-
-export function resolveTerminalReply(cmd: string, randomValue: number) {
-  return CMD_RESPONSES[cmd] ?? pickTerminalFallback(randomValue);
-}
-
-export function getTerminalReplyDelayMs(randomValue: number) {
-  return 420 + randomValue * 180;
-}
 
 /** 字体基础样式 */
 const mono = "font-mono text-xs leading-relaxed tracking-normal antialiased";
@@ -154,7 +126,7 @@ export function HeroTerminal() {
 
   const respond = useCallback(
     (userText: string) => {
-      const raw = normalizeTerminalInput(userText);
+      const raw = userText.trim();
       const cmd = raw.toLowerCase();
 
       setLines((prev) => [...prev.slice(-30), { role: "user", text: raw }]);
@@ -168,19 +140,21 @@ export function HeroTerminal() {
 
       setTyping(true);
 
-      const delay = getTerminalReplyDelayMs(Math.random());
+      const delay = 420 + Math.random() * 180;
 
       setTimeout(() => {
         setTyping(false);
 
-        const reply = resolveTerminalReply(cmd, Math.random());
+        const fallbackIdx = Math.floor(Math.random() * FALLBACKS.length);
+        const fallback = FALLBACKS[fallbackIdx] ?? FALLBACKS[0];
+        const reply = CMD_RESPONSES[cmd] ?? fallback;
 
         setLines((prev) => [...prev, { role: "assistant", text: reply }]);
 
         // Re-focus input after AI replies
         requestAnimationFrame(() => inputRef.current?.focus());
 
-        const navigationTarget = getTerminalNavigationTarget(cmd);
+        const navigationTarget = NAV_CMDS[cmd];
         if (navigationTarget) {
           setTimeout(() => router.push(navigationTarget), 600);
         }

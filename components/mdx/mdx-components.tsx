@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef, HTMLAttributes, ReactNode } from "react"
 
 import { cn } from "@/lib/utils";
 
-export function slugifyHeading(children: ReactNode): string {
+function slugifyHeading(children: ReactNode): string {
   const text = flattenText(children)
     .toLowerCase()
     .replace(/\s+/g, "-")
@@ -11,7 +11,7 @@ export function slugifyHeading(children: ReactNode): string {
   return text || "section";
 }
 
-export function flattenText(node: ReactNode): string {
+function flattenText(node: ReactNode): string {
   if (node == null || typeof node === "boolean") return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(flattenText).join("");
@@ -22,7 +22,7 @@ export function flattenText(node: ReactNode): string {
   return "";
 }
 
-export function isExternalHref(href: string) {
+function isExternalHref(href: string) {
   return (
     href.startsWith("http://") ||
     href.startsWith("https://") ||

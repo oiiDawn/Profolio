@@ -7,22 +7,9 @@ import {
   writingShareRowSchema,
 } from "@/lib/types";
 
-type SupabaseServerClient = NonNullable<
-  ReturnType<typeof createSupabaseServerClient>
->;
-type SupabaseServerClientFactory = () => SupabaseServerClient | null;
-
-let supabaseServerClientFactory: SupabaseServerClientFactory =
-  createSupabaseServerClient;
-
 function getSupabaseServerClient() {
-  return supabaseServerClientFactory();
+  return createSupabaseServerClient();
 }
-
-const cacheFn: typeof reactCache =
-  typeof reactCache === "function"
-    ? reactCache
-    : ((fn: (...args: unknown[]) => unknown) => fn) as typeof reactCache;
 
 function parseWritingShareRow(
   row: unknown,
@@ -122,7 +109,7 @@ const getSharesCached = unstable_cache(getSharesUncached, ["writing-shares"], {
   tags: ["writing-shares"],
 });
 
-const getShareByIdCached = cacheFn(async (id: string) => getShareByIdUncached(id));
+const getShareByIdCached = reactCache(async (id: string) => getShareByIdUncached(id));
 
 const getShareMdxContentCached = unstable_cache(
   async (filePath: string) => getShareMdxContentUncached(filePath),
@@ -152,20 +139,3 @@ export async function getShareMdxContent(
 ): Promise<string | null> {
   return getShareMdxContentCached(filePath);
 }
-
-export function __setSupabaseServerClientFactoryForTests(
-  factory: SupabaseServerClientFactory,
-) {
-  supabaseServerClientFactory = factory;
-}
-
-export function __resetSupabaseServerClientFactoryForTests() {
-  supabaseServerClientFactory = createSupabaseServerClient;
-}
-
-export const __writingInternals = {
-  getShareByIdUncached,
-  getShareMdxContentUncached,
-  getSharesUncached,
-  parseWritingShareRow,
-};

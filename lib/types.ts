@@ -4,48 +4,27 @@ import { z } from "zod";
 
 type UnknownInput = unknown;
 
-const nullableStringFromUnknown = z.preprocess((value: UnknownInput) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  if (typeof value === "string") {
+/** 将 unknown 输入统一转为 string | null/undefined，number 自动转字符串 */
+function preprocessString(emptyAs: null | undefined, trim: boolean) {
+  return z.preprocess((value: UnknownInput) => {
+    if (value === undefined || value === null || value === "") {
+      return emptyAs;
+    }
+    if (typeof value === "string") {
+      return trim ? value.trim() : value;
+    }
+    if (typeof value === "number") {
+      return String(value);
+    }
     return value;
-  }
-  if (typeof value === "number") {
-    return String(value);
-  }
-  return value;
-}, z.string().nullable());
+  }, emptyAs === null ? z.string().nullable() : z.string().optional());
+}
 
-const nullableTrimmedStringFromUnknown = z.preprocess((value: UnknownInput) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    return trimmed.length ? trimmed : null;
-  }
-  if (typeof value === "number") {
-    return String(value);
-  }
-  return value;
-}, z.string().trim().min(1).nullable());
-
-const nullableUrlFromUnknown = z.preprocess((value: UnknownInput) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  if (typeof value === "string") {
-    return value.trim();
-  }
-  if (typeof value === "number") {
-    return String(value);
-  }
-  return value;
-}, z.url().nullable());
+const nullableString = preprocessString(null, false);
+const nullableTrimmedString = preprocessString(null, true);
+const optionalString = preprocessString(undefined, false);
 
 const uuidString = z.uuid();
-
 const nonEmptyTrimmedString = z.string().trim().min(1);
 
 const normalizedWritingType = z
@@ -55,11 +34,11 @@ const normalizedWritingType = z
 export const writingShareRowSchema = z.object({
   id: uuidString,
   title: nonEmptyTrimmedString,
-  description: nullableTrimmedStringFromUnknown,
-  tag: nullableTrimmedStringFromUnknown,
+  description: nullableTrimmedString,
+  tag: nullableTrimmedString,
   type: normalizedWritingType,
-  url: nullableUrlFromUnknown,
-  file_path: nullableTrimmedStringFromUnknown,
+  url: preprocessString(null, true).pipe(z.url().nullable()),
+  file_path: nullableTrimmedString,
   created_at: nonEmptyTrimmedString,
 }).superRefine((value, ctx) => {
   if (value.type === "md") {
@@ -114,25 +93,12 @@ const optionalUuidString = z.preprocess((value: UnknownInput) => {
   return value;
 }, uuidString.optional());
 
-const optionalStringFromUnknown = z.preprocess((value: UnknownInput) => {
-  if (value === undefined || value === null || value === "") {
-    return undefined;
-  }
-  if (typeof value === "string") {
-    return value;
-  }
-  if (typeof value === "number") {
-    return String(value);
-  }
-  return value;
-}, z.string().optional());
-
 export const writingFrontmatterSchema = z.object({
   id: optionalUuidString,
-  title: optionalStringFromUnknown,
-  description: optionalStringFromUnknown,
-  tag: optionalStringFromUnknown,
-  file_path: optionalStringFromUnknown,
+  title: optionalString,
+  description: optionalString,
+  tag: optionalString,
+  file_path: optionalString,
 });
 
 export type WritingFrontmatter = z.infer<typeof writingFrontmatterSchema>;
@@ -140,8 +106,8 @@ export type WritingFrontmatter = z.infer<typeof writingFrontmatterSchema>;
 export const writingLinkInputSchema = z.object({
   id: optionalUuidString,
   title: nonEmptyTrimmedString,
-  description: nullableStringFromUnknown,
-  tag: nullableStringFromUnknown,
+  description: nullableString,
+  tag: nullableString,
   url: z.url(),
 });
 

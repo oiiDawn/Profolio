@@ -26,11 +26,6 @@ export async function compileMdxSourceUncached(source: string) {
   });
 }
 
-const cacheFn: typeof reactCache =
-  typeof reactCache === "function"
-    ? reactCache
-    : ((fn: (...args: unknown[]) => unknown) => fn) as typeof reactCache;
-
-export const compileMdxSource = cacheFn(async (source: string) =>
+export const compileMdxSource = reactCache(async (source: string) =>
   compileMdxSourceUncached(source),
 );
