@@ -7,11 +7,11 @@
 - **项目类型**：个人主页 / 作品集站点，包含写作分享系统
 - **技术栈**：Next.js 14、React 18、TypeScript、Tailwind CSS 4
 - **包管理器**：统一使用 `pnpm`（≥10.18.2），不要混用 `npm` / `yarn`
-- **Node 版本**：≥20.0.0（见 `package.json` engines）
+- **Node 版本**：≥22.0.0（见 `package.json` engines）
 - **文档语言**：本项目 `CLAUDE.md` 统一使用中文编写
 - **路由结构**：`/`、`/about`、`/projects`、`/writing`、`/writing/[id]`
 - **路径别名**：`@/*` 映射到项目根目录（见 `tsconfig.json` paths）
-- **设计规范**：详见 `DESIGN.md`（Terminal Architect 设计系统：暗色主题、霓虹能量色、直角组件）
+- **设计规范**：Terminal Architect 设计系统——暗色主题、霓虹能量色（cyan/purple/pink）、直角组件（`rounded-none`）
 
 ## 安装与常用命令
 
@@ -76,16 +76,14 @@ content/writing/           # 本地 MDX 草稿目录，仅作为上传输入，�
 supabase/
   writing.sql              # `writing_shares` DDL + RLS
   writing.seed.sql         # 种子数据（可选）
-DESIGN.md                  # Terminal Architect 设计系统规范
 tsconfig.typecheck.json    # 不依赖 `.next/types` 的类型检查配置
 next.config.mjs            # Next.js 配置（reactStrictMode）
 vercel.json                # Vercel 部署配置
 .husky/
   pre-commit               # lint-staged（未安装时回退 lint）
   pre-push                 # check:fast（未定义时回退 check）
-.lintstagedrc.json         # lint-staged：eslint --max-warnings=0 --fix
 .agents/                   # 项目内 agent 技能（supabase、humanizer-zh 等）
-package.json               # engines: node ≥20, pnpm ≥10.18.2
+package.json               # engines: node ≥22, pnpm ≥10.18.2
 ```
 
 ## 工作规则
@@ -98,11 +96,11 @@ package.json               # engines: node ≥20, pnpm ≥10.18.2
 6. 修改静态个人信息、项目、时间线、联系方式时，优先检查 `lib/site.ts`，不要分散硬编码到页面文件。
 7. 涉及依赖安装、脚本执行、锁文件变更时，默认使用 `pnpm`。
 8. 共享页面框架在 `components/layout`；站点级静态数据在 `lib/site.ts`。
-9. 设计令牌扩展统一收敛到 `app/globals.css`，并保持与 `DESIGN.md` 规范一致。
+9. 设计令牌扩展统一收敛到 `app/globals.css`，保持 Terminal Architect 规范（暗色主题、霓虹能量色、直角）。
 
 ## 样式约定
 
-- 遵循 `DESIGN.md` 中的 Terminal Architect 设计系统：暗色主题、霓虹能量色（cyan/purple/pink）、直角（`rounded-none`）。
+- 遵循 Terminal Architect 设计系统：暗色主题、霓虹能量色（cyan/purple/pink）、直角（`rounded-none`）。
 - 优先沿用 `app/page.tsx` 中已有的 utility-first 风格。
 - 优先做语义化的间距、排版调整，避免零散 magic values。
 - 非必要不要加入过重动画；动效尊重 `prefers-reduced-motion`。
