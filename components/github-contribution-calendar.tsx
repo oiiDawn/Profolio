@@ -1,6 +1,7 @@
 "use client";
 
 import { GitHubCalendar, type Activity } from "react-github-calendar";
+import { useTheme } from "next-themes";
 
 import "react-github-calendar/tooltips.css";
 
@@ -35,26 +36,20 @@ function filterLastSixMonths(data: Activity[]): Activity[] {
   ];
 }
 
-/**
- * 使用社区封装 {@link https://github.com/grubersjoe/react-github-calendar react-github-calendar}，
- * 数据来自 {@link https://github.com/grubersjoe/github-contributions-api github-contributions-api}（第三方聚合，非 GitHub 官方 GraphQL）。
- *
- * lg+ 在项目三栏中与父容器同高；SVG 等高缩放、宽度按比例（globals.css `.github-cal-fit-shell`）。
- */
 export function GitHubContributionCalendar({ username }: Props) {
+  const { resolvedTheme } = useTheme();
+
   return (
     <section
       className={cn(
-        "github-cal-fit-shell flex min-h-0 w-full flex-col lg:w-fit lg:shrink-0",
-        "[-webkit-overflow-scrolling:touch]",
-        /* 移动端日历可能溢出，大屏由父栅格限制宽度 */
+        "flex min-h-0 w-full flex-col lg:w-fit lg:shrink-0",
         "overflow-x-auto overflow-y-visible lg:h-full lg:max-h-full lg:overflow-x-hidden lg:overflow-y-hidden",
       )}
       aria-label={`${username} 的 GitHub 贡献热力图`}
     >
       <GitHubCalendar
         username={username}
-        colorScheme="dark"
+        colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
         blockSize={8}
         blockMargin={2}
         fontSize={11}

@@ -1,11 +1,20 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function SectionLabel({
   children,
   className,
 }: {
-  children: string
-  className?: string
+  children: string;
+  className?: string;
 }) {
-  return <p className={cn("text-label", className)}>{children}</p>
+  return (
+    <p
+      className={cn(
+        "text-xs font-medium uppercase tracking-widest text-muted-foreground",
+        className
+      )}
+    >
+      {children}
+    </p>
+  );
 }

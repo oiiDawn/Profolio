@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PageShell } from "@/components/page-shell";
 import { SectionLabel } from "@/components/section-label";
@@ -10,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProjectsCalendarLogRow } from "@/components/projects-calendar-log-row";
 import { getProjectsForPage, getRecentActivityForPage } from "@/lib/github";
 import { siteGithubUsername } from "@/lib/site";
@@ -19,7 +21,6 @@ export const metadata: Metadata = {
   description: "个人项目与开源实验",
 };
 
-/** 与写作页类似的缓存窗口，减少 GitHub API 调用频率 */
 export const revalidate = 300;
 
 export default async function ProjectsPage() {
@@ -32,24 +33,19 @@ export default async function ProjectsPage() {
 
   return (
     <PageShell>
-      <section className="relative px-4 py-16 sm:px-8 lg:py-20">
+      <section className="px-4 py-16 sm:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <SectionLabel className="reveal [--delay:40ms]">
-            [PROJECT_VAULT]
-          </SectionLabel>
-          <h1 className="reveal mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl [--delay:80ms]">
+          <SectionLabel>projects</SectionLabel>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">
             项目
           </h1>
           {notice ? (
-            <p
-              className="reveal mt-4 max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100 [--delay:140ms]"
-              role="status"
-            >
-              {notice}
-            </p>
+            <Alert variant="destructive" className="mt-4 max-w-2xl">
+              <AlertDescription>{notice}</AlertDescription>
+            </Alert>
           ) : null}
 
-          <div className="reveal mt-10 [--delay:145ms]">
+          <div className="mt-10">
             <ProjectsCalendarLogRow
               username={contributionUsername}
               rows={activityRows}
@@ -59,44 +55,32 @@ export default async function ProjectsPage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project, i) => (
-              <Card
-                key={`${project.id}-${project.href}`}
-                variant="project"
-                className="reveal h-full"
-                style={{ animationDelay: `${160 + i * 48}ms` }}
-              >
-                <CardHeader className="gap-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <Badge variant="terminal" className="shrink-0">
+            {projects.map((project) => (
+              <Card key={`${project.id}-${project.href}`} className="h-full flex flex-col">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
                       {project.id}
                     </Badge>
-                    <Badge variant="label">{project.tag}</Badge>
+                    <Badge variant="secondary">{project.tag}</Badge>
                   </div>
-                  <div className="space-y-2">
-                    <CardDescription className="text-micro text-primary/85">
-                      github repo
-                    </CardDescription>
-                    <CardTitle className="wrap-break-word text-xl uppercase leading-snug">
-                      {project.title}
-                    </CardTitle>
-                  </div>
+                  <CardTitle className="text-lg">{project.title}</CardTitle>
+                  <CardDescription>github repo</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-1 flex-col gap-5">
+                <CardContent className="flex flex-1 flex-col gap-4">
                   <p className="flex-1 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                     {project.desc}
                   </p>
-                  <div className="flex justify-end border-t border-white/8 pt-4">
-                    <a
+                  <div className="flex justify-end border-t pt-3">
+                    <Link
                       href={project.href}
-                      className="text-label underline-offset-4 transition-colors hover:text-primary hover:underline"
-                      {...(project.href.startsWith("http")
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
+                      className="text-sm font-medium text-primary underline underline-offset-4 hover:text-primary/80 transition-colors"
+                      target={project.href.startsWith("http") ? "_blank" : undefined}
+                      rel={project.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       aria-label={`打开 ${project.title} 的${project.linkLabel}`}
                     >
                       {project.linkLabel} →
-                    </a>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

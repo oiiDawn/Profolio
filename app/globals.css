@@ -28,662 +28,101 @@
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
-  --color-surface-base: hsl(var(--surface-base));
-  --color-surface-soft: hsl(var(--surface-soft));
-  --color-surface-raised: hsl(var(--surface-raised));
-  --color-surface-tint: hsl(var(--surface-tint));
-  --color-accent-soft: hsl(var(--accent-soft));
-  --color-meta-foreground: hsl(var(--meta-foreground));
-  --color-terminal-red: rgb(var(--terminal-red));
-  --color-terminal-yellow: rgb(var(--terminal-yellow));
-  --color-terminal-green: rgb(var(--terminal-green));
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  /*
-   * 字体由 layout 中 @fontsource/* 注入（本地 woff2，不请求 Google）。
-   * 英文等宽：JetBrains Mono；中文：Noto Sans SC。
-   */
-  --font-sans:
-    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
-    "Microsoft YaHei", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
-  --font-heading:
-    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
-    "Microsoft YaHei", sans-serif;
-  --font-serif:
-    "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC", serif;
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @layer base {
   :root {
-    /* Terminal Architect — dark only; HSL tokens for shadcn */
-    --background: 0 0% 5.5%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 12.5%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 7.5%;
-    --popover-foreground: 0 0% 100%;
-    /* #8ff5ff */
-    --primary: 185 100% 78%;
-    /* #005d63 */
-    --primary-foreground: 186 100% 19%;
-    /* surface-container #1a1919 */
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 67%;
-    /* #131313 tier */
-    --muted: 0 0% 7.5%;
-    --muted-foreground: 0 0% 67%;
-    --accent: 286 100% 73%;
-    --accent-foreground: 0 0% 100%;
-    --accent-soft: 286 90% 82%;
-    --destructive: 0 72% 71%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 20%;
-    --input: 0 0% 29%;
-    --ring: 185 100% 78%;
-    --chart-1: 185 100% 78%;
-    --chart-2: 286 100% 73%;
-    --chart-3: 353 100% 72%;
-    --chart-4: 0 0% 45%;
-    --chart-5: 0 0% 29%;
-    --surface-base: 0 0% 9%;
-    --surface-soft: 0 0% 11%;
-    --surface-raised: 0 0% 12.5%;
-    --surface-tint: 0 0% 16%;
-    --meta-foreground: 0 0% 74%;
-    --radius: 0;
-    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --neon-cyan: 143 245 255;
-    --neon-purple: 213 117 255;
-    --terminal-red: 255 95 87;
-    --terminal-yellow: 254 188 46;
-    --terminal-green: 40 200 64;
-    --ring-neon: 0 0 20px rgb(var(--neon-cyan) / 0.25);
-    --surface-high: 0 0% 12.5%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 240 5.9% 10%;
+    --radius: 0.5rem;
   }
 
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    font-family:
-      "JetBrains Mono", ui-monospace, "Noto Sans SC", "PingFang SC",
-      "Microsoft YaHei", sans-serif;
+    @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: inherit;
-    text-rendering: optimizeLegibility;
-  }
-}
-
-@layer utilities {
-  .font-mono {
-    font-family: "JetBrains Mono", ui-monospace, "Noto Sans SC", monospace;
-  }
-
-  .text-micro {
-    @apply font-mono text-xs uppercase tracking-[0.14em] text-[hsl(var(--meta-foreground))];
-  }
-
-  .text-label {
-    @apply font-mono text-xs uppercase tracking-[0.18em] text-accent;
-  }
-
-  .surface-panel {
-    background: hsl(var(--surface-raised) / 0.72);
-    border: 1px solid hsl(var(--border) / 0.7);
-    box-shadow: 0 0 40px -12px rgb(var(--neon-cyan) / 0.08);
-    backdrop-filter: blur(18px);
-  }
-
-  .surface-panel-soft {
-    background: hsl(var(--surface-soft) / 0.68);
-    border: 1px solid hsl(var(--border) / 0.55);
-    backdrop-filter: blur(16px);
-  }
-
-  /**
-   * GitHub 热力图 — lg+ 在项目三栏中由父级高度驱动尺寸。
-   * 外层 article 显式声明 6 个月视图（含 footer）的整体宽高比，保证 grid 的 auto 列拿到完整宽度；
-   * 内部 SVG 用 width: 100% / height: auto，让 footer 与热力图共享同一右边界。
-   * react-activity-calendar 的滚动容器有内联 overflow，需要在这里覆盖。
-   */
-  @media (min-width: 64rem) {
-    .github-cal-fit-shell > article.react-activity-calendar {
-      display: flex;
-      width: auto;
-      max-width: none;
-      height: 100%;
-      max-height: 100%;
-      min-height: 0;
-      aspect-ratio: 2.85 / 1;
-      flex-direction: column;
-    }
-
-    .github-cal-fit-shell
-      > article.react-activity-calendar
-      .react-activity-calendar__scroll-container {
-      display: flex;
-      flex: 1 1 auto;
-      width: 100%;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 0;
-      max-width: none;
-      padding-inline: 2px;
-      overflow-x: hidden !important;
-      overflow-y: hidden !important;
-    }
-
-    .github-cal-fit-shell
-      > article.react-activity-calendar
-      svg.react-activity-calendar__calendar {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      max-height: 100%;
-    }
-
-    .github-cal-fit-shell > article.react-activity-calendar footer {
-      box-sizing: border-box;
-      width: 100%;
-      padding-inline: 2px;
-      flex-shrink: 0;
-    }
-  }
-
-  /**
-   * Timeline — Terminal Architect 垂直时间线
-   * 结构：[time] | [rail + node] | [card]
-   * 轨道贴在 content 列左侧 border，节点在 rail 上绝对定位。
-   */
-  .timeline-rail {
-    position: relative;
-  }
-
-  .timeline-rail::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: hsl(var(--ring) / 0.28);
-    box-shadow: 0 0 8px rgb(var(--neon-cyan) / 0.12);
-  }
-
-  /* 第一个条目顶部与最后一个条目底部的轨道做自然淡出 */
-  .timeline-entry:first-child .timeline-rail::before {
-    background: linear-gradient(
-      to bottom,
-      transparent 0,
-      hsl(var(--ring) / 0.28) 14px,
-      hsl(var(--ring) / 0.28) 100%
-    );
-  }
-
-  .timeline-entry:last-child .timeline-rail::before {
-    background: linear-gradient(
-      to bottom,
-      hsl(var(--ring) / 0.28) 0,
-      hsl(var(--ring) / 0.28) 40%,
-      transparent 100%
-    );
-  }
-
-  .timeline-entry:first-child:last-child .timeline-rail::before {
-    background: linear-gradient(
-      to bottom,
-      transparent 0,
-      hsl(var(--ring) / 0.28) 14px,
-      hsl(var(--ring) / 0.28) 60%,
-      transparent 100%
-    );
-  }
-
-  .timeline-node {
-    position: absolute;
-    top: 0.75rem;
-    left: 0;
-    transform: translateX(-50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 9999px;
-    background: hsl(var(--surface-base));
-    border: 1px solid hsl(var(--ring) / 0.75);
-    box-shadow:
-      inset 0 0 0 2px hsl(var(--background)),
-      0 0 0 1px hsl(var(--ring) / 0.25),
-      0 0 12px rgb(var(--neon-cyan) / 0.35);
-    transition:
-      box-shadow 220ms var(--ease-out-quart),
-      border-color 220ms var(--ease-out-quart);
-  }
-
-  .timeline-node::after {
-    content: "";
-    position: absolute;
-    inset: 3px;
-    border-radius: 9999px;
-    background: hsl(var(--ring));
-    opacity: 0.85;
-  }
-
-  .timeline-node-active {
-    border-color: hsl(var(--accent) / 0.8);
-    box-shadow:
-      inset 0 0 0 2px hsl(var(--background)),
-      0 0 0 1px hsl(var(--accent) / 0.35),
-      0 0 18px rgb(var(--neon-purple) / 0.55);
-  }
-
-  .timeline-node-active::after {
-    background: hsl(var(--accent));
-    animation: timeline-pulse 2s ease-in-out infinite;
-  }
-
-  .timeline-entry:hover .timeline-node {
-    box-shadow:
-      inset 0 0 0 2px hsl(var(--background)),
-      0 0 0 1px hsl(var(--ring) / 0.5),
-      0 0 22px rgb(var(--neon-cyan) / 0.55);
-  }
-
-  .timeline-card {
-    background: hsl(var(--surface-raised) / 0.6);
-    border: 1px solid hsl(var(--border) / 0.55);
-    backdrop-filter: blur(14px);
-    transition:
-      background-color 220ms var(--ease-out-quart),
-      border-color 220ms var(--ease-out-quart),
-      box-shadow 220ms var(--ease-out-quart),
-      transform 220ms var(--ease-out-quart);
-  }
-
-  .timeline-entry:hover .timeline-card {
-    background: hsl(var(--surface-raised) / 0.82);
-    border-color: hsl(var(--ring) / 0.32);
-    box-shadow: 0 14px 48px -18px rgb(var(--neon-cyan) / 0.22);
-    transform: translateX(2px);
-  }
-
-  .timeline-logo {
-    background: hsl(var(--surface-base));
-    border: 1px solid hsl(var(--border) / 0.65);
-    box-shadow: inset 0 0 0 1px rgb(var(--neon-cyan) / 0.07);
-  }
-
-  .timeline-time {
-    font-family: var(--font-mono);
-    color: hsl(var(--meta-foreground));
-  }
-
-  .timeline-time-from {
-    color: hsl(var(--foreground));
-  }
-
-  .timeline-time-to-active {
-    color: hsl(var(--accent));
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .timeline-node-active::after {
-      animation: none;
-    }
-  }
-
-  .terminal-bar {
-    background: hsl(var(--surface-base) / 0.92);
-    border-bottom: 1px solid hsl(var(--border) / 0.7);
-  }
-
-  .focus-terminal {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--surface-base))];
-  }
-
-  .focus-terminal-within {
-    transition:
-      border-color 160ms var(--ease-out-quart),
-      box-shadow 160ms var(--ease-out-quart),
-      background-color 160ms var(--ease-out-quart);
-  }
-
-  .focus-terminal-within:focus-within {
-    border-color: hsl(var(--ring) / 0.8);
-    box-shadow:
-      0 0 0 1px hsl(var(--ring) / 0.22),
-      0 0 28px 5px rgb(var(--neon-cyan) / 0.13),
-      0 0 56px 14px rgb(var(--neon-cyan) / 0.08),
-      0 0 96px 28px rgb(var(--neon-cyan) / 0.04);
-  }
-
-  .hover-glow-soft {
-    transition:
-      transform 200ms var(--ease-out-quart),
-      box-shadow 200ms var(--ease-out-quart),
-      border-color 200ms var(--ease-out-quart);
-  }
-
-  .hover-glow-soft:hover {
-    border-color: hsl(var(--ring) / 0.42);
-    box-shadow: 0 12px 40px -12px rgb(var(--neon-cyan) / 0.18);
-  }
-
-  .glass-panel {
-    background: rgb(38 38 38 / 0.4);
-    backdrop-filter: blur(20px);
-    border-left: 2px solid hsl(var(--primary));
-  }
-
-  /**
-   * PCB 风格：主网格走线 + 细副网格 + 焊盘；暗层 / 亮层共用同一 tiling，仅透明度不同。
-   */
-  .circuit-bg-dim,
-  .circuit-bg-bright {
-    background-color: hsl(var(--background));
-    background-image:
-      /* 焊盘（节点） */
-      radial-gradient(
-        circle at 50% 50%,
-        hsl(var(--primary) / 0.22) 0%,
-        transparent 2px
-      ),
-      /* 主水平走线 */
-        repeating-linear-gradient(
-          to bottom,
-          transparent 0,
-          transparent 30px,
-          hsl(var(--primary) / 0.09) 30px,
-          hsl(var(--primary) / 0.09) 31px,
-          transparent 31px,
-          transparent 62px
-        ),
-      /* 主垂直走线 */
-        repeating-linear-gradient(
-          to right,
-          transparent 0,
-          transparent 30px,
-          hsl(var(--primary) / 0.08) 30px,
-          hsl(var(--primary) / 0.08) 31px,
-          transparent 31px,
-          transparent 62px
-        ),
-      /* 错位副网格（更像双层板） */
-        repeating-linear-gradient(
-          to bottom,
-          transparent 0,
-          transparent 14px,
-          hsl(var(--accent) / 0.06) 14px,
-          hsl(var(--accent) / 0.06) 15px,
-          transparent 15px,
-          transparent 30px
-        ),
-      repeating-linear-gradient(
-        to right,
-        transparent 0,
-        transparent 14px,
-        hsl(var(--accent) / 0.05) 14px,
-        hsl(var(--accent) / 0.05) 15px,
-        transparent 15px,
-        transparent 30px
-      );
-    background-size:
-      62px 62px,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%;
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      11px 7px,
-      11px 7px;
-  }
-
-  .circuit-bg-dim {
-    opacity: 0.55;
-  }
-
-  .circuit-bg-bright {
-    opacity: 1;
-    filter: saturate(1.15);
-    background-image:
-      radial-gradient(
-        circle at 50% 50%,
-        hsl(var(--primary) / 0.55) 0%,
-        transparent 2.5px
-      ),
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 30px,
-        hsl(var(--primary) / 0.32) 30px,
-        hsl(var(--primary) / 0.32) 31px,
-        transparent 31px,
-        transparent 62px
-      ),
-      repeating-linear-gradient(
-        to right,
-        transparent 0,
-        transparent 30px,
-        hsl(var(--primary) / 0.28) 30px,
-        hsl(var(--primary) / 0.28) 31px,
-        transparent 31px,
-        transparent 62px
-      ),
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 14px,
-        hsl(var(--accent) / 0.22) 14px,
-        hsl(var(--accent) / 0.22) 15px,
-        transparent 15px,
-        transparent 30px
-      ),
-      repeating-linear-gradient(
-        to right,
-        transparent 0,
-        transparent 14px,
-        hsl(var(--accent) / 0.18) 14px,
-        hsl(var(--accent) / 0.18) 15px,
-        transparent 15px,
-        transparent 30px
-      );
-    background-size:
-      62px 62px,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%;
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      11px 7px,
-      11px 7px;
-  }
-
-  .terminal-glow {
-    text-shadow: 0 0 12px rgb(var(--neon-cyan) / 0.45);
-  }
-
-  .neon-glow-sm {
-    box-shadow: 0 0 20px rgb(var(--neon-cyan) / 0.15);
-  }
-
-  .neon-glow-md {
-    box-shadow:
-      0 0 30px rgb(var(--neon-cyan) / 0.12),
-      0 0 60px rgb(var(--neon-purple) / 0.06);
-  }
-
-  /**
-   * CRT scanline overlay — fixed, pointer-events none, very low opacity
-   */
-  .scanline-overlay {
-    pointer-events: none;
-    background:
-      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%),
-      linear-gradient(
-        90deg,
-        rgba(255, 0, 0, 0.04),
-        rgba(0, 255, 0, 0.02),
-        rgba(0, 0, 255, 0.04)
-      );
-    background-size:
-      100% 4px,
-      3px 100%;
-    opacity: 0.02;
-  }
-
-  .terminal-cursor {
-    animation: terminal-blink 1s steps(1, end) infinite;
-  }
-
-  .reveal {
-    --delay: 0ms;
-    animation: reveal-clip 720ms var(--ease-out-expo) both;
-    animation-delay: var(--delay);
-    will-change: transform, opacity;
-  }
-
-  .nav-link-terminal {
-    font-family: var(--font-mono);
-    @apply text-xs uppercase tracking-widest text-muted-foreground transition-colors duration-100;
-  }
-
-  .nav-link-terminal:hover {
-    @apply text-primary;
-  }
-
-  /** 状态栏在线指示点 */
-  .status-dot {
-    animation: status-blink 2s ease-in-out infinite;
-  }
-
-  /** 主 CTA 微弱霓虹脉冲 */
-  .neon-pulse {
-    animation: neon-pulse 2.4s ease-in-out infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .status-dot {
-      animation: none;
-    }
-
-    .neon-pulse {
-      animation: none;
-    }
-  }
-}
-
-@keyframes reveal-clip {
-  from {
-    opacity: 0;
-    transform: translate3d(-8px, 0, 0);
-    clip-path: inset(0 100% 0 0);
-  }
-  /* inset 插值到 99.99%，最后一帧再 none，避免 inset→none 发僵并保留光晕 */
-  99.99% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-    clip-path: inset(0 0 0 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-    clip-path: none;
-  }
-}
-
-@keyframes terminal-blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes status-blink {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow: 0 0 6px rgb(52 211 153 / 0.6);
-  }
-  50% {
-    opacity: 0.45;
-    box-shadow: 0 0 2px rgb(52 211 153 / 0.3);
-  }
-}
-
-@keyframes timeline-pulse {
-  0%,
-  100% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(0.82);
-  }
-}
-
-@keyframes neon-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 20px rgb(143 245 255 / 0.25),
-      0 0 0 0 rgb(143 245 255 / 0.12);
-  }
-  50% {
-    box-shadow:
-      0 0 28px rgb(143 245 255 / 0.4),
-      0 0 0 1px rgb(143 245 255 / 0.2);
-  }
-}
-
-/* MDX articles (/writing/[id]) — code figures from rehype-pretty-code */
-.mdx-article figure[data-rehype-pretty-code-figure] {
-  margin: 1.5rem 0;
-}
-
-.mdx-article figure[data-rehype-pretty-code-figure] pre {
-  margin: 0;
-  border: none;
-  background: transparent;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .reveal {
-    animation: none;
-  }
-
-  .terminal-cursor {
-    animation: none;
-    opacity: 1;
-  }
-
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    @apply bg-background text-foreground;
   }
 }

@@ -5,19 +5,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ActivityRow } from "@/lib/github";
 import { cn } from "@/lib/utils";
 
-const mono =
-  "font-mono text-xs leading-snug tracking-normal antialiased sm:text-sm";
-
-/** 终端/Git UI 常见的星标与推送前缀 */
-const EMO_STARRED = "\u{2b50}";
-const EMO_PUSHED = "\u{1f680}";
-
 function truncate(s: string, max: number): string {
   if (s.length <= max) return s;
   return `${s.slice(0, Math.max(0, max - 1))}…`;
 }
 
-/** 与其它类事件一致：(5d ago)、(12h ago)，异常时间则省略后缀 */
 function timeSuffix(relTime: string): string {
   if (!relTime.trim() || relTime === "—") return "";
   return ` (${relTime} ago)`;
@@ -27,7 +19,6 @@ function truncateDetail(message: string, max = 52): string {
   return truncate(message.trim(), max);
 }
 
-/** 单行终端风格：动词 + repo + (相对时间) [· 简要补充] */
 function buildRowLine(r: ActivityRow): string {
   const repo = truncate(r.repo, 32);
   const t = timeSuffix(r.relTime);
@@ -35,12 +26,12 @@ function buildRowLine(r: ActivityRow): string {
 
   switch (r.kind) {
     case "star":
-      return `${EMO_STARRED} starred ${repo}${t}`;
+      return `⭐ starred ${repo}${t}`;
     case "push": {
       const msg = truncateDetail(r.message, 54);
       return msg
-        ? `${EMO_PUSHED} pushed ${repo}${t} · ${msg}`
-        : `${EMO_PUSHED} pushed ${repo}${t}`;
+        ? `🚀 pushed ${repo}${t} · ${msg}`
+        : `🚀 pushed ${repo}${t}`;
     }
     case "pr":
       return `pr ${repo}${t}${dot(r.message)}`;
@@ -81,13 +72,6 @@ type Props = {
   notice?: string;
   className?: string;
 };
-
-const CURSOR = (
-  <span
-    className="terminal-cursor ml-0.5 inline-block h-[0.85em] w-0.5 align-[-0.1em] bg-primary"
-    aria-hidden
-  />
-);
 
 export function GitHubActivityLog({ rows, notice, className }: Props) {
   const fullLines = useMemo(
@@ -229,16 +213,13 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
       className={cn("flex min-h-0 w-full flex-col", className)}
     >
       {notice ? (
-        <p
-          className="mb-2 shrink-0 text-xs text-amber-100/95"
-          role="status"
-        >
+        <p className="mb-2 shrink-0 text-xs text-muted-foreground" role="status">
           {notice}
         </p>
       ) : null}
 
       {rows.length === 0 && !notice ? (
-        <p className={cn(mono, "shrink-0 text-muted-foreground")}>
+        <p className="shrink-0 font-mono text-sm text-muted-foreground">
           暂无活动数据
         </p>
       ) : null}
@@ -246,22 +227,14 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
       {rows.length > 0 ? (
         <>
           <noscript>
-            <pre
-              className={cn(
-                mono,
-                "whitespace-pre-wrap break-all text-foreground/85",
-              )}
-            >
+            <pre className="whitespace-pre-wrap break-all font-mono text-sm text-muted-foreground">
               {staticText}
             </pre>
           </noscript>
 
           <div
             ref={scrollRef}
-            className={cn(
-              mono,
-              "min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]",
-            )}
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-y-contain font-mono text-sm leading-snug"
             role="log"
             aria-live={live}
           >
@@ -275,11 +248,16 @@ export function GitHubActivityLog({ rows, notice, className }: Props) {
                     href={row.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground/90 focus-visible:ring-2 focus-visible:ring-primary"
+                    className="block rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={accessibilityLabel(row)}
                   >
                     {text}
-                    {cursor ? CURSOR : null}
+                    {cursor ? (
+                      <span
+                        className="ml-0.5 inline-block h-[0.85em] w-0.5 align-[-0.1em] animate-pulse bg-foreground"
+                        aria-hidden
+                      />
+                    ) : null}
                   </a>
                 );
               })}

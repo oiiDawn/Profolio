@@ -54,43 +54,38 @@ export function WritingPageView({
 
   return (
     <PageShell>
-      <section className="relative px-4 py-16 sm:px-8 lg:py-20">
+      <section className="px-4 py-16 sm:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <Badge variant="meta" className="reveal mb-4 [--delay:40ms]">
-            SHARES
-          </Badge>
-          <SectionLabel className="reveal [--delay:80ms]">
-            [WRITING_VAULT]
-          </SectionLabel>
-          <h1 className="reveal mt-2 font-heading text-3xl font-bold uppercase tracking-tighter sm:text-5xl [--delay:120ms]">
+          <SectionLabel>writing</SectionLabel>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">
             个人分享
           </h1>
-          <p className="reveal mt-4 max-w-2xl text-muted-foreground [--delay:160ms]">
-            我会定期输出关于学习、项目实践和个人效率的可执行经验，尽量讲清楚方法背后的逻辑。点击下方卡片阅读站内长文或外链。
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            我会定期输出关于学习、项目实践和个人效率的可执行经验，尽量讲清楚方法背后的逻辑。
           </p>
 
           {emptyStateKind === "env-missing" ? (
             <p
-              className="reveal mt-10 max-w-xl font-mono text-sm leading-relaxed text-muted-foreground [--delay:200ms]"
+              className="mt-10 max-w-xl text-sm leading-relaxed text-muted-foreground"
               data-testid="writing-empty-env"
             >
               暂无文章。请配置{" "}
-              <code className="text-primary">NEXT_PUBLIC_SUPABASE_URL</code> /{" "}
-              <code className="text-primary">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>
-              ，执行 <code className="text-primary">supabase/writing.sql</code>{" "}
+              <code className="bg-muted px-1 py-0.5 rounded text-sm">NEXT_PUBLIC_SUPABASE_URL</code> /{" "}
+              <code className="bg-muted px-1 py-0.5 rounded text-sm">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>
+              ，执行 <code className="bg-muted px-1 py-0.5 rounded text-sm">supabase/writing.sql</code>{" "}
               建表后，使用{" "}
-              <code className="text-primary">pnpm upload-writing &lt;文件.mdx&gt;</code>{" "}
-              上传，或在表中自行写入数据。
+              <code className="bg-muted px-1 py-0.5 rounded text-sm">pnpm upload-writing &lt;文件.mdx&gt;</code>{" "}
+              上传。
             </p>
           ) : null}
 
           {emptyStateKind === "no-data" ? (
             <p
-              className="reveal mt-10 max-w-xl font-mono text-sm leading-relaxed text-muted-foreground [--delay:200ms]"
+              className="mt-10 max-w-xl text-sm leading-relaxed text-muted-foreground"
               data-testid="writing-empty-data"
             >
               暂时没有可展示的分享内容。你可以稍后再来，或者先去{" "}
-              <Link href="/projects" className="text-primary underline">
+              <Link href="/projects" className="text-primary underline underline-offset-4">
                 项目页
               </Link>{" "}
               看看我最近在做什么。
@@ -102,54 +97,45 @@ export function WritingPageView({
               className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3"
               data-testid="writing-share-grid"
             >
-              {shares.map((share, i) => {
+              {shares.map((share) => {
                 const target = getWritingShareTarget(share);
                 const isMd = target.isMd;
                 const href = target.href;
                 const card = (
                   <Card
                     id={`share-${share.id}`}
-                    variant="editorial"
-                    className="reveal h-full scroll-mt-24"
-                    style={{ animationDelay: `${200 + i * 48}ms` }}
+                    className="h-full flex flex-col"
                     data-testid={`writing-share-card-${share.id}`}
                   >
-                    <CardHeader className="gap-3">
+                    <CardHeader>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant={isMd ? "terminal" : "meta"}>
+                        <Badge variant="outline" className="font-mono text-xs">
                           {isMd ? "MDX" : "LINK"}
                         </Badge>
                         {share.tag ? (
-                          <Badge variant="label">{share.tag}</Badge>
+                          <Badge variant="secondary">{share.tag}</Badge>
                         ) : null}
                       </div>
-                      <div className="space-y-2">
-                        <CardDescription className="text-micro text-primary/80">
-                          {formatDate(share.created_at)}
-                        </CardDescription>
-                        <CardTitle className="text-xl leading-snug">
-                          {share.title}
-                        </CardTitle>
-                      </div>
+                      <CardDescription className="text-xs">
+                        {formatDate(share.created_at)}
+                      </CardDescription>
+                      <CardTitle className="text-lg">{share.title}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex flex-1 flex-col gap-5">
+                    <CardContent className="flex flex-1 flex-col gap-4">
                       <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
                         {share.description ?? "打开条目查看正文、外链或延伸阅读。"}
                       </p>
-                      <div className="flex items-center justify-between gap-3 border-t border-white/8 pt-4">
-                        <span className="text-micro text-primary/75">
-                          {isMd ? "longform note" : "external reference"}
+                      <div className="flex items-center justify-between gap-3 border-t pt-3">
+                        <span className="text-xs text-muted-foreground">
+                          {isMd ? "站内长文" : "外部链接"}
                         </span>
-                        <span className="inline-flex items-center gap-2 text-label">
+                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
                           {isMd ? (
-                            "站内阅读 →"
+                            "阅读 →"
                           ) : (
                             <>
                               外链
-                              <ExternalLink
-                                className="size-3.5 opacity-80"
-                                aria-hidden
-                              />
+                              <ExternalLink className="size-3.5" aria-hidden />
                             </>
                           )}
                         </span>
@@ -163,7 +149,7 @@ export function WritingPageView({
                     <Link
                       key={share.id}
                       href={href}
-                      className="focus-terminal block"
+                      className="block"
                       aria-label={`阅读：${share.title}`}
                     >
                       {card}
@@ -177,7 +163,7 @@ export function WritingPageView({
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="focus-terminal block"
+                    className="block"
                     aria-label={`在新标签页打开：${share.title}`}
                   >
                     {card}
