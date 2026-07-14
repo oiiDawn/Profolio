@@ -1,6 +1,5 @@
 {
   "framework": "nextjs",
-  "nodeVersion": "22",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --ignore-scripts",
   "buildCommand": "pnpm build"
 }
