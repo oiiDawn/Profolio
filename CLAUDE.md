@@ -18,16 +18,8 @@ pnpm dev
 pnpm build
 pnpm start
 pnpm lint
-pnpm typecheck              # 建议指向 `tsc -p tsconfig.typecheck.json --noEmit`
-pnpm test
-pnpm test:unit
-pnpm test:component
-pnpm test:data
-pnpm test:e2e
-pnpm test:visual
-pnpm test:a11y
-pnpm check:fast            # lint + typecheck + unit/component/data
-pnpm check:full            # check:fast + build + e2e/a11y/visual（按 CI 策略）
+pnpm typecheck              # tsc -p tsconfig.typecheck.json --noEmit
+pnpm check:fast             # lint + typecheck
 pnpm upload-writing ./path/to/article.mdx
 ```
 
@@ -57,14 +49,7 @@ lib/
 scripts/
   upload-writing.ts        # 上传 MDX / 外链并 upsert `writing_shares`
 content/writing/           # 本地 MDX 草稿/源文件目录，仅作为上传输入，不是运行时内容源
-tests/
-  lib/types.test.ts
-  scripts/upload-writing.test.ts
-  setup/node.ts            # Vitest Node 测试环境 setup
-  setup/jsdom.ts           # Vitest + Testing Library 的 JSDOM setup
-vitest.config.ts           # Vitest 根配置（Node/JSDOM 分流、coverage）
 tsconfig.typecheck.json    # 不依赖 `.next/types` 的类型检查配置
-tsconfig.vitest.json       # 测试类型环境配置
 .lintstagedrc.json         # lint-staged 规则
 .husky/
   pre-commit               # lint-staged（若未安装则回退 lint）
@@ -132,12 +117,10 @@ package.json
 
 - writing 相关页面使用 300 秒 revalidate 窗口；新上传内容不一定会立刻出现。
 - `lib/writing.ts` 使用了 `unstable_cache`，因此短时间内内容延迟可能是正常缓存行为。
-- 一般代码改动优先运行 `pnpm check:fast`（若尚未接入则回退 `pnpm check`）。
-- 新测试体系下优先运行 `pnpm check:fast`；涉及部署链路或发布前再跑 `pnpm check:full`。
+- 一般代码改动优先运行 `pnpm check:fast`。
 - 修改写作系统后，至少手动验证：
   - `/writing` 列表是否正常展示
   - `/writing/[id]` 的 MDX 渲染或外链跳转是否正常
-- `vitest.config.ts` 已提供 Node/JSDOM 双环境基础配置，后续新增组件/路由测试优先放到 `tests/frontend/`，数据与契约测试优先放到 `tests/data/`。
 
 ## Git 与交付
 
