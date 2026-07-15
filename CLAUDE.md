@@ -5,7 +5,7 @@
 ## 项目概览
 
 - **项目类型**：个人主页 / 作品集站点，包含写作分享系统
-- **技术栈**：Next.js 14、React 18、TypeScript、Tailwind CSS 4
+- **技术栈**：Next.js 15、React 19、TypeScript 5.8、Tailwind CSS 4
 - **包管理器**：统一使用 `pnpm`（≥10.18.2），不要混用 `npm` / `yarn`
 - **Node 版本**：≥22.0.0（见 `package.json` engines）
 - **文档语言**：本项目 `CLAUDE.md` 统一使用中文编写
