@@ -15,7 +15,7 @@ import { getShareById, getShares } from "@/lib/writing";
 
 export const revalidate = 300;
 
-type PageProps = { params: { id: string } };
+type PageProps = { params: Promise<{ id: string }> };
 
 const getCachedShareById = cache(async (id: string) => getShareById(id));
 
@@ -38,7 +38,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const share = await getCachedShareById(params.id);
+  const { id } = await params;
+  const share = await getCachedShareById(id);
   if (!share) {
     return { title: "未找到" };
   }
@@ -49,7 +50,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function WritingArticlePage({ params }: PageProps) {
-  const shareCandidate = await getCachedShareById(params.id);
+  const { id } = await params;
+  const shareCandidate = await getCachedShareById(id);
 
   const routeDecision = resolveWritingArticleRoute(shareCandidate);
   if (routeDecision.kind === "not-found") {

@@ -8,8 +8,8 @@ A modern personal homepage built with Next.js, React, TypeScript, and Tailwind C
 
 ## Tech Stack
 
-- Next.js 14
-- React 18
+- Next.js 15
+- React 19
 - TypeScript
 - Tailwind CSS
 - shadcn-style UI components
@@ -18,7 +18,7 @@ A modern personal homepage built with Next.js, React, TypeScript, and Tailwind C
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - pnpm
 
 ### Install and Run
