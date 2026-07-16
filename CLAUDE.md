@@ -9,7 +9,7 @@
 - **包管理器**：统一使用 `pnpm`（≥10.18.2），不要混用 `npm` / `yarn`
 - **Node 版本**：≥22.0.0（见 `package.json` engines）
 - **文档语言**：本项目 `CLAUDE.md` 统一使用中文编写
-- **路由结构**：`/`、`/about`、`/projects`、`/writing`、`/writing/[id]`
+- **路由结构**：`/`（包含 `#about`、`#projects`）、`/writing`、`/writing/[id]`
 - **路径别名**：`@/*` 映射到项目根目录（见 `tsconfig.json` paths）
 - **设计规范**：Terminal Architect 设计系统——暗色主题、霓虹能量色（cyan/purple/pink）、直角组件（`rounded-none`）
 
@@ -36,8 +36,6 @@ app/
   globals.css              # 全局样式与设计令牌
   icon.svg                 # 站点图标（自动生成）
   opengraph-image.tsx      # OG 图片（自动生成）
-  about/page.tsx           # 关于我 + 时间线
-  projects/page.tsx        # 项目列表 + 贡献热力图
   writing/
     page.tsx               # 来自 Supabase `writing_shares` 的分享列表
     writing-page-view.tsx  # Writing 页面视图组件
@@ -113,8 +111,7 @@ package.json               # engines: node ≥22, pnpm ≥10.18.2
 - `/writing/[id]` 先读取 share 行，再对 `md` 类型条目从公开 Storage bucket `writing` 下载原始 MDX，通过 `lib/mdx-compile.ts` 编译渲染。
 - `type = "link"` 跳转到 `url`；`type = "md"` 依赖 `file_path`。
 - `content/writing/` 下的本地文件只是上传输入，运行时不读取。
-- `/projects` 仅从 GitHub 拉取公开仓库，失败或无可用仓库时显示说明，不维护本地备用列表。
-- `/projects` 贡献热力图使用 `react-github-calendar`，数据由 `github-contributions-api.jogruber.de` 提供，与 GitHub 网页可能略有差异。
+- 首页 `#projects` 仅从 GitHub 拉取公开仓库，失败或无可用仓库时显示说明，不维护本地备用列表。
 
 ## Supabase 与环境变量
 

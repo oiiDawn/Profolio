@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { cache } from "react";
 
 import {
   renderWritingArticleBody,
@@ -16,8 +15,6 @@ import { getShareById, getShares } from "@/lib/writing";
 export const revalidate = 300;
 
 type PageProps = { params: Promise<{ id: string }> };
-
-const getCachedShareById = cache(async (id: string) => getShareById(id));
 
 function formatDate(iso: string) {
   try {
@@ -39,7 +36,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const share = await getCachedShareById(id);
+  const share = await getShareById(id);
   if (!share) {
     return { title: "未找到" };
   }
@@ -51,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function WritingArticlePage({ params }: PageProps) {
   const { id } = await params;
-  const shareCandidate = await getCachedShareById(id);
+  const shareCandidate = await getShareById(id);
 
   const routeDecision = resolveWritingArticleRoute(shareCandidate);
   if (routeDecision.kind === "not-found") {

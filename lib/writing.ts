@@ -7,10 +7,6 @@ import {
   writingShareRowSchema,
 } from "@/lib/types";
 
-function getSupabaseServerClient() {
-  return createSupabaseServerClient();
-}
-
 function parseWritingShareRow(
   row: unknown,
   context: string,
@@ -26,7 +22,7 @@ function parseWritingShareRow(
 }
 
 async function getSharesUncached(): Promise<WritingShare[]> {
-  const supabase = getSupabaseServerClient();
+  const supabase = createSupabaseServerClient();
   if (!supabase) {
     return [];
   }
@@ -51,7 +47,7 @@ async function getSharesUncached(): Promise<WritingShare[]> {
 }
 
 async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
-  const supabase = getSupabaseServerClient();
+  const supabase = createSupabaseServerClient();
   if (!supabase) {
     return null;
   }
@@ -80,7 +76,7 @@ async function getShareByIdUncached(id: string): Promise<WritingShare | null> {
 async function getShareMdxContentUncached(
   filePath: string,
 ): Promise<string | null> {
-  const supabase = getSupabaseServerClient();
+  const supabase = createSupabaseServerClient();
   if (!supabase) {
     return null;
   }
