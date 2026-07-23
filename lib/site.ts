@@ -1,8 +1,5 @@
 /** 站点级数据：顶栏、页脚与各页共用 */
 
-/** 站点首次上线或本次部署日（用于首页运行天数展示），ISO 8601 */
-export const siteDeployDate = "2024-06-01T00:00:00+08:00";
-
 export const contactLinks = [
   {
     label: "邮箱",
@@ -93,13 +90,4 @@ export const timeline = [
     role: "软件开发工程师",
     logo: "/logos/weiguang.svg",
   },
-] as const;
-
-export const stackTags = [
-  "TYPESCRIPT",
-  "REACT",
-  "C/C++",
-  "PYTHON",
-  "DOCKER",
-  "MACHINE_LEARNING",
 ] as const;

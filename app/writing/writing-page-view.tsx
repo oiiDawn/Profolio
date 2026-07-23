@@ -85,7 +85,7 @@ export function WritingPageView({
               data-testid="writing-empty-data"
             >
               暂时没有可展示的分享内容。你可以稍后再来，或者先去{" "}
-              <Link href="/projects" className="text-primary underline underline-offset-4">
+              <Link href="/#projects" className="text-primary underline underline-offset-4">
                 项目页
               </Link>{" "}
               看看我最近在做什么。
