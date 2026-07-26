@@ -1,0 +1,489 @@
+.showcase {
+  --navy: #020d1e;
+  --navy-soft: #06182d;
+  --ink: #f8f3e8;
+  --gold: #c7a76b;
+  position: relative;
+  height: calc(100vh - 4rem);
+  height: calc(100dvh - 4rem);
+  min-height: 36rem;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--navy);
+  color: var(--ink);
+}
+
+.atmosphere,
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.atmosphere {
+  z-index: -3;
+  background:
+    radial-gradient(circle at 50% 28%, rgb(31 126 165 / 0.32), transparent 34%),
+    radial-gradient(circle at 50% 85%, rgb(9 59 101 / 0.24), transparent 43%),
+    linear-gradient(180deg, #04182d 0%, var(--navy) 72%);
+}
+
+.grid {
+  z-index: -2;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgb(190 222 238 / 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(190 222 238 / 0.16) 1px, transparent 1px);
+  background-size: 5rem 5rem;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.heroScene {
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.heroArt {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  width: min(52vw, 43rem);
+  aspect-ratio: 4 / 3;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 2.5rem 4rem rgb(0 0 0 / 0.44));
+  mask-image: radial-gradient(ellipse at center, black 48%, transparent 78%);
+}
+
+.heroArt img {
+  object-fit: contain;
+}
+
+.heroTitle {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.heroTitle > span,
+.heroTitle > strong {
+  font-size: clamp(0.58rem, 0.8vw, 0.72rem);
+  font-style: normal;
+  letter-spacing: 0.62em;
+}
+
+.heroTitle > span {
+  margin-bottom: 0.65rem;
+  color: rgb(248 243 232 / 0.78);
+}
+
+.heroTitle h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.6rem, 8.8vw, 8.8rem);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: -0.065em;
+  text-wrap: nowrap;
+}
+
+.heroTitle i {
+  width: 0.45rem;
+  height: 0.45rem;
+  margin: 1.1rem 0 0.85rem;
+  transform: rotate(45deg);
+  background: var(--ink);
+}
+
+.heroTitle > strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.galleryScene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 4.5rem clamp(1rem, 5vw, 5rem) 2rem;
+}
+
+.galleryEyebrow {
+  display: flex;
+  width: min(100%, 78rem);
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: rgb(248 243 232 / 0.45);
+  font-size: 0.58rem;
+  letter-spacing: 0.35em;
+}
+
+.galleryRail {
+  display: grid;
+  width: min(100%, 78rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: clamp(0.6rem, 1.4vw, 1.25rem);
+}
+
+.galleryRail > div {
+  min-width: 0;
+}
+
+.projectCard {
+  position: relative;
+  display: flex;
+  height: min(38vh, 22rem);
+  min-height: 17rem;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid rgb(157 183 205 / 0.17);
+  background: rgb(4 17 38 / 0.68);
+  padding: 1.2rem;
+  color: inherit;
+  text-align: left;
+  box-shadow: 0 1.8rem 4rem rgb(0 0 0 / 0.2);
+  backdrop-filter: blur(14px);
+  transition:
+    height 350ms ease,
+    border-color 250ms ease,
+    transform 250ms ease;
+}
+
+.projectCard::after {
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid rgb(157 183 205 / 0.07);
+  content: "";
+  pointer-events: none;
+}
+
+.projectCard:hover,
+.projectCard:focus-visible {
+  height: min(48vh, 28rem);
+  border-color: rgb(199 167 107 / 0.62);
+  outline: none;
+  transform: translateY(-0.45rem);
+}
+
+.projectCardNumber {
+  position: relative;
+  z-index: 2;
+  color: var(--gold);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.3em;
+}
+
+.projectGlyph {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  color: rgb(206 213 235 / 0.7);
+  font-size: clamp(2.5rem, 4.2vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.12em;
+  transition: opacity 250ms ease;
+}
+
+.projectCardImage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.projectCardImage::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #020d1e 0%, transparent 54%);
+  content: "";
+}
+
+.projectCardImage img {
+  object-fit: cover;
+  transform: scale(1.25);
+}
+
+.projectCard:hover .projectCardImage,
+.projectCard:focus-visible .projectCardImage {
+  opacity: 1;
+}
+
+.projectCard:hover .projectGlyph,
+.projectCard:focus-visible .projectGlyph {
+  opacity: 0;
+}
+
+.projectCardMeta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.projectCardMeta strong {
+  overflow: hidden;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.92rem, 1.45vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projectCardMeta small {
+  color: rgb(248 243 232 / 0.42);
+  font-size: 0.52rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.aboutScene {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  align-content: center;
+  gap: 2rem clamp(2rem, 8vw, 9rem);
+  padding: clamp(2rem, 7vw, 8rem);
+}
+
+.aboutScene > p {
+  grid-column: 1 / -1;
+  color: var(--gold);
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+}
+
+.aboutScene h1 {
+  display: flex;
+  flex-direction: column;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.8rem, 8vw, 8.5rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.065em;
+}
+
+.aboutScene h1 span {
+  color: rgb(248 243 232 / 0.32);
+}
+
+.aboutScene > div {
+  align-self: end;
+  border-top: 1px solid rgb(248 243 232 / 0.18);
+  padding-top: 1.4rem;
+  color: rgb(248 243 232 / 0.68);
+  font-size: clamp(0.9rem, 1.25vw, 1.08rem);
+  line-height: 1.8;
+}
+
+.aboutScene > div p + p {
+  margin-top: 1rem;
+}
+
+.detailScene {
+  display: grid;
+  grid-template-columns: minmax(20rem, 1.05fr) minmax(18rem, 0.95fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 7rem);
+  padding: 3.5rem clamp(1rem, 7vw, 8rem) 2rem;
+}
+
+.detailMedia {
+  position: relative;
+  width: 100%;
+  max-width: 43rem;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgb(199 167 107 / 0.38);
+  box-shadow: 0 2.5rem 6rem rgb(0 0 0 / 0.38);
+}
+
+.detailMedia::after {
+  position: absolute;
+  inset: 0.9rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  content: "";
+}
+
+.detailMedia img {
+  object-fit: cover;
+}
+
+.detailCopy {
+  position: relative;
+  max-width: 36rem;
+}
+
+.detailPlanet {
+  display: block;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-bottom: 1.8rem;
+  border-radius: 50%;
+  background:
+    linear-gradient(45deg, transparent 48%, rgb(255 255 255 / 0.24) 50%, transparent 52%),
+    radial-gradient(circle at 32% 30%, #72e58e, #0c735b 62%, #052933);
+  box-shadow: 0 0 1.8rem rgb(38 189 131 / 0.25);
+}
+
+.detailCopy > p {
+  margin-bottom: 0.8rem;
+  color: rgb(248 243 232 / 0.48);
+  font-size: 0.58rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+}
+
+.detailCopy h2 {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 6.8vw, 7.5rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+}
+
+.detailCopy h2 span {
+  display: block;
+}
+
+.detailCopy > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.4rem;
+  border-top: 1px solid rgb(248 243 232 / 0.18);
+  padding-top: 1rem;
+}
+
+.detailCopy > div > span {
+  color: var(--gold);
+  font-size: 0.55rem;
+  letter-spacing: 0.32em;
+}
+
+.detailCopy a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+@media (max-width: 48rem) {
+  .heroArt {
+    top: 8%;
+    width: min(96vw, 38rem);
+  }
+
+  .heroTitle {
+    margin-top: min(32vh, 17rem);
+  }
+
+  .heroTitle h1 {
+    font-size: clamp(3.3rem, 19vw, 6.2rem);
+  }
+
+  .heroTitle > span,
+  .heroTitle > strong {
+    letter-spacing: 0.35em;
+  }
+
+  .galleryScene {
+    padding: 2rem 1rem;
+  }
+
+  .galleryRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projectCard {
+    height: min(31vh, 14rem);
+    min-height: 10.5rem;
+  }
+
+  .projectCard:hover,
+  .projectCard:focus-visible {
+    height: min(36vh, 16rem);
+  }
+
+  .projectCard {
+    padding: 0.8rem;
+  }
+
+  .aboutScene {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+  }
+
+  .aboutScene > p {
+    grid-column: auto;
+  }
+
+  .aboutScene h1 {
+    font-size: clamp(3.1rem, 16vw, 5.5rem);
+  }
+
+  .detailScene {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .detailMedia {
+    width: min(100%, 29rem);
+    max-height: 44vh;
+    justify-self: center;
+  }
+
+  .detailCopy {
+    width: min(100%, 29rem);
+    justify-self: center;
+  }
+
+  .detailPlanet {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .detailCopy h2 {
+    display: block;
+    font-size: clamp(2.6rem, 14vw, 4.5rem);
+    line-height: 0.9;
+  }
+
+  .detailCopy h2 span {
+    display: inline-block;
+    margin-right: 0.2em;
+  }
+
+  .detailCopy > div {
+    margin-top: 1.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectCard {
+    transition: none;
+  }
+}

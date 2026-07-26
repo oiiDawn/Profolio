@@ -20,9 +20,6 @@ pnpm-debug.log*
 .env*.local
 .vercel/
 
-# Writing drafts / MDX sources (published via Supabase Storage + upload script; do not commit)
-content/**/*.mdx
-
 # OS/editor
 .DS_Store
 Thumbs.db
