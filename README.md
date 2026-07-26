@@ -16,4 +16,4 @@ pnpm check:fast
 pnpm build
 ```
 
-Routes: `/`, `/about`, `/work`, `/work/[slug]`.
+Routes: `/`, `/about`, `/work`, `/work/[slug]`, `/contact`.

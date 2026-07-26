@@ -3,6 +3,7 @@ export type ShowcaseProject = {
   title: string;
   tag: string;
   href: string;
+  image?: string;
 };
 
 export const showcaseProjects: readonly ShowcaseProject[] = [
