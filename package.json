@@ -18,7 +18,7 @@
     "ci:pr": "pnpm check:fast && pnpm build"
   },
   "dependencies": {
-    "framer-motion": "^12.42.2",
+    "animejs": "^4.5.0",
     "geist": "^1.7.2",
     "next": "15.3.9",
     "react": "19.1.0",

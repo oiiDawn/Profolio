@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navLink =
-  "text-[9px] font-medium tracking-[0.34em] text-white/55 transition-colors hover:text-[#cdb27a] focus-visible:text-[#cdb27a] focus-visible:outline-none";
+  "text-[9px] font-medium tracking-[0.34em] text-white/55 hover:text-[#cdb27a] focus-visible:text-[#cdb27a] focus-visible:outline-none";
 
 export function Topbar() {
   return (
