@@ -63,10 +63,9 @@ function HeroSculpture() {
           y2="402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stopColor="#83e4f0" />
-          <stop offset=".36" stopColor="#4b79d8" />
-          <stop offset=".7" stopColor="#8b5ac9" />
-          <stop offset="1" stopColor="#ef806f" />
+          <stop offset="0" stopColor="#e4cf9c" />
+          <stop offset=".5" stopColor="#cdb27a" />
+          <stop offset="1" stopColor="#a88d55" />
         </linearGradient>
         <linearGradient
           id="hobby-highlight"
@@ -76,45 +75,12 @@ function HeroSculpture() {
           y2="362"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stopColor="#f5f2e9" stopOpacity=".9" />
-          <stop offset=".52" stopColor="#cbd9ed" stopOpacity=".66" />
-          <stop offset="1" stopColor="#cdb27a" stopOpacity=".88" />
+          <stop offset="0" stopColor="#f1dfb5" stopOpacity=".9" />
+          <stop offset="1" stopColor="#cdb27a" stopOpacity=".72" />
         </linearGradient>
-        <radialGradient id="hobby-aura" cx=".5" cy=".47" r=".56">
-          <stop offset="0" stopColor="#14547b" stopOpacity=".24" />
-          <stop offset=".58" stopColor="#152655" stopOpacity=".12" />
-          <stop offset="1" stopColor="#020a1d" stopOpacity="0" />
-        </radialGradient>
-        <filter
-          id="hobby-glow"
-          x="-25%"
-          y="-25%"
-          width="150%"
-          height="150%"
-          colorInterpolationFilters="sRGB"
-        >
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feColorMatrix
-            in="blur"
-            values="1 0 0 0 0.06  0 1 0 0 0.16  0 0 1 0 0.34  0 0 0 .72 0"
-            result="glow"
-          />
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
 
-      <ellipse
-        cx="360"
-        cy="274"
-        rx="250"
-        ry="172"
-        fill="url(#hobby-aura)"
-      />
-
-      <g className={styles.hobbySculpture} filter="url(#hobby-glow)">
+      <g className={styles.hobbySculpture}>
         <path
           className={styles.storyLine}
           data-story-line
