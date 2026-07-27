@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { PortfolioAnimation } from "@/components/portfolio-animation";
+import { PortfolioChrome } from "@/components/portfolio-chrome";
 import {
   projectSlug,
   showcaseProjects,
@@ -16,5 +17,10 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
   if (!project) notFound();
 
-  return <PortfolioAnimation view="detail" project={project} />;
+  return (
+    <>
+      <PortfolioChrome section="work" />
+      <PortfolioAnimation view="detail" project={project} />
+    </>
+  );
 }

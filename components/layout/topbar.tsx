@@ -11,15 +11,15 @@ export function Topbar() {
         aria-label="Primary navigation"
       >
         <div className="flex gap-4 sm:gap-12">
-          <Link className={navLink} href="/about">
+          <Link className={navLink} href="/#about">
             ABOUT
           </Link>
-          <Link className={navLink} href="/work">
+          <Link className={navLink} href="/#work">
             WORK
           </Link>
         </div>
         <Link
-          href="/"
+          href="/#home"
           className="relative border-x border-white/10 px-4 font-[Didot,Georgia,serif] text-2xl font-normal tracking-[-0.08em] text-white sm:px-6"
           aria-label="Home"
         >
@@ -30,15 +30,7 @@ export function Topbar() {
           />
         </Link>
         <div className="flex justify-end gap-4 sm:gap-12">
-          <a
-            className={`${navLink} hidden sm:inline`}
-            href="https://github.com/oiidawn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GITHUB
-          </a>
-          <Link className={navLink} href="/contact">
+          <Link className={navLink} href="/#contact">
             CONTACT
           </Link>
         </div>

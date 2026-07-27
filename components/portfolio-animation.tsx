@@ -203,37 +203,9 @@ function HeroSculpture() {
   );
 }
 
-function SceneChrome({
-  index,
-  label,
-}: {
-  index: string;
-  label: string;
-}) {
-  return (
-    <>
-      <div className={styles.sceneIndex} aria-hidden>
-        <span>{index}</span>
-        <i />
-      </div>
-      <div className={styles.sceneLabel}>
-        <i aria-hidden />
-        <span>{label}</span>
-      </div>
-      <div className={styles.sceneDots} aria-hidden>
-        <i />
-        <i />
-        <i />
-      </div>
-    </>
-  );
-}
-
 function HeroScene() {
   return (
     <div className={`${styles.scene} ${styles.heroScene}`} data-scene>
-      <SceneChrome index="01" label="INTRODUCTION" />
-
       <div className={styles.heroArt} data-hero-art>
         <HeroSculpture />
       </div>
@@ -289,8 +261,6 @@ function GalleryScene({
 
   return (
     <div className={`${styles.scene} ${styles.galleryScene}`} data-scene>
-      <SceneChrome index="02" label="SELECTED WORK" />
-
       <div className={styles.galleryEyebrow}>
         <span>PROJECT INDEX</span>
         <span>2024—2026</span>
@@ -350,8 +320,6 @@ function GalleryScene({
 function AboutScene() {
   return (
     <div className={`${styles.scene} ${styles.aboutScene}`} data-scene>
-      <SceneChrome index="03" label="ABOUT" />
-
       <div
         className={styles.aboutVisual}
         data-about-visual
@@ -380,17 +348,6 @@ function AboutScene() {
         </div>
       </div>
 
-      <div className={styles.aboutFooter}>
-        <span>BASED IN CHINA</span>
-        <a href="mailto:oii.zhangjm@gmail.com">EMAIL</a>
-        <a
-          href="https://github.com/oiidawn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GITHUB ↗
-        </a>
-      </div>
     </div>
   );
 }
@@ -418,8 +375,6 @@ function DetailScene({ project }: { project: ShowcaseProject }) {
 
   return (
     <div className={`${styles.scene} ${styles.detailScene}`} data-scene>
-      <SceneChrome index={project.id} label="PROJECT DETAIL" />
-
       <div className={styles.detailMedia} data-detail-media>
         <ProjectVisual project={project} />
       </div>
@@ -446,8 +401,6 @@ function DetailScene({ project }: { project: ShowcaseProject }) {
 function ContactScene() {
   return (
     <div className={`${styles.scene} ${styles.contactScene}`} data-scene>
-      <SceneChrome index="04" label="CONTACT" />
-
       <div className={styles.contactCopy} data-scene-copy>
         <span>OPPORTUNITIES · COLLABORATIONS</span>
         <h1>Building a team or a product?</h1>
@@ -470,11 +423,6 @@ function ContactScene() {
         </div>
       </div>
 
-      <div className={styles.contactFooter}>
-        <span>OII DAWN</span>
-        <span>PRODUCT · CODE · SYSTEMS</span>
-        <span>AVAILABLE FOR THE RIGHT FIT</span>
-      </div>
     </div>
   );
 }
@@ -487,10 +435,11 @@ export function PortfolioAnimation({
   const rootRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!rootRef.current) return;
+    const root = rootRef.current;
+    if (!root) return;
 
     const scope = createScope({
-      root: rootRef.current,
+      root,
       mediaQueries: {
         isSmall: "(max-width: 48rem)",
         reduceMotion: "(prefers-reduced-motion: reduce)",
@@ -500,19 +449,8 @@ export function PortfolioAnimation({
       const reduceMotion = Boolean(self?.matches.reduceMotion);
       const duration = (milliseconds: number) =>
         reduceMotion ? 0 : milliseconds;
-
       animate("[data-scene]", {
         opacity: { from: 0 },
-        scale: {
-          from:
-            view === "gallery"
-              ? 1.04
-              : view === "hero"
-                ? 1.035
-                : view === "contact"
-                  ? 1.025
-                  : 1,
-        },
         duration: duration(view === "hero" ? 850 : 700),
         ease: "out(4)",
       });
@@ -526,7 +464,6 @@ export function PortfolioAnimation({
 
         animate("[data-hero-art]", {
           opacity: { from: 0 },
-          y: { from: 56 },
           rotate: { from: -5 },
           duration: duration(1050),
           ease: "out(4)",
@@ -551,7 +488,6 @@ export function PortfolioAnimation({
         });
         animate("[data-scene-copy]", {
           opacity: { from: 0 },
-          y: { from: 36 },
           delay: duration(380),
           duration: duration(750),
           ease: "out(4)",
@@ -561,7 +497,6 @@ export function PortfolioAnimation({
       if (view === "gallery") {
         animate("[data-project-card-slot]", {
           opacity: { from: 0 },
-          y: { from: 72 },
           delay: stagger(duration(80)),
           duration: duration(650),
           ease: "out(4)",
@@ -636,14 +571,12 @@ export function PortfolioAnimation({
       if (view === "about") {
         animate("[data-about-visual]", {
           opacity: { from: 0 },
-          x: { from: -64 },
           rotate: { from: -2 },
           duration: duration(900),
           ease: "out(4)",
         });
         animate("[data-scene-copy]", {
           opacity: { from: 0 },
-          y: { from: 42 },
           delay: duration(220),
           duration: duration(750),
           ease: "out(4)",
@@ -653,14 +586,12 @@ export function PortfolioAnimation({
       if (view === "detail") {
         animate("[data-detail-media]", {
           opacity: { from: 0 },
-          x: { from: -72 },
           rotate: { from: -1.5 },
           duration: duration(850),
           ease: "out(4)",
         });
         animate("[data-scene-copy]", {
           opacity: { from: 0 },
-          y: { from: 42 },
           delay: duration(200),
           duration: duration(720),
           ease: "out(4)",
@@ -670,7 +601,6 @@ export function PortfolioAnimation({
       if (view === "contact") {
         animate("[data-scene-copy]", {
           opacity: { from: 0 },
-          y: { from: 42 },
           delay: duration(180),
           duration: duration(780),
           ease: "out(4)",
@@ -685,6 +615,7 @@ export function PortfolioAnimation({
     <section
       ref={rootRef}
       className={styles.showcase}
+      data-view={view}
       data-portfolio-prototype
       aria-label="OII DAWN portfolio"
     >
