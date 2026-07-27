@@ -195,9 +195,39 @@
   filter: drop-shadow(0 2.4rem 3rem rgb(0 0 0 / 0.34));
 }
 
-.heroSvg [data-hero-knot] {
+.hobbySculpture,
+.heroSvg [data-laptop-screen],
+.heroSvg [data-car],
+.heroSvg [data-car-wheel],
+.heroSvg [data-barbell-left],
+.heroSvg [data-barbell-right],
+.heroSvg [data-controller],
+.storyLine {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.heroSvg [data-laptop-screen] {
+  transform-origin: center bottom;
+}
+
+.heroSvg [data-car],
+.heroSvg [data-barbell],
+.heroSvg [data-controller] {
+  opacity: 0;
+}
+
+.heroSvg [data-laptop-morph-target] {
+  visibility: hidden;
+}
+
+.heroSvg path,
+.heroSvg circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.storyLine {
+  transform-origin: center center;
 }
 
 .heroTitle {
