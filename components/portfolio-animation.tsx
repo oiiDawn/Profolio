@@ -16,6 +16,10 @@ import {
   useRef,
 } from "react";
 
+import barbellScene from "@/app/Barbell.svg";
+import bmwM4 from "@/app/BMW M4.svg";
+import controllerScene from "@/app/controller.svg";
+import laptopScene from "@/app/Laptop.svg";
 import {
   projectSlug,
   type ShowcaseProject,
@@ -41,307 +45,347 @@ const viewLabels: Record<ShowcaseView, string> = {
 
 const projectGlyphs = ["//", "8", "○", "◇"] as const;
 
+type HeroAssetName = "laptop" | "car" | "barbell" | "controller";
+
+type HeroAssetDefinition = {
+  name: HeroAssetName;
+  src: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type PreparedHeroAsset = {
+  element: SVGGElement;
+  drawables: ReturnType<typeof svg.createDrawable>;
+};
+
+const heroAssets = [
+  {
+    name: "laptop",
+    src: laptopScene.src,
+    x: 60,
+    y: 30,
+    width: 600,
+    height: 338,
+  },
+  {
+    name: "car",
+    src: bmwM4.src,
+    x: 60,
+    y: 78,
+    width: 600,
+    height: 338,
+  },
+  {
+    name: "barbell",
+    src: barbellScene.src,
+    x: 0,
+    y: 0,
+    width: 720,
+    height: 540,
+  },
+  {
+    name: "controller",
+    src: controllerScene.src,
+    x: 60,
+    y: 30,
+    width: 600,
+    height: 338,
+  },
+] as const satisfies readonly HeroAssetDefinition[];
+
+const heroCycleTiming = {
+  draw: 2050,
+  drawStagger: 350,
+  hold: 1800,
+  erase: 1100,
+  eraseStagger: 350,
+  blank: 150,
+} as const;
+
+const heroCycleDuration =
+  heroCycleTiming.draw +
+  heroCycleTiming.drawStagger +
+  heroCycleTiming.hold +
+  heroCycleTiming.erase +
+  heroCycleTiming.eraseStagger +
+  heroCycleTiming.blank;
+
+function namespaceSvgIds(svgElement: SVGSVGElement, namespace: string) {
+  const idMap = new Map<string, string>();
+
+  svgElement.querySelectorAll<SVGElement>("[id]").forEach((element) => {
+    const id = element.id;
+    const namespacedId = `${namespace}-${id}`;
+    idMap.set(id, namespacedId);
+    element.id = namespacedId;
+  });
+
+  const referenceAttributes = [
+    "fill",
+    "stroke",
+    "filter",
+    "clip-path",
+    "mask",
+    "marker-start",
+    "marker-mid",
+    "marker-end",
+    "href",
+    "xlink:href",
+  ] as const;
+
+  svgElement.querySelectorAll<SVGElement>("*").forEach((element) => {
+    referenceAttributes.forEach((attribute) => {
+      const value = element.getAttribute(attribute);
+      if (!value) return;
+
+      let nextValue = value;
+      idMap.forEach((namespacedId, id) => {
+        nextValue = nextValue
+          .replaceAll(`url(#${id})`, `url(#${namespacedId})`)
+          .replaceAll(`#${id}`, `#${namespacedId}`);
+      });
+
+      if (nextValue !== value) {
+        element.setAttribute(attribute, nextValue);
+      }
+    });
+  });
+}
+
+async function prepareHeroAssets(
+  root: HTMLElement,
+  signal: AbortSignal,
+): Promise<PreparedHeroAsset[]> {
+  const slots = heroAssets.map((asset) => {
+    const element = root.querySelector<SVGGElement>(
+      `[data-scene-asset="${asset.name}"]`,
+    );
+
+    if (!element) {
+      throw new Error(`Missing hero SVG slot: ${asset.name}`);
+    }
+
+    return { asset, element };
+  });
+
+  const loadedAssets = await Promise.all(
+    slots.map(async ({ asset, element }) => {
+      const response = await fetch(asset.src, { signal });
+      if (!response.ok) {
+        throw new Error(
+          `Unable to load ${asset.name} SVG (${response.status})`,
+        );
+      }
+
+      const source = await response.text();
+      const parsed = new DOMParser().parseFromString(source, "image/svg+xml");
+      if (parsed.querySelector("parsererror")) {
+        throw new Error(`Unable to parse ${asset.name} SVG`);
+      }
+
+      const sourceSvg = parsed.querySelector("svg");
+      if (!sourceSvg) {
+        throw new Error(`Missing SVG root for ${asset.name}`);
+      }
+
+      const inlineSvg = document.importNode(
+        sourceSvg,
+        true,
+      ) as unknown as SVGSVGElement;
+      inlineSvg.querySelectorAll("title").forEach((title) => title.remove());
+      namespaceSvgIds(inlineSvg, `hero-${asset.name}`);
+      inlineSvg.setAttribute("x", String(asset.x));
+      inlineSvg.setAttribute("y", String(asset.y));
+      inlineSvg.setAttribute("width", String(asset.width));
+      inlineSvg.setAttribute("height", String(asset.height));
+      inlineSvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      inlineSvg.setAttribute("aria-hidden", "true");
+      inlineSvg.setAttribute("focusable", "false");
+
+      return { element, inlineSvg };
+    }),
+  );
+
+  return loadedAssets.map(({ element, inlineSvg }) => {
+    element.replaceChildren(inlineSvg);
+    const paths = Array.from(
+      inlineSvg.querySelectorAll<SVGGeometryElement>("path"),
+    );
+    if (paths.length === 0) {
+      throw new Error("Hero SVG does not contain drawable paths");
+    }
+
+    return {
+      element,
+      drawables: svg.createDrawable(paths),
+    };
+  });
+}
+
+function buildHeroDrawableTimeline(assets: PreparedHeroAsset[]) {
+  const timeline = createTimeline({
+    loop: true,
+    defaults: {
+      ease: "inOut(3)",
+    },
+  });
+  const elements = assets.map((asset) => asset.element);
+
+  timeline.set(elements, { opacity: 0 }, 0);
+
+  assets.forEach((asset, index) => {
+    const start = index * heroCycleDuration;
+    const eraseStart =
+      start +
+      heroCycleTiming.draw +
+      heroCycleTiming.drawStagger +
+      heroCycleTiming.hold;
+    const hideStart =
+      eraseStart + heroCycleTiming.erase + heroCycleTiming.eraseStagger;
+
+    timeline
+      .set(asset.element, { opacity: 1 }, start)
+      .add(
+        asset.drawables,
+        {
+          draw: ["0 0", "0 1"],
+          delay: stagger([0, heroCycleTiming.drawStagger]),
+          duration: heroCycleTiming.draw,
+          ease: "inOut(3)",
+        },
+        start,
+      )
+      .add(
+        asset.drawables,
+        {
+          draw: "0 0",
+          delay: stagger([0, heroCycleTiming.eraseStagger], {
+            reversed: true,
+          }),
+          duration: heroCycleTiming.erase,
+          ease: "inOut(3)",
+        },
+        eraseStart,
+      )
+      .set(asset.element, { opacity: 0 }, hideStart);
+  });
+
+  timeline.call(() => undefined, heroCycleDuration * assets.length);
+
+  return timeline;
+}
+
+function showHeroFallback(root: HTMLElement) {
+  root.querySelectorAll<SVGGElement>("[data-scene-asset]").forEach((asset) => {
+    asset.style.opacity =
+      asset.dataset.sceneAsset === heroAssets[0].name ? "1" : "0";
+  });
+}
+
+function createHeroAssetTimeline(root: HTMLElement) {
+  const abortController = new AbortController();
+  let timeline: ReturnType<typeof createTimeline> | null = null;
+  let isVisible = false;
+  let reverted = false;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      isVisible = Boolean(
+        entry?.isIntersecting && entry.intersectionRatio >= 0.1,
+      );
+      if (!timeline) return;
+      if (isVisible) {
+        timeline.resume();
+      } else {
+        timeline.pause();
+      }
+    },
+    { threshold: [0, 0.1] },
+  );
+  observer.observe(root);
+
+  void prepareHeroAssets(root, abortController.signal)
+    .then((assets) => {
+      if (reverted) return;
+      timeline = buildHeroDrawableTimeline(assets);
+      if (!isVisible) timeline.pause();
+    })
+    .catch((error: unknown) => {
+      if (
+        error instanceof DOMException &&
+        error.name === "AbortError"
+      ) {
+        return;
+      }
+
+      console.error("Unable to initialize the hero SVG sequence.", error);
+      showHeroFallback(root);
+    });
+
+  return {
+    revert() {
+      reverted = true;
+      abortController.abort();
+      observer.disconnect();
+      timeline?.revert();
+    },
+  };
+}
+
 function HeroSculpture() {
   return (
     <svg
       className={styles.heroSvg}
       viewBox="0 0 720 540"
       role="img"
-      aria-labelledby="hero-sculpture-title"
+      aria-label="A looping animation drawing a laptop, BMW M4, barbell and game controller"
       focusable="false"
     >
-      <title id="hero-sculpture-title">
-        A continuous line animation of a laptop, sports car, barbell and game
-        controller
-      </title>
-      <defs>
-        <linearGradient
-          id="hobby-line"
-          x1="126"
-          y1="118"
-          x2="592"
-          y2="402"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0" stopColor="#e4cf9c" />
-          <stop offset=".5" stopColor="#cdb27a" />
-          <stop offset="1" stopColor="#a88d55" />
-        </linearGradient>
-        <linearGradient
-          id="hobby-highlight"
-          x1="188"
-          y1="150"
-          x2="545"
-          y2="362"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0" stopColor="#f1dfb5" stopOpacity=".9" />
-          <stop offset="1" stopColor="#cdb27a" stopOpacity=".72" />
-        </linearGradient>
-      </defs>
-
-      <g className={styles.hobbySculpture}>
-        <path
-          className={styles.storyLine}
-          data-story-line
-          d="M155 326 H565"
-          fill="none"
-          stroke="url(#hobby-line)"
-          strokeLinecap="round"
-          strokeWidth="5"
-        />
-
-        <g data-laptop>
-          <g data-laptop-screen>
-            <path
-              data-laptop-draw
-              data-laptop-screen-shape
-              d="M221 303 V153 Q221 132 242 132 H478 Q499 132 499 153 V303"
-              fill="none"
-              stroke="url(#hobby-line)"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="6"
-            />
-            <path
-              data-laptop-detail
-              d="M244 280 V157 H476 V280"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2.2"
-              opacity=".72"
-            />
-            <path
-              data-laptop-detail
-              d="M270 188 H340 M270 210 H430 M270 232 H397"
-              fill="none"
-              stroke="#83e4f0"
-              strokeLinecap="round"
-              strokeWidth="2"
-              opacity=".42"
-            />
-          </g>
-          <path
-            data-laptop-draw
-            data-laptop-deck
-            d="M194 326 L221 303 H499 L526 326"
-            fill="none"
-            stroke="url(#hobby-highlight)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="4"
-          />
-          <path
-            data-laptop-detail
-            d="M326 314 H394"
-            fill="none"
-            stroke="#cdb27a"
-            strokeLinecap="round"
-            strokeWidth="2"
-            opacity=".78"
+      <g className={styles.hobbySculpture} data-scene-compositor>
+        <g data-scene-asset="laptop">
+          <image
+            href={laptopScene.src}
+            x="60"
+            y="30"
+            width="600"
+            height="338"
+            preserveAspectRatio="xMidYMid meet"
           />
         </g>
-
-        <g data-car>
-          <path
-            data-car-draw
-            d="M120 309 C132 285 157 277 208 271 L257 221 C274 205 301 196 337 196 H406 C435 197 458 205 481 225 L516 258 C559 264 588 278 600 301 L597 319 H564 C558 289 537 273 507 273 C477 273 456 289 449 319 H270 C264 289 243 273 213 273 C183 273 162 289 155 319 H125 Z"
-            fill="none"
-            stroke="url(#hobby-line)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="5"
-          />
-          <path
-            data-car-draw
-            d="M267 224 C283 210 305 205 337 205 H399 C421 206 439 212 458 229 L482 254 H244 Z"
-            fill="none"
-            stroke="url(#hobby-highlight)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2.4"
-          />
-          <path
-            data-car-detail
-            d="M342 207 L325 254 M468 264 H524 M137 298 H168 M292 270 H429"
-            fill="none"
-            stroke="#cdb27a"
-            strokeLinecap="round"
-            strokeWidth="2.2"
-            opacity=".78"
-          />
-          <path
-            data-car-detail
-            d="M583 288 L599 294 M125 302 L143 300"
-            fill="none"
-            stroke="#ef806f"
-            strokeLinecap="round"
-            strokeWidth="4"
-          />
-          <g data-car-wheel>
-            <circle
-              data-car-draw
-              cx="213"
-              cy="319"
-              r="33"
-              fill="#020a1d"
-              stroke="url(#hobby-line)"
-              strokeWidth="5"
-            />
-            <circle
-              cx="213"
-              cy="319"
-              r="18"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeWidth="2"
-            />
-            <path
-              d="M213 301 V337 M195 319 H231 M201 307 L225 331 M225 307 L201 331"
-              fill="none"
-              stroke="#cbd9ed"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              opacity=".64"
-            />
-          </g>
-          <g data-car-wheel>
-            <circle
-              data-car-draw
-              cx="507"
-              cy="319"
-              r="33"
-              fill="#020a1d"
-              stroke="url(#hobby-line)"
-              strokeWidth="5"
-            />
-            <circle
-              cx="507"
-              cy="319"
-              r="18"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeWidth="2"
-            />
-            <path
-              d="M507 301 V337 M489 319 H525 M495 307 L519 331 M519 307 L495 331"
-              fill="none"
-              stroke="#cbd9ed"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              opacity=".64"
-            />
-          </g>
-        </g>
-
-        <g data-barbell>
-          <g data-barbell-left>
-            <path
-              data-barbell-draw
-              d="M165 270 H209 M209 225 V315 M224 210 V330 M242 234 V306"
-              fill="none"
-              stroke="url(#hobby-line)"
-              strokeLinecap="round"
-              strokeWidth="12"
-            />
-            <path
-              data-barbell-detail
-              d="M209 231 V309 M224 216 V324"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeLinecap="round"
-              strokeWidth="2"
-            />
-          </g>
-          <g data-barbell-right>
-            <path
-              data-barbell-draw
-              d="M555 270 H511 M511 225 V315 M496 210 V330 M478 234 V306"
-              fill="none"
-              stroke="url(#hobby-line)"
-              strokeLinecap="round"
-              strokeWidth="12"
-            />
-            <path
-              data-barbell-detail
-              d="M511 231 V309 M496 216 V324"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeLinecap="round"
-              strokeWidth="2"
-            />
-          </g>
-          <path
-            data-barbell-detail
-            d="M274 270 H446"
-            fill="none"
-            stroke="#cdb27a"
-            strokeDasharray="4 9"
-            strokeLinecap="round"
-            strokeWidth="2"
-            opacity=".8"
+        <g data-scene-asset="car">
+          <image
+            href={bmwM4.src}
+            x="60"
+            y="78"
+            width="600"
+            height="338"
+            preserveAspectRatio="xMidYMid meet"
           />
         </g>
-
-        <g data-controller>
-          <path
-            data-controller-outline
-            data-controller-draw
-            d="M250 223 C217 224 194 242 181 280 L154 360 C145 388 177 405 196 382 L243 329 C274 338 306 343 360 343 C414 343 446 338 477 329 L524 382 C543 405 575 388 566 360 L539 280 C526 242 503 224 470 223 C439 223 417 235 398 250 H322 C303 235 281 223 250 223 Z"
-            fill="none"
-            stroke="url(#hobby-line)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="6"
+        <g data-scene-asset="barbell">
+          <image
+            href={barbellScene.src}
+            x="0"
+            y="0"
+            width="720"
+            height="540"
           />
-          <g data-controller-detail>
-            <circle
-              cx="281"
-              cy="281"
-              r="24"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeWidth="3"
-            />
-            <circle
-              cx="414"
-              cy="318"
-              r="24"
-              fill="none"
-              stroke="url(#hobby-highlight)"
-              strokeWidth="3"
-            />
-            <path
-              d="M274 281 H288 M281 274 V288 M326 282 H350 M338 270 V294"
-              fill="none"
-              stroke="#cdb27a"
-              strokeLinecap="round"
-              strokeWidth="4"
-            />
-            <circle cx="454" cy="265" r="6" fill="#83e4f0" />
-            <circle cx="477" cy="282" r="6" fill="#cdb27a" />
-            <circle cx="431" cy="282" r="6" fill="#ef806f" />
-            <circle cx="454" cy="299" r="6" fill="#8b5ac9" />
-            <path
-              d="M353 313 H367"
-              fill="none"
-              stroke="#cbd9ed"
-              strokeLinecap="round"
-              strokeWidth="3"
-              opacity=".68"
-            />
-          </g>
         </g>
-
-        <path
-          data-laptop-morph-target
-          d="M221 303 V153 Q221 132 242 132 H478 Q499 132 499 153 V303"
-          fill="none"
-          stroke="none"
-        />
+        <g data-scene-asset="controller">
+          <image
+            href={controllerScene.src}
+            x="60"
+            y="30"
+            width="600"
+            height="338"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </g>
       </g>
+
     </svg>
   );
 }
@@ -612,387 +656,15 @@ export function PortfolioAnimation({
           ease: "out(4)",
         });
 
-        if (reduceMotion) return;
-
-        const query = <ElementType extends Element>(selector: string) =>
-          Array.from(
-            rootRef.current?.querySelectorAll<ElementType>(selector) ?? [],
-          );
-        const laptop = query<SVGGElement>("[data-laptop]");
-        const laptopScreen = query<SVGGElement>("[data-laptop-screen]");
-        const laptopDetails = query<SVGGeometryElement>(
-          "[data-laptop-detail]",
-        );
-        const laptopDrawables = svg.createDrawable(
-          query<SVGGeometryElement>("[data-laptop-draw]"),
-        );
-        const car = query<SVGGElement>("[data-car]");
-        const carWheels = query<SVGGElement>("[data-car-wheel]");
-        const carDrawables = svg.createDrawable(
-          query<SVGGeometryElement>("[data-car-draw]"),
-        );
-        const carDetails = query<SVGGeometryElement>("[data-car-detail]");
-        const barbell = query<SVGGElement>("[data-barbell]");
-        const barbellSides = query<SVGGElement>(
-          "[data-barbell-left], [data-barbell-right]",
-        );
-        const barbellDrawables = svg.createDrawable(
-          query<SVGGeometryElement>("[data-barbell-draw]"),
-        );
-        const barbellDetails = query<SVGGeometryElement>(
-          "[data-barbell-detail]",
-        );
-        const controller = query<SVGGElement>("[data-controller]");
-        const controllerDetails = query<SVGGElement>(
-          "[data-controller-detail]",
-        );
-        const controllerDrawables = svg.createDrawable(
-          query<SVGGeometryElement>("[data-controller-draw]"),
-        );
-        const storyLine = query<SVGPathElement>("[data-story-line]");
-        const controllerOutline = rootRef.current?.querySelector<SVGPathElement>(
-          "[data-controller-outline]",
-        );
-        const laptopMorphTarget =
-          rootRef.current?.querySelector<SVGPathElement>(
-            "[data-laptop-morph-target]",
-          );
-        const controllerPath = controllerOutline?.getAttribute("d");
-
-        if (!controllerOutline || !laptopMorphTarget || !controllerPath) {
+        if (reduceMotion) {
+          if (rootRef.current) showHeroFallback(rootRef.current);
           return;
         }
 
-        const heroTimeline = createTimeline({
-          loop: true,
-          defaults: {
-            ease: "inOut(3)",
-          },
-        });
+        if (!rootRef.current) return;
+        const heroAssetTimeline = createHeroAssetTimeline(rootRef.current);
+        return () => heroAssetTimeline.revert();
 
-        heroTimeline
-          .set(laptop, { opacity: 1 }, 0)
-          .set(laptopScreen, { scaleY: 1, y: 0 }, 0)
-          .set(laptopDetails, { opacity: 1 }, 0)
-          .set(car, { opacity: 0, x: -500 }, 0)
-          .set(barbell, { opacity: 0 }, 0)
-          .set(controller, { opacity: 0 }, 0)
-          .set(storyLine, { opacity: 1, scaleX: 0.72, y: 0 }, 0)
-          .set(controllerOutline, { d: controllerPath }, 0)
-          .add(
-            laptopDrawables,
-            {
-              draw: ["0 0", "0 1"],
-              delay: stagger(90),
-              duration: 900,
-              ease: "out(4)",
-            },
-            0,
-          )
-          .add(
-            laptopDetails,
-            {
-              opacity: { from: 0 },
-              delay: stagger(70),
-              duration: 540,
-              ease: "out(4)",
-            },
-            420,
-          )
-          .add(
-            laptopDetails,
-            {
-              opacity: 0,
-              duration: 300,
-              ease: "in(3)",
-            },
-            1800,
-          )
-          .add(
-            laptopScreen,
-            {
-              scaleY: 0.04,
-              y: 10,
-              duration: 620,
-              ease: "inOut(4)",
-            },
-            1800,
-          )
-          .add(
-            "[data-laptop-deck]",
-            {
-              opacity: 0,
-              duration: 320,
-              ease: "in(3)",
-            },
-            2080,
-          )
-          .add(
-            storyLine,
-            {
-              scaleX: 1,
-              duration: 620,
-              ease: "inOut(4)",
-            },
-            1920,
-          )
-          .add(
-            laptop,
-            {
-              opacity: 0,
-              duration: 260,
-              ease: "in(3)",
-            },
-            2280,
-          )
-          .set(car, { opacity: 1 }, 2260)
-          .add(
-            carDrawables,
-            {
-              draw: ["0 0", "0 1"],
-              delay: stagger(45),
-              duration: 620,
-              ease: "out(4)",
-            },
-            2260,
-          )
-          .add(
-            carDetails,
-            {
-              opacity: { from: 0 },
-              duration: 500,
-              ease: "out(4)",
-            },
-            2520,
-          )
-          .add(
-            car,
-            {
-              x: 0,
-              duration: 980,
-              ease: "out(5)",
-            },
-            2260,
-          )
-          .add(
-            carWheels,
-            {
-              rotate: 540,
-              duration: 980,
-              ease: "out(4)",
-            },
-            2260,
-          )
-          .add(
-            car,
-            {
-              x: 520,
-              duration: 820,
-              ease: "in(4)",
-            },
-            3880,
-          )
-          .add(
-            carWheels,
-            {
-              rotate: 1080,
-              duration: 820,
-              ease: "in(3)",
-            },
-            3880,
-          )
-          .add(
-            car,
-            {
-              opacity: 0,
-              duration: 240,
-              ease: "in(3)",
-            },
-            4480,
-          )
-          .add(
-            storyLine,
-            {
-              y: -56,
-              scaleX: 0.9,
-              duration: 520,
-              ease: "inOut(4)",
-            },
-            4520,
-          )
-          .set(barbell, { opacity: 1 }, 4620)
-          .add(
-            barbellSides,
-            {
-              opacity: { from: 0 },
-              scale: { from: 0.28 },
-              duration: 620,
-              ease: "out(5)",
-            },
-            4620,
-          )
-          .add(
-            barbellDrawables,
-            {
-              draw: ["0 0", "0 1"],
-              delay: stagger(55, { from: "center" }),
-              duration: 600,
-              ease: "out(4)",
-            },
-            4580,
-          )
-          .add(
-            barbellDetails,
-            {
-              opacity: { from: 0 },
-              duration: 460,
-              ease: "out(4)",
-            },
-            4900,
-          )
-          .add(
-            "[data-barbell-left]",
-            {
-              x: 72,
-              scale: 0.8,
-              opacity: 0,
-              duration: 760,
-              ease: "inOut(4)",
-            },
-            6300,
-          )
-          .add(
-            "[data-barbell-right]",
-            {
-              x: -72,
-              scale: 0.8,
-              opacity: 0,
-              duration: 760,
-              ease: "inOut(4)",
-            },
-            6300,
-          )
-          .add(
-            barbellDetails,
-            {
-              opacity: 0,
-              duration: 380,
-              ease: "in(3)",
-            },
-            6260,
-          )
-          .add(
-            storyLine,
-            {
-              scaleX: 0.34,
-              opacity: 0.32,
-              duration: 720,
-              ease: "inOut(4)",
-            },
-            6260,
-          )
-          .set(controller, { opacity: 1 }, 6240)
-          .add(
-            controllerDrawables,
-            {
-              draw: ["0 0", "0 1"],
-              duration: 900,
-              ease: "inOut(4)",
-            },
-            6240,
-          )
-          .add(
-            controllerDetails,
-            {
-              opacity: { from: 0 },
-              scale: { from: 0.84 },
-              duration: 620,
-              ease: "out(5)",
-            },
-            6880,
-          )
-          .add(
-            barbell,
-            {
-              opacity: 0,
-              duration: 260,
-              ease: "in(3)",
-            },
-            6880,
-          )
-          .add(
-            controllerDetails,
-            {
-              opacity: 0,
-              scale: 0.92,
-              duration: 360,
-              ease: "in(3)",
-            },
-            9180,
-          )
-          .add(
-            controllerOutline,
-            {
-              d: svg.morphTo(laptopMorphTarget, 0.16),
-              duration: 1080,
-              ease: "inOut(4)",
-            },
-            9300,
-          )
-          .add(
-            storyLine,
-            {
-              y: 0,
-              scaleX: 0.72,
-              opacity: 1,
-              duration: 820,
-              ease: "inOut(4)",
-            },
-            9520,
-          )
-          .set(laptop, { opacity: 1 }, 10220)
-          .set(laptopDetails, { opacity: 0 }, 10220)
-          .add(
-            controller,
-            {
-              opacity: 0,
-              duration: 260,
-              ease: "in(3)",
-            },
-            10220,
-          )
-          .add(
-            laptopScreen,
-            {
-              scaleY: 1,
-              y: 0,
-              duration: 760,
-              ease: "out(5)",
-            },
-            10220,
-          )
-          .add(
-            "[data-laptop-deck]",
-            {
-              opacity: 1,
-              duration: 420,
-              ease: "out(4)",
-            },
-            10340,
-          )
-          .add(
-            laptopDetails,
-            {
-              opacity: 1,
-              delay: stagger(65),
-              duration: 480,
-              ease: "out(4)",
-            },
-            10620,
-          )
-          .call(() => undefined, 12000);
-
-        return () => heroTimeline.revert();
       }
 
       if (view === "gallery") {
