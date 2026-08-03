@@ -93,20 +93,20 @@
     mask-image: linear-gradient(transparent, black 40%, transparent 100%);
   }
 
-  .hero-drawable,
-  .hero-drawable [data-scene-asset] {
+  .hero-carousel,
+  .hero-carousel [data-scene-asset] {
     transform-box: fill-box;
     transform-origin: center;
   }
 
-  .hero-drawable [data-scene-asset] {
+  .hero-carousel [data-scene-asset] {
     opacity: 0;
     pointer-events: none;
-    will-change: opacity;
+    will-change: transform;
   }
 
-  .hero-drawable [data-scene-asset] > svg {
-    overflow: visible;
+  .hero-carousel [data-scene-asset]:first-child {
+    opacity: 1;
   }
 
   .project-visual,
