@@ -1,4 +1,7 @@
-import { PortfolioAnimation } from "@/components/portfolio-animation";
+import {
+  PortfolioAnimation,
+  PortfolioBackdrop,
+} from "@/components/portfolio-animation";
 import { PortfolioChrome } from "@/components/portfolio-chrome";
 import { showcaseProjects } from "@/lib/showcase-projects";
 
@@ -6,19 +9,28 @@ import styles from "./portfolio-page.module.css";
 
 export default function HomePage() {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-portfolio-page>
+      <PortfolioBackdrop />
       <PortfolioChrome />
-      <div id="home" className={styles.section}>
-        <PortfolioAnimation view="hero" />
+      <div
+        data-portfolio-section="home"
+        data-active
+        className={styles.section}
+      >
+        <PortfolioAnimation view="hero" withBackdrop={false} />
       </div>
-      <div id="about" className={styles.section}>
-        <PortfolioAnimation view="about" />
+      <div data-portfolio-section="about" className={styles.section}>
+        <PortfolioAnimation view="about" withBackdrop={false} />
       </div>
-      <div id="work" className={styles.section}>
-        <PortfolioAnimation view="gallery" projects={showcaseProjects} />
+      <div data-portfolio-section="work" className={styles.section}>
+        <PortfolioAnimation
+          view="gallery"
+          projects={showcaseProjects}
+          withBackdrop={false}
+        />
       </div>
-      <div id="contact" className={styles.section}>
-        <PortfolioAnimation view="contact" />
+      <div data-portfolio-section="contact" className={styles.section}>
+        <PortfolioAnimation view="contact" withBackdrop={false} />
       </div>
     </div>
   );

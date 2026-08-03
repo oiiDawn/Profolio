@@ -33,6 +33,7 @@ type PortfolioAnimationProps = {
   view: ShowcaseView;
   projects?: readonly ShowcaseProject[];
   project?: ShowcaseProject;
+  withBackdrop?: boolean;
 };
 
 const viewLabels: Record<ShowcaseView, string> = {
@@ -618,6 +619,7 @@ export function PortfolioAnimation({
   view,
   projects = [],
   project,
+  withBackdrop = true,
 }: PortfolioAnimationProps) {
   const rootRef = useRef<HTMLElement>(null);
 
@@ -787,14 +789,18 @@ export function PortfolioAnimation({
   return (
     <section
       ref={rootRef}
-      className={styles.showcase}
+      className={`${styles.showcase} ${withBackdrop ? "" : styles.transparentShowcase}`}
       data-view={view}
       data-portfolio-prototype
       aria-label="OII DAWN portfolio"
     >
-      <div className={styles.atmosphere} aria-hidden />
-      <div className={styles.guideLines} aria-hidden />
-      <div className={styles.contours} aria-hidden />
+      {withBackdrop ? (
+        <>
+          <div className={styles.atmosphere} aria-hidden />
+          <div className={styles.guideLines} aria-hidden />
+          <div className={styles.contours} aria-hidden />
+        </>
+      ) : null}
 
       <p className="sr-only">Current scene: {viewLabels[view]}</p>
 
@@ -804,5 +810,19 @@ export function PortfolioAnimation({
       {view === "detail" && project ? <DetailScene project={project} /> : null}
       {view === "contact" ? <ContactScene /> : null}
     </section>
+  );
+}
+
+export function PortfolioBackdrop() {
+  return (
+    <div
+      className={`${styles.showcase} ${styles.sharedBackdrop}`}
+      data-view="hero"
+      aria-hidden
+    >
+      <div className={styles.atmosphere} />
+      <div className={styles.guideLines} />
+      <div className={styles.contours} />
+    </div>
   );
 }

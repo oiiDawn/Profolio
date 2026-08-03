@@ -201,6 +201,15 @@
   transform-origin: center;
 }
 
+.transparentShowcase {
+  background: transparent;
+}
+
+.sharedBackdrop {
+  position: absolute;
+  inset: 0;
+}
+
 .heroSvg [data-scene-asset] {
   opacity: 0;
   pointer-events: none;

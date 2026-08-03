@@ -1,5 +1,6 @@
 "use client";
 
+import { createTimeline, set } from "animejs";
 import { useEffect, useState } from "react";
 
 import styles from "./portfolio-animation.module.css";
@@ -17,6 +18,7 @@ const sections: Record<
 };
 
 const sectionIds = Object.keys(sections) as PortfolioSection[];
+const sceneTiming = { exit: 220, enter: 570, enterAt: 80 } as const;
 
 function sectionFromHash(): PortfolioSection {
   const section = window.location.hash.slice(1) as PortfolioSection;
@@ -34,7 +36,99 @@ export function PortfolioChrome({ section }: { section?: PortfolioSection }) {
       return;
     }
 
-    const updateSection = () => setActiveSection(sectionFromHash());
+    const page = document.querySelector<HTMLElement>("[data-portfolio-page]");
+    if (!page) return;
+    const getScene = (sectionId: PortfolioSection) =>
+      page.querySelector<HTMLElement>(
+        `[data-portfolio-section="${sectionId}"]`,
+      );
+    let currentSection = sectionFromHash();
+    let transition: ReturnType<typeof createTimeline> | null = null;
+
+    page
+      .querySelectorAll<HTMLElement>("[data-portfolio-section]")
+      .forEach((scene) => {
+        const isActive = scene.dataset.portfolioSection === currentSection;
+        scene.toggleAttribute("data-active", isActive);
+        scene.setAttribute("aria-hidden", String(!isActive));
+        set(scene, {
+          opacity: isActive ? 1 : 0,
+          visibility: isActive ? "visible" : "hidden",
+          y: 0,
+          scale: 1,
+        });
+      });
+    setActiveSection(currentSection);
+
+    const navigateToSection = (
+      nextSection: PortfolioSection,
+      nextUrl?: string,
+    ) => {
+      if (nextSection === currentSection) return;
+      const outgoing = getScene(currentSection);
+      const incoming = getScene(nextSection);
+      if (!outgoing || !incoming) return;
+
+      transition?.pause();
+      set(page.querySelectorAll("[data-portfolio-section]:not([data-active])"), {
+        opacity: 0,
+        visibility: "hidden",
+        y: 0,
+        scale: 1,
+      });
+
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const direction =
+        sectionIds.indexOf(nextSection) > sectionIds.indexOf(currentSection)
+          ? 1
+          : -1;
+      const offset = reduceMotion ? 0 : Math.min(window.innerHeight * 0.06, 64);
+
+      outgoing.removeAttribute("data-active");
+      outgoing.setAttribute("aria-hidden", "true");
+      incoming.toggleAttribute("data-active", true);
+      incoming.setAttribute("aria-hidden", "false");
+      set(outgoing, { visibility: "visible" });
+      set(incoming, {
+        opacity: 0,
+        visibility: "visible",
+        y: direction * offset,
+        scale: reduceMotion ? 1 : 0.985,
+      });
+
+      transition = createTimeline()
+        .add(
+          outgoing,
+          {
+            opacity: 0,
+            y: -direction * offset * 0.65,
+            scale: reduceMotion ? 1 : 0.985,
+            duration: reduceMotion ? 120 : sceneTiming.exit,
+            ease: reduceMotion ? "linear" : "in(3)",
+          },
+          0,
+        )
+        .add(
+          incoming,
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: reduceMotion ? 120 : sceneTiming.enter,
+            ease: reduceMotion ? "linear" : "out(4)",
+            onComplete: () => set(outgoing, { visibility: "hidden" }),
+          },
+          reduceMotion ? 0 : sceneTiming.enterAt,
+        );
+
+      currentSection = nextSection;
+      setActiveSection(nextSection);
+      if (nextUrl) window.history.pushState(null, "", nextUrl);
+    };
+
+    const updateSection = () => navigateToSection(sectionFromHash());
     const updateFromAnchor = (event: MouseEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -44,19 +138,20 @@ export function PortfolioChrome({ section }: { section?: PortfolioSection }) {
 
       const destination = new URL(anchor.href);
       const nextSection = destination.hash.slice(1) as PortfolioSection;
-      if (destination.pathname === "/" && nextSection in sections) {
-        setActiveSection(nextSection);
+      if (nextSection in sections) {
+        event.preventDefault();
+        navigateToSection(nextSection, destination.href);
       }
     };
 
     updateSection();
     window.addEventListener("hashchange", updateSection);
     window.addEventListener("popstate", updateSection);
-    document.addEventListener("click", updateFromAnchor);
+    document.addEventListener("click", updateFromAnchor, true);
     return () => {
       window.removeEventListener("hashchange", updateSection);
       window.removeEventListener("popstate", updateSection);
-      document.removeEventListener("click", updateFromAnchor);
+      document.removeEventListener("click", updateFromAnchor, true);
     };
   }, [section]);
 
