@@ -1,11 +1,6 @@
 import { createTimeline, stagger, svg } from "animejs";
 
-import barbellScene from "./assets/hero/barbell.svg";
-import bmwM4 from "./assets/hero/bmw-m4.svg";
-import controllerScene from "./assets/hero/controller.svg";
-import laptopScene from "./assets/hero/laptop.svg";
-
-type HeroAssetName = "laptop" | "car" | "barbell" | "controller";
+type HeroAssetName = "laptop" | "car" | "barbell" | "gaming-pc";
 
 type HeroAssetDefinition = {
   name: HeroAssetName;
@@ -24,35 +19,35 @@ type PreparedHeroAsset = {
 const heroAssets = [
   {
     name: "laptop",
-    src: laptopScene.src,
-    x: 60,
-    y: 30,
-    width: 600,
-    height: 338,
-  },
-  {
-    name: "car",
-    src: bmwM4.src,
-    x: 60,
-    y: 78,
-    width: 600,
-    height: 338,
-  },
-  {
-    name: "barbell",
-    src: barbellScene.src,
-    x: 0,
+    src: "/hobbies/macbook-pro.svg",
+    x: 90,
     y: 0,
-    width: 720,
+    width: 540,
     height: 540,
   },
   {
-    name: "controller",
-    src: controllerScene.src,
-    x: 60,
-    y: 30,
-    width: 600,
-    height: 338,
+    name: "car",
+    src: "/hobbies/bmw-m4.svg",
+    x: 90,
+    y: 0,
+    width: 540,
+    height: 540,
+  },
+  {
+    name: "barbell",
+    src: "/hobbies/barbell.svg",
+    x: 90,
+    y: 0,
+    width: 540,
+    height: 540,
+  },
+  {
+    name: "gaming-pc",
+    src: "/hobbies/gaming-pc.svg",
+    x: 90,
+    y: 0,
+    width: 540,
+    height: 540,
   },
 ] as const satisfies readonly HeroAssetDefinition[];
 
@@ -134,6 +129,15 @@ async function prepareHeroAssets(
     if (paths.length === 0) {
       throw new Error("Hero SVG does not contain drawable paths");
     }
+
+    paths.forEach((path) => {
+      path.style.fill = "none";
+      path.style.stroke = "#cdb27a";
+      path.style.strokeWidth = "1.25px";
+      path.style.strokeLinecap = "round";
+      path.style.strokeLinejoin = "round";
+      path.style.vectorEffect = "non-scaling-stroke";
+    });
 
     return {
       element,
@@ -255,7 +259,7 @@ export function HeroSculpture() {
       className="hero-drawable h-full w-full overflow-visible drop-shadow-[0_2.4rem_3rem_rgb(0_0_0/.34)]"
       viewBox="0 0 720 540"
       role="img"
-      aria-label="A looping animation drawing a laptop, BMW M4, barbell and game controller"
+      aria-label="A looping animation drawing a MacBook Pro, BMW M4, barbell and gaming PC"
       focusable="false"
     >
       <g>
