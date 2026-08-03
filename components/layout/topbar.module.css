@@ -1,0 +1,78 @@
+.header {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5rem;
+  color: white;
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 72rem;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.links {
+  display: flex;
+  gap: 1rem;
+}
+
+.linksEnd {
+  justify-content: flex-end;
+}
+
+.navLink {
+  color: rgb(255 255 255 / 0.55);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: #cdb27a;
+  outline: none;
+}
+
+.brand {
+  position: relative;
+  border-right: 1px solid rgb(255 255 255 / 0.1);
+  border-left: 1px solid rgb(255 255 255 / 0.1);
+  padding: 0 1rem;
+  color: white;
+  font-family: Didot, Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.08em;
+}
+
+.brand span {
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  width: 1rem;
+  height: 1px;
+  background: #cdb27a;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 40rem) {
+  .nav {
+    padding: 0 2rem;
+  }
+
+  .links {
+    gap: 3rem;
+  }
+
+  .brand {
+    padding: 0 1.5rem;
+  }
+}

@@ -1,12 +1,36 @@
-@import "tailwindcss";
-
-@theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0 solid;
+  padding: 0;
 }
 
 html,
 body {
   min-height: 100%;
   background: #020d1e;
+}
+
+body {
+  font-family: var(--font-geist-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }

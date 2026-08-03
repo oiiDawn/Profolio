@@ -21,7 +21,7 @@ export default function RootLayout({
       lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className="font-sans antialiased">
+      <body>
         <Topbar />
         <main>{children}</main>
       </body>

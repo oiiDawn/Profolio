@@ -1,36 +1,32 @@
 import Link from "next/link";
 
-const navLink =
-  "text-[9px] font-medium tracking-[0.34em] text-white/55 hover:text-[#cdb27a] focus-visible:text-[#cdb27a] focus-visible:outline-none";
+import styles from "./topbar.module.css";
 
 export function Topbar() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-20 text-white">
+    <header className={styles.header}>
       <nav
-        className="mx-auto grid h-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-8"
+        className={styles.nav}
         aria-label="Primary navigation"
       >
-        <div className="flex gap-4 sm:gap-12">
-          <Link className={navLink} href="/#about">
+        <div className={styles.links}>
+          <Link className={styles.navLink} href="/#about">
             ABOUT
           </Link>
-          <Link className={navLink} href="/#work">
+          <Link className={styles.navLink} href="/#work">
             WORK
           </Link>
         </div>
         <Link
           href="/#home"
-          className="relative border-x border-white/10 px-4 font-[Didot,Georgia,serif] text-2xl font-normal tracking-[-0.08em] text-white sm:px-6"
+          className={styles.brand}
           aria-label="Home"
         >
           OII
-          <span
-            className="absolute -bottom-2 left-1/2 h-px w-4 -translate-x-1/2 bg-[#cdb27a]"
-            aria-hidden
-          />
+          <span aria-hidden />
         </Link>
-        <div className="flex justify-end gap-4 sm:gap-12">
-          <Link className={navLink} href="/#contact">
+        <div className={`${styles.links} ${styles.linksEnd}`}>
+          <Link className={styles.navLink} href="/#contact">
             CONTACT
           </Link>
         </div>

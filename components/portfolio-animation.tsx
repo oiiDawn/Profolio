@@ -7,14 +7,8 @@ import {
   stagger,
   svg,
 } from "animejs";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  type MouseEvent,
-  useEffect,
-  useRef,
-} from "react";
+import { useEffect, useRef } from "react";
 
 import barbellScene from "@/app/Barbell.svg";
 import bmwM4 from "@/app/BMW M4.svg";
@@ -114,48 +108,6 @@ const heroCycleDuration =
   heroCycleTiming.eraseStagger +
   heroCycleTiming.blank;
 
-function namespaceSvgIds(svgElement: SVGSVGElement, namespace: string) {
-  const idMap = new Map<string, string>();
-
-  svgElement.querySelectorAll<SVGElement>("[id]").forEach((element) => {
-    const id = element.id;
-    const namespacedId = `${namespace}-${id}`;
-    idMap.set(id, namespacedId);
-    element.id = namespacedId;
-  });
-
-  const referenceAttributes = [
-    "fill",
-    "stroke",
-    "filter",
-    "clip-path",
-    "mask",
-    "marker-start",
-    "marker-mid",
-    "marker-end",
-    "href",
-    "xlink:href",
-  ] as const;
-
-  svgElement.querySelectorAll<SVGElement>("*").forEach((element) => {
-    referenceAttributes.forEach((attribute) => {
-      const value = element.getAttribute(attribute);
-      if (!value) return;
-
-      let nextValue = value;
-      idMap.forEach((namespacedId, id) => {
-        nextValue = nextValue
-          .replaceAll(`url(#${id})`, `url(#${namespacedId})`)
-          .replaceAll(`#${id}`, `#${namespacedId}`);
-      });
-
-      if (nextValue !== value) {
-        element.setAttribute(attribute, nextValue);
-      }
-    });
-  });
-}
-
 async function prepareHeroAssets(
   root: HTMLElement,
   signal: AbortSignal,
@@ -197,7 +149,6 @@ async function prepareHeroAssets(
         true,
       ) as unknown as SVGSVGElement;
       inlineSvg.querySelectorAll("title").forEach((title) => title.remove());
-      namespaceSvgIds(inlineSvg, `hero-${asset.name}`);
       inlineSvg.setAttribute("x", String(asset.x));
       inlineSvg.setAttribute("y", String(asset.y));
       inlineSvg.setAttribute("width", String(asset.width));
@@ -345,46 +296,19 @@ function HeroSculpture() {
       aria-label="A looping animation drawing a laptop, BMW M4, barbell and game controller"
       focusable="false"
     >
-      <g className={styles.hobbySculpture} data-scene-compositor>
-        <g data-scene-asset="laptop">
-          <image
-            href={laptopScene.src}
-            x="60"
-            y="30"
-            width="600"
-            height="338"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </g>
-        <g data-scene-asset="car">
-          <image
-            href={bmwM4.src}
-            x="60"
-            y="78"
-            width="600"
-            height="338"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </g>
-        <g data-scene-asset="barbell">
-          <image
-            href={barbellScene.src}
-            x="0"
-            y="0"
-            width="720"
-            height="540"
-          />
-        </g>
-        <g data-scene-asset="controller">
-          <image
-            href={controllerScene.src}
-            x="60"
-            y="30"
-            width="600"
-            height="338"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </g>
+      <g className={styles.hobbySculpture}>
+        {heroAssets.map((asset) => (
+          <g key={asset.name} data-scene-asset={asset.name}>
+            <image
+              href={asset.src}
+              x={asset.x}
+              y={asset.y}
+              width={asset.width}
+              height={asset.height}
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </g>
+        ))}
       </g>
 
     </svg>
@@ -413,40 +337,6 @@ function GalleryScene({
 }: {
   projects: readonly ShowcaseProject[];
 }) {
-  const router = useRouter();
-  const navigationTimer = useRef<number | null>(null);
-
-  useEffect(
-    () => () => {
-      if (navigationTimer.current !== null) {
-        window.clearTimeout(navigationTimer.current);
-      }
-    },
-    [],
-  );
-
-  function openProject(
-    event: MouseEvent<HTMLAnchorElement>,
-    project: ShowcaseProject,
-  ) {
-    const coarsePointer = window.matchMedia(
-      "(hover: none), (pointer: coarse)",
-    ).matches;
-
-    if (event.detail === 0 || !coarsePointer) {
-      return;
-    }
-
-    event.preventDefault();
-    if (navigationTimer.current !== null) return;
-
-    event.currentTarget.dispatchEvent(new Event("portfolio-preview"));
-    navigationTimer.current = window.setTimeout(
-      () => router.push(`/work/${projectSlug(project.title)}`),
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250,
-    );
-  }
-
   return (
     <div className={`${styles.scene} ${styles.galleryScene}`} data-scene>
       <div className={styles.galleryEyebrow}>
@@ -464,7 +354,6 @@ function GalleryScene({
             <Link
               className={styles.projectCard}
               href={`/work/${projectSlug(project.title)}`}
-              onClick={(event) => openProject(event, project)}
               data-project={project.id}
               data-project-card
               aria-label={`Open project: ${project.title}`}
@@ -474,16 +363,7 @@ function GalleryScene({
                 <span>{project.id}</span>
               </span>
 
-              <span className={styles.projectCardImage} data-project-image>
-                {project.image ? (
-                  <Image
-                    src={project.image}
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 78vw, 22vw"
-                  />
-                ) : null}
-              </span>
+              <span className={styles.projectCardImage} data-project-image />
 
               <span
                 className={styles.projectGlyph}
@@ -540,31 +420,16 @@ function AboutScene() {
   );
 }
 
-function ProjectVisual({ project }: { project: ShowcaseProject }) {
-  return (
-    <div className={styles.detailVisual} data-project={project.id}>
-      {project.image ? (
-        <Image
-          src={project.image}
-          alt={`${project.title} project preview`}
-          fill
-          sizes="(max-width: 768px) 90vw, 54vw"
-        />
-      ) : (
-        <span>PROJECT IMAGE</span>
-      )}
-      <small>{project.id}</small>
-    </div>
-  );
-}
-
 function DetailScene({ project }: { project: ShowcaseProject }) {
   const titleWords = project.title.split(/[-\s]+/);
 
   return (
     <div className={`${styles.scene} ${styles.detailScene}`} data-scene>
       <div className={styles.detailMedia} data-detail-media>
-        <ProjectVisual project={project} />
+        <div className={styles.detailVisual} data-project={project.id}>
+          <span>PROJECT IMAGE</span>
+          <small>{project.id}</small>
+        </div>
       </div>
 
       <div className={styles.detailCopy} data-scene-copy>
@@ -729,14 +594,12 @@ export function PortfolioAnimation({
           card.addEventListener("mouseleave", deactivate);
           card.addEventListener("focus", activate);
           card.addEventListener("blur", deactivate);
-          card.addEventListener("portfolio-preview", activate);
 
           return () => {
             card.removeEventListener("mouseenter", activate);
             card.removeEventListener("mouseleave", deactivate);
             card.removeEventListener("focus", activate);
             card.removeEventListener("blur", deactivate);
-            card.removeEventListener("portfolio-preview", activate);
           };
         });
 
@@ -791,7 +654,6 @@ export function PortfolioAnimation({
       ref={rootRef}
       className={`${styles.showcase} ${withBackdrop ? "" : styles.transparentShowcase}`}
       data-view={view}
-      data-portfolio-prototype
       aria-label="OII DAWN portfolio"
     >
       {withBackdrop ? (
