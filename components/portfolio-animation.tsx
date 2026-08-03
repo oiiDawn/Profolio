@@ -40,7 +40,7 @@ function HeroScene() {
       data-scene
     >
       <div
-        className="absolute top-[8%] left-1/2 aspect-4/3 w-[min(58vw,45rem)] -translate-x-1/2 drop-shadow-[0_3rem_4rem_rgb(0_0_0/.46)] [mask-image:radial-gradient(ellipse_at_center,black_51%,transparent_78%)] max-md:top-[12%] max-md:w-[min(108vw,38rem)]"
+        className="absolute top-[8%] left-1/2 aspect-4/3 w-[min(58vw,45rem)] -translate-x-1/2 drop-shadow-[0_3rem_4rem_rgb(0_0_0/.46)] max-md:top-[12%] max-md:w-[min(108vw,38rem)]"
         data-hero-art
       >
         <HeroSculpture />

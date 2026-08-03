@@ -133,10 +133,11 @@ async function prepareHeroAssets(
     paths.forEach((path) => {
       path.style.fill = "none";
       path.style.stroke = "#cdb27a";
-      path.style.strokeWidth = "1.25px";
+      path.style.strokeWidth = "1px";
       path.style.strokeLinecap = "round";
       path.style.strokeLinejoin = "round";
       path.style.vectorEffect = "non-scaling-stroke";
+      path.style.shapeRendering = "geometricPrecision";
     });
 
     return {
