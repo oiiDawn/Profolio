@@ -3,8 +3,6 @@
 import { createTimeline, set } from "animejs";
 import { useEffect, useState } from "react";
 
-import styles from "./portfolio-animation.module.css";
-
 type PortfolioSection = "home" | "about" | "work" | "contact";
 
 const sections: Record<
@@ -158,18 +156,27 @@ export function PortfolioChrome({ section }: { section?: PortfolioSection }) {
   const active = sections[activeSection];
 
   return (
-    <div className={styles.portfolioChrome}>
-      <div className={styles.sceneIndex} aria-hidden>
+    <div>
+      <div
+        className="fixed top-[31%] left-[clamp(1.3rem,6vw,6rem)] z-40 flex items-center gap-[.7rem] font-mono text-[.52rem] tracking-[.18em] text-[rgb(231_237_245/.72)] max-md:hidden"
+        aria-hidden
+      >
         <span>{active.index}</span>
-        <i />
+        <i className="block h-px w-[clamp(1.6rem,4vw,3.8rem)] bg-linear-to-r from-line to-transparent" />
       </div>
 
-      <div className={styles.sceneLabel}>
-        <i aria-hidden />
+      <div className="fixed bottom-[8%] left-[clamp(1.3rem,6vw,6rem)] z-40 flex items-center gap-3 text-[.5rem] font-semibold tracking-[.48em] text-[rgb(226_234_244/.7)] max-md:bottom-[1.8rem]">
+        <i
+          className="h-0 w-0 border-y-[.2rem] border-y-transparent border-l-[.32rem] border-l-ink"
+          aria-hidden
+        />
         <span>{active.label}</span>
       </div>
 
-      <nav className={styles.sceneDots} aria-label="Page sections">
+      <nav
+        className="fixed top-[31%] right-[clamp(1.3rem,6vw,6rem)] z-40 flex flex-col items-center gap-[.7rem] max-md:hidden"
+        aria-label="Page sections"
+      >
         {sectionIds.map((sectionId) => {
           const { index } = sections[sectionId];
           const isActive = sectionId === activeSection;
@@ -178,16 +185,20 @@ export function PortfolioChrome({ section }: { section?: PortfolioSection }) {
             <a
               key={sectionId}
               href={`/#${sectionId}`}
+              className="group grid size-4 place-items-center focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-gold"
               aria-label={`Go to section ${index}`}
               aria-current={isActive ? "page" : undefined}
             >
-              <i data-active={isActive || undefined} />
+              <i
+                className="block size-0.5 rounded-full bg-[rgb(233_239_247/.38)] group-hover:bg-gold group-focus-visible:bg-gold data-[active]:size-1.5 data-[active]:bg-ink data-[active]:shadow-[0_0_.65rem_rgb(245_242_233/.34)]"
+                data-active={isActive || undefined}
+              />
             </a>
           );
         })}
       </nav>
 
-      <div className={styles.sceneFooter}>
+      <div className="fixed right-[clamp(1.3rem,6vw,6rem)] bottom-[1.7rem] left-[clamp(1.3rem,6vw,6rem)] z-40 flex items-center justify-between gap-6 border-t border-line pt-[.9rem] text-[.48rem] tracking-[.26em] text-[rgb(226_234_244/.4)] max-md:bottom-[1.2rem] max-md:flex-wrap max-md:justify-center max-md:gap-x-4 max-md:gap-y-[.65rem] max-md:text-center">
         <span>OII DAWN</span>
         <span>PRODUCT · CODE · SYSTEMS</span>
         <span>AVAILABLE FOR THE RIGHT FIT</span>
