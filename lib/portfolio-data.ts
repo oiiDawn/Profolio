@@ -44,7 +44,6 @@ export const portfolio: {
     stack: string;
     contact: string;
     sendEmail: string;
-    touchGrass: string;
     openCaseStudy: string;
     closeDialog: string;
     moreInformation: string;
@@ -71,7 +70,6 @@ export const portfolio: {
     stack: "Stack",
     contact: "Contact",
     sendEmail: "Send me an email",
-    touchGrass: "Touch the grass",
     openCaseStudy: "Open case study",
     closeDialog: "Close dialog",
     moreInformation: "More information",

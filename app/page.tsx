@@ -295,10 +295,6 @@ export default function HomePage() {
         </section>
       </div>
 
-      <footer className="grass" aria-label={portfolio.labels.touchGrass}>
-        <span>{portfolio.labels.touchGrass}</span>
-      </footer>
-
       {portfolio.work.map((study) => (
         <CaseStudyDialog key={study.id} study={study} />
       ))}
