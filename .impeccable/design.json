@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-27T00:00:00+08:00",
+  "title": "Design System: gresfilip Replica",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Warm Canvas",
+        "canonical": "#f9f7f5",
+        "tonalRamp": [
+          "#252321",
+          "#474441",
+          "#696561",
+          "#8d8883",
+          "#b2aca7",
+          "#d4cfcb",
+          "#ebe7e4",
+          "#f9f7f5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "Geist",
+        "purpose": "Unified typography for the single-page portfolio and its dialogs."
+      }
+    },
+    "breakpoints": [
+      {
+        "name": "mobile-acceptance",
+        "value": "390px"
+      },
+      {
+        "name": "desktop-acceptance",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "Frozen Competitor Canon",
+    "overview": "This shipped replica follows the gresfilip competitor canon frozen on 2026-08-27. Snapshot seed snapshot-gresfilip-20260827 is the reference for visual fidelity; preserve the existing composition instead of extending it into a new identity.",
+    "keyCharacteristics": [
+      "One restrained portfolio page with three native dialogs.",
+      "Compact editorial presentation centered on the work.",
+      "Local, deterministic content and imagery."
+    ],
+    "rules": [
+      {
+        "name": "The Canon Rule",
+        "body": "Preserve the frozen reference palette; do not introduce speculative accent colors.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do treat snapshot-gresfilip-20260827 as the visual canon.",
+      "Do keep data in lib/portfolio-data.ts and assets in public/portfolio.",
+      "Do verify the 1440x900 desktop and 390x844 mobile targets."
+    ],
+    "donts": [
+      "Don't widen the 576px desktop content column.",
+      "Don't add pages, custom modal systems, remote assets, or a new visual identity.",
+      "Don't reinterpret the competitor canon after its 2026-08-27 freeze."
+    ]
+  }
+}

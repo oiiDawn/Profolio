@@ -1,59 +1,8 @@
-# CLAUDE.md
+# Project guidance
 
-## Project
-
-- Next.js 15 App Router portfolio.
-- Routes: `/`, `/about`, `/work`, `/work/[slug]`, `/contact`.
-- Package manager: `pnpm`.
-- Dark editorial visual system; desktop pages fit one viewport, mobile pages may scroll.
-
-## Work
-
-- Keep changes scoped and reuse existing components.
-- Preserve keyboard access and `prefers-reduced-motion`.
-- Project data lives in `lib/showcase-projects.ts`.
-- Shared navigation lives in `components/layout/topbar.tsx`.
-- Shared scenes and their styles live in `components/portfolio-animation.tsx` and `components/portfolio-animation.module.css`.
-
-## Check
-
-```bash
-pnpm check:fast
-pnpm build
-```
-
-## Design Context
-
-### Users
-
-The portfolio primarily serves recruiters, potential collaborators, and
-technical peers. Visitors should quickly understand OII DAWN's personality,
-then be able to confirm product and engineering capability through the work and
-contact sections.
-
-### Brand Personality
-
-Restrained, precise, and alive. The experience should feel composed and
-editorial rather than showy, technically exact without feeling sterile, and
-personal enough to reveal the human interests behind the engineering work.
-
-### Aesthetic Direction
-
-Maintain the existing dark editorial visual system: deep navy atmosphere,
-warm off-white typography, restrained gold accents, fine structural lines, and
-carefully controlled blue, violet, and coral color. Motion should feel cinematic
-and continuous. Avoid cyberpunk neon, game-launcher aesthetics, cartoon
-stickers, brand-logo collages, and fast transitions that exist only to show off.
-
-### Design Principles
-
-1. Keep professional identity legible while personal interests provide the
-   memorable hero moment.
-2. Prefer one precise, choreographed signature animation over many competing
-   effects.
-3. Use fine line work, restrained highlights, and purposeful color so new
-   visuals feel native to the existing interface.
-4. Preserve keyboard access, responsive behavior, and a meaningful static
-   experience for people who prefer reduced motion.
-5. Let every visual detail earn its place; avoid labels or decoration when the
-   form communicates clearly on its own.
+- This branch is a 2026-08-27 snapshot reproduction of `gresfilip.com`.
+- Keep the application to one page and native case-study dialogs.
+- Keep all visible facts, links, projects, and tool labels in `lib/portfolio-data.ts`.
+- Preserve keyboard access, responsive behavior, local assets, and reduced-motion support.
+- Prefer native HTML and CSS; add dependencies only when the current reproduction cannot work without them.
+- Validate with `pnpm check:fast` and `pnpm build`.

@@ -1,24 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="OII_DAWN">
-  <title>OII_DAWN</title>
-
-  <!-- Terminal frame: four corner brackets (thicker for 16/32 px favicon clarity) -->
-  <g fill="none" stroke="#8ff5ff" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter">
-    <path d="M6 22 V6 H22" />
-    <path d="M42 6 H58 V22" />
-    <path d="M6 42 V58 H22" />
-    <path d="M42 58 H58 V42" />
-  </g>
-
-  <!-- Shell prompt chevron: > -->
-  <path
-    d="M19 22 L30 32 L19 42"
-    fill="none"
-    stroke="#8ff5ff"
-    stroke-width="4.5"
-    stroke-linecap="square"
-    stroke-linejoin="miter"
-  />
-
-  <!-- Blinking-cursor block (accent magenta) -->
-  <rect x="34" y="38" width="12" height="5" fill="#d575ff" />
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="80" height="80" fill="#0C0A09"/>
+<path d="M25 16H55.1521V21.6789H30.8141V37.769H53.9352V43.3127H30.8141V64H25V16Z" fill="white"/>
 </svg>

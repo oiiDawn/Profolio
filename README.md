@@ -1,19 +1,12 @@
-# OII DAWN
+# Filip Gres portfolio snapshot
 
-Minimal animated portfolio built with Next.js, React, Tailwind CSS and Framer Motion.
-
-## Run
+Local Next.js reproduction of [gresfilip.com](https://gresfilip.com/), frozen on 2026-08-27.
 
 ```bash
 pnpm install
 pnpm dev
-```
-
-## Check
-
-```bash
 pnpm check:fast
 pnpm build
 ```
 
-Routes: `/`, `/about`, `/work`, `/work/[slug]`, `/contact`.
+Edit all visible content and links in `lib/portfolio-data.ts`.
