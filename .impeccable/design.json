@@ -1,67 +1,140 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-27T00:00:00+08:00",
-  "title": "Design System: gresfilip Replica",
+  "generatedAt": "2026-08-28T15:30:00+08:00",
+  "title": "Design System: Jiaming Zhang Working Folio",
   "extensions": {
     "colorMeta": {
-      "canvas": {
+      "paper": {
+        "role": "primary",
+        "displayName": "Warm Paper",
+        "canonical": "#f7f0e7",
+        "tonalRamp": ["#2a241f", "#4f443a", "#766759", "#9d8b79", "#c1ad98", "#dfcdbb", "#eee0d2", "#f7f0e7"]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Soft Graphite",
+        "canonical": "#353331",
+        "tonalRamp": ["#1c1b1a", "#353331", "#514e4b", "#716d68", "#938e88", "#b7b2ac", "#dad6d2", "#f0eeec"]
+      },
+      "ink-soft": {
         "role": "neutral",
-        "displayName": "Warm Canvas",
-        "canonical": "#f9f7f5",
-        "tonalRamp": [
-          "#252321",
-          "#474441",
-          "#696561",
-          "#8d8883",
-          "#b2aca7",
-          "#d4cfcb",
-          "#ebe7e4",
-          "#f9f7f5"
-        ]
+        "displayName": "Reading Graphite",
+        "canonical": "#68625d",
+        "tonalRamp": ["#201e1c", "#3a3734", "#514c48", "#68625d", "#8a837c", "#ada69f", "#d1cbc5", "#eeeae6"]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Accessible Quiet Ink",
+        "canonical": "#6f6963",
+        "tonalRamp": ["#211f1d", "#3d3936", "#56514c", "#6f6963", "#918a83", "#b3ada6", "#d4cfca", "#efebe7"]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Soft Rule",
+        "canonical": "#c9beb2",
+        "tonalRamp": ["#29231e", "#51463c", "#76695c", "#9a8c7e", "#b9aa9c", "#c9beb2", "#e2d9d0", "#f4eee8"]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "#a89d92",
+        "tonalRamp": ["#27221e", "#4b423a", "#6b6056", "#8b7f74", "#a89d92", "#c3bab1", "#ddd6cf", "#f2ede8"]
       }
     },
     "typographyMeta": {
-      "body": {
-        "displayName": "Geist",
-        "purpose": "Unified typography for the single-page portfolio and its dialogs."
-      }
+      "display": { "displayName": "Display", "purpose": "Reliability-led homepage thesis and project titles." },
+      "headline": { "displayName": "Chapter Headline", "purpose": "Case-study chapter structure." },
+      "title": { "displayName": "Structural Title", "purpose": "Section headings and index titles." },
+      "body": { "displayName": "Reading Body", "purpose": "Narrative, reflection, dates, and captions." },
+      "label": { "displayName": "Compact Label", "purpose": "Metadata keys and tooltips." }
     },
+    "shadows": [],
+    "motion": [
+      { "name": "trace-draw", "value": "720ms cubic-bezier(.16, 1, .3, 1) 180ms", "purpose": "Draw the single hero underline from an already-visible composition." },
+      { "name": "micro-response", "value": "180ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Directional link and icon responses." },
+      { "name": "tooltip-reveal", "value": "150ms ease", "purpose": "Reveal contextual icon labels." },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "Resolve motion immediately while preserving the final state." }
+    ],
     "breakpoints": [
-      {
-        "name": "mobile-acceptance",
-        "value": "390px"
-      },
-      {
-        "name": "desktop-acceptance",
-        "value": "1440px"
-      }
+      { "name": "minimum-supported", "value": "320px" },
+      { "name": "single-column", "value": "700px" },
+      { "name": "mobile-verification", "value": "390px" },
+      { "name": "desktop-verification", "value": "1440px" }
     ]
   },
-  "components": [],
+  "components": [
+    {
+      "name": "Section Heading",
+      "kind": "custom",
+      "refersTo": "section-heading",
+      "description": "A compact title with a same-row dashed leader.",
+      "html": "<h2 class=\"ds-section-heading\"><span>Selected Work</span><i aria-hidden=\"true\"></i></h2>",
+      "css": ".ds-section-heading { display:flex; align-items:center; gap:14px; margin:0; color:var(--ink); font:500 19px/1.2 Geist,Arial,sans-serif; letter-spacing:-.025em; } .ds-section-heading span { flex:none; } .ds-section-heading i { flex:1; border-top:1px dashed var(--line-strong); }"
+    },
+    {
+      "name": "Work Index Link",
+      "kind": "nav",
+      "refersTo": "work-index-row",
+      "description": "An unboxed project route with summary, period, and directional response.",
+      "html": "<a class=\"ds-work-link\" href=\"#\"><span><strong>VivoFlow</strong><small>From fragmented workflows to a company-wide source of truth.</small></span><span class=\"ds-work-meta\">2025–Present <svg viewBox=\"0 0 34 12\" aria-hidden=\"true\"><path d=\"M1 6h31M27 1l5 5-5 5\"/></svg></span></a>",
+      "css": ".ds-work-link { display:grid; grid-template-columns:minmax(0,1fr) 112px; gap:28px; padding:10px 0 17px; color:var(--ink); text-decoration:none; } .ds-work-link strong,.ds-work-link small { display:block; } .ds-work-link strong { font:500 20px/1.3 Geist,Arial,sans-serif; letter-spacing:-.025em; } .ds-work-link small,.ds-work-meta { color:var(--ink-soft); font:400 14px/1.45 Georgia,serif; } .ds-work-meta { display:flex; align-items:flex-end; flex-direction:column; white-space:nowrap; } .ds-work-meta svg { width:34px; margin-top:9px; fill:none; stroke:currentColor; stroke-width:1.2; transition:transform 180ms cubic-bezier(.16,1,.3,1); } .ds-work-link:hover svg,.ds-work-link:focus-visible svg { transform:translateX(5px); } .ds-work-link:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }"
+    },
+    {
+      "name": "Stack Tool",
+      "kind": "custom",
+      "refersTo": "stack-tool",
+      "description": "A bare brand-mark target with a compact inverse tooltip.",
+      "html": "<span class=\"ds-stack-tool\" tabindex=\"0\" aria-label=\"Tool\" data-label=\"Tool\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 4v16M4 12h16\"/></svg></span>",
+      "css": ".ds-stack-tool { position:relative; display:grid; width:32px; height:32px; place-items:center; color:var(--ink); } .ds-stack-tool svg { width:23px; height:23px; fill:none; stroke:currentColor; opacity:.78; transition:transform 180ms cubic-bezier(.16,1,.3,1),opacity 180ms ease; } .ds-stack-tool::after { position:absolute; bottom:calc(100% + 9px); left:50%; padding:4px 7px; background:var(--ink); color:var(--paper); content:attr(data-label); font:450 11px/1.35 Geist,Arial,sans-serif; opacity:0; pointer-events:none; transform:translate(-50%,4px); transition:150ms ease; white-space:nowrap; } .ds-stack-tool:hover svg,.ds-stack-tool:focus-visible svg { opacity:1; transform:translateY(-2px) rotate(-2deg); } .ds-stack-tool:hover::after,.ds-stack-tool:focus-visible::after { opacity:1; transform:translate(-50%,0); } .ds-stack-tool:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }"
+    },
+    {
+      "name": "Contact Link",
+      "kind": "nav",
+      "description": "A compact accessible icon link with the same authored micro-response as Stack.",
+      "html": "<a class=\"ds-contact-link\" href=\"mailto:hello@example.com\" aria-label=\"Get in touch by email\" data-label=\"Get in touch\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"2.5\" y=\"5\" width=\"19\" height=\"14\" rx=\"1\"/><path d=\"m3.5 6 8.5 7 8.5-7\"/></svg></a>",
+      "css": ".ds-contact-link { position:relative; display:block; width:25px; height:25px; color:var(--ink); } .ds-contact-link svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.35; transition:transform 180ms cubic-bezier(.16,1,.3,1); } .ds-contact-link:hover svg,.ds-contact-link:focus-visible svg { transform:translateY(-2px) rotate(-2deg); } .ds-contact-link:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }"
+    },
+    {
+      "name": "Concept Figure",
+      "kind": "custom",
+      "refersTo": "concept-figure",
+      "description": "A public-safe explanation drawn directly on the paper field.",
+      "html": "<figure class=\"ds-concept\"><div class=\"ds-node\"><strong>VivoFlow</strong><small>Shared, structured, traceable</small></div><figcaption>Conceptual view only; no internal interface or data is reproduced.</figcaption></figure>",
+      "css": ".ds-concept { margin:0; padding:42px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:var(--ink); } .ds-node { display:flex; min-height:124px; align-items:center; justify-content:center; flex-direction:column; border:1px solid var(--ink-soft); border-radius:52% 48% 50% 46%; text-align:center; transform:rotate(-1deg); } .ds-node strong { font:500 20px/1.2 Geist,Arial,sans-serif; } .ds-node small,.ds-concept figcaption { color:var(--ink-faint); font:400 12px/1.5 Georgia,serif; } .ds-concept figcaption { margin-top:36px; }"
+    }
+  ],
   "narrative": {
-    "northStar": "Frozen Competitor Canon",
-    "overview": "This shipped replica follows the gresfilip competitor canon frozen on 2026-08-27. Snapshot seed snapshot-gresfilip-20260827 is the reference for visual fidelity; preserve the existing composition instead of extending it into a new identity.",
+    "northStar": "The Working Folio",
+    "overview": "The system feels like a considered personal document that remains in use: warm paper, softened graphite, literary reading type, and a few precise hand-drawn gestures. It presents real engineering work with calm confidence, without turning the person into a conversion funnel or the page into a résumé template. Expression comes from typography, whitespace, dotted rules, and restrained linework. The interface stays quiet enough for long-form reading, while slightly irregular strokes and organic conceptual diagrams keep it authored rather than institutional. It rejects ornamental scrapbook nostalgia, card grids, and decorative texture.",
     "keyCharacteristics": [
-      "One restrained portfolio page with three native dialogs.",
-      "Compact editorial presentation centered on the work.",
-      "Local, deterministic content and imagery."
+      "Warm paper field with softened graphite hierarchy.",
+      "Modern structural sans paired with a literary serif reading voice.",
+      "Slightly left-offset reading rhythm with wider directory and figure moments.",
+      "Sparse dashed rules, organic geometry, and one purposeful drawn-line motion.",
+      "Public-safe, evidence-led project storytelling without screenshots or invented proof."
     ],
     "rules": [
-      {
-        "name": "The Canon Rule",
-        "body": "Preserve the frozen reference palette; do not introduce speculative accent colors.",
-        "section": "colors"
-      }
+      { "name": "The Paper Field Rule", "body": "The warm paper is the continuous canvas; do not break reading flow with white cards or tinted panels.", "section": "colors" },
+      { "name": "The Graphite Rule", "body": "Hierarchy comes from weight and tone, never pure black or a speculative accent color.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Sans structures and directs; serif explains and reflects. Do not introduce monospace or handwriting as a third general-purpose voice.", "section": "typography" },
+      { "name": "The Quiet Weight Rule", "body": "Prefer medium and variable weights over blunt boldness; emphasis should feel written into the hierarchy, not applied as decoration.", "section": "typography" },
+      { "name": "The Reading Axis Rule", "body": "Prose stays narrow; directories and evidence may widen only when the additional width improves scanning or comprehension.", "section": "layout" },
+      { "name": "The Flat Paper Rule", "body": "Do not lift sections into cards. A new surface must justify its existence through content hierarchy, not elevation.", "section": "elevation" },
+      { "name": "The Meaningful Irregularity Rule", "body": "Hand-drawn variation belongs to lines and conceptual geometry that explain something; never add doodles merely to decorate empty space.", "section": "shapes" }
     ],
     "dos": [
-      "Do treat snapshot-gresfilip-20260827 as the visual canon.",
-      "Do keep data in lib/portfolio-data.ts and assets in public/portfolio.",
-      "Do verify the 1440x900 desktop and 390x844 mobile targets."
+      "Do keep the warm paper field continuous and the primary text softened from pure black.",
+      "Do use typography, whitespace, measure, and sparse rules as the main hierarchy tools.",
+      "Do keep long-form prose narrow while allowing public-safe diagrams to widen.",
+      "Do preserve visible keyboard focus, readable small-text contrast, and an immediate reduced-motion alternative.",
+      "Do use conceptual diagrams only when they communicate confirmed, public-safe facts."
     ],
     "donts": [
-      "Don't widen the 576px desktop content column.",
-      "Don't add pages, custom modal systems, remote assets, or a new visual identity.",
-      "Don't reinterpret the competitor canon after its 2026-08-27 freeze."
+      "Don't introduce cards, persistent navigation, hero CTAs, technology tag walls, or résumé-conversion patterns.",
+      "Don't add tape, torn edges, sticky notes, paper fibers, pervasive doodles, or reconstructed screenshots.",
+      "Don't use pure black, bright accent colors, gradients, decorative shadows, or ornamental texture.",
+      "Don't fabricate imagery, metrics, evidence, or confidential interface detail to make a case study feel complete.",
+      "Don't publish placeholder sections or assets; omit unfinished material until the real content exists."
     ]
   }
 }

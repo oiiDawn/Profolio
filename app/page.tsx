@@ -1,303 +1,128 @@
-"use client";
-
-/* This page renders the complete portfolio snapshot from one editable data source. */
-import type { MouseEvent } from "react";
+/* This page introduces Jiaming through a concise index of work, experience, tools, and contact paths. */
+import Link from "next/link";
 import Image from "next/image";
 
-import { portfolio, type CaseStudy, type Project } from "@/lib/portfolio-data";
+import { profile, workStudies } from "@/lib/portfolio-data";
 
-const asset = (path: string) => `/portfolio/${path}`;
-
-function LocalImage({
-  src,
-  alt = "",
-  className,
-  width = 24,
-  height = 24,
-}: {
-  src: string;
-  alt?: string;
-  className?: string;
-  width?: number;
-  height?: number;
-}) {
-  return <Image src={asset(src)} alt={alt} className={className} width={width} height={height} />;
-}
-
-function ExternalLink({
-  href,
-  children,
-  className,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
+function SectionHeading({ children, id }: { children: React.ReactNode; id?: string }) {
   return (
-    <a className={className} href={href} target="_blank" rel="noreferrer">
-      {children}
-    </a>
+    <h2 className="section-heading" id={id}>
+      <span>{children}</span>
+      <i aria-hidden="true" />
+    </h2>
   );
 }
 
-function ProjectBlock({ project }: { project: Project }) {
-  return (
-    <section className="case-project">
-      <h3>{project.title}</h3>
-      {project.kind === "mascot" ? (
-        <div className="mascot" aria-label={portfolio.labels.mascot}>
-          <div className="mascot-face">
-            <i />
-            <i />
-            <b />
-          </div>
-          <span>{project.prompt}</span>
-        </div>
-      ) : (
-        <div className={project.images.length > 1 ? "case-images case-images-grid" : "case-images"}>
-          {project.images.map((image) => (
-            <Image
-              key={image.src}
-              src={asset(image.src)}
-              alt={image.alt}
-              width={image.width ?? 2256}
-              height={image.height ?? 1500}
-              sizes="(max-width: 639px) calc(100vw - 32px), 737px"
-              priority={image.src === "felix/felix-app-ui.png"}
-            />
-          ))}
-        </div>
-      )}
-      <ul className="tags" aria-label={`${project.title} disciplines`}>
-        {project.tags.map((tag) => (
-          <li key={tag}>{tag}</li>
-        ))}
-      </ul>
-    </section>
-  );
-}
+function ContactIcon({ kind }: { kind: "email" | "linkedin" | "github" }) {
+  if (kind === "email") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2.5" y="5" width="19" height="14" rx="1" />
+        <path d="m3.5 6 8.5 7 8.5-7" />
+      </svg>
+    );
+  }
 
-function CaseStudyDialog({ study }: { study: CaseStudy }) {
-  const close = (event: MouseEvent<HTMLButtonElement>) => {
-    event.currentTarget.closest("dialog")?.close();
-  };
+  if (kind === "linkedin") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="1" />
+        <path d="M7.5 10v7M7.5 7.2v.1M11 17v-7m0 3.2c.8-2 5.5-2.6 5.5 1.1V17" />
+      </svg>
+    );
+  }
 
   return (
-    <dialog
-      className="case-dialog"
-      id={`case-${study.id}`}
-      aria-labelledby={`case-${study.id}-title`}
-      onClick={(event) => event.target === event.currentTarget && event.currentTarget.close()}
-    >
-      <div className="case-panel">
-        <header className="case-toolbar">
-          <span className="case-info" tabIndex={0}>
-            <LocalImage src="info-circle.svg" alt={portfolio.labels.moreInformation} />
-            <span role="tooltip">{study.notice}</span>
-          </span>
-          <p>{study.company}</p>
-          <button type="button" onClick={close} aria-label={portfolio.labels.closeDialog} autoFocus>
-            <LocalImage src="close.svg" />
-          </button>
-        </header>
-
-        <div className="case-scroll">
-          <div className="case-content">
-            <section className="case-overview">
-              <div className="case-copy">
-                <h2 id={`case-${study.id}-title`}>{study.title}</h2>
-                {study.body.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </div>
-
-              <div className="case-metrics">
-                {study.metrics.map((metric) => {
-                  const content = (
-                    <>
-                      {metric.icon && <LocalImage src={metric.icon} width={172} height={32} />}
-                      <strong>{metric.value}</strong>
-                      <span>{metric.label}</span>
-                    </>
-                  );
-                  return metric.href ? (
-                    <ExternalLink key={metric.value} href={metric.href}>
-                      {content}
-                    </ExternalLink>
-                  ) : (
-                    <div key={metric.value}>{content}</div>
-                  );
-                })}
-              </div>
-
-              <dl className="case-facts">
-                {study.facts.map((fact) => (
-                  <div key={fact.label}>
-                    <dt>{fact.label}</dt>
-                    <dd>{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-
-            {study.chapters.map((chapter, index) => (
-              <section className="case-chapter" key={chapter.title ?? `chapter-${index}`}>
-                {chapter.title && (
-                  <div className="case-copy">
-                    <h2>{chapter.title}</h2>
-                    {chapter.body?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                  </div>
-                )}
-                {chapter.projects.map((project) => (
-                  <ProjectBlock key={project.title} project={project} />
-                ))}
-              </section>
-            ))}
-
-            {study.links.length > 0 && (
-              <div className="case-actions">
-                {study.links.map((link) => (
-                  <ExternalLink key={link.label} href={link.href} className="button button-dark">
-                    {link.icon && <LocalImage src={link.icon} />}
-                    {link.label}
-                    {!link.icon && <LocalImage src="arrow-up-right.svg" />}
-                  </ExternalLink>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </dialog>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2.7a9.3 9.3 0 0 0-3 18.1c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.7.1-.7.1-.7 1 .1 1.6 1 1.6 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.3-2.3-.3-4.6-1.1-4.6-4.9 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.5 9.5 0 0 1 5.1 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.6 4.9.4.3.7 1 .7 1.9v2.8c0 .3.2.6.7.5A9.3 9.3 0 0 0 12 2.7Z" />
+    </svg>
   );
-}
-
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="section-title">{children}</h2>;
 }
 
 export default function HomePage() {
   return (
-    <main className="site">
-      <div className="column">
-        <header className="topline">
-          <p>{portfolio.name}</p>
-          <ExternalLink href={portfolio.followers.href} className="follower-link">
-            <LocalImage src="linkedin.svg" alt="LinkedIn" />
-            {portfolio.followers.label}
-            <LocalImage src="arrow-up-right.svg" />
-          </ExternalLink>
+    <main className="folio">
+      <div className="folio-column">
+        <header className="opening">
+          <p className="identity">
+            {profile.name} <span aria-hidden="true">·</span> <span lang="zh-CN">{profile.chineseName}</span>
+          </p>
+          <p className="role">{profile.role}</p>
+          <h1>{profile.headline}</h1>
+          <p className="introduction">{profile.introduction}</p>
         </header>
 
-        <section className="hero">
-          <h1>{portfolio.headline}</h1>
-          {portfolio.intro.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-          <div className="hero-actions">
-            <a className="button button-dark" href={portfolio.email}>
-              {portfolio.labels.contactMe}
-            </a>
-            <ExternalLink className="button button-light" href={portfolio.resume}>
-              {portfolio.labels.readCv}
-              <LocalImage src="arrow-up-right.svg" />
-            </ExternalLink>
-          </div>
-        </section>
-
-        <section className="page-section work-life">
-          <SectionTitle>{portfolio.labels.workLife}</SectionTitle>
-          <div className="rows">
-            {portfolio.work.map((work) => (
-              <button
-                className="work-row"
-                key={work.id}
-                type="button"
-                onClick={() => (document.getElementById(`case-${work.id}`) as HTMLDialogElement).showModal()}
-              >
-                <span className="row-name">
-                  <LocalImage src={work.logo} />
-                  {work.company}
+        <section className="folio-section selected-work" aria-labelledby="selected-work-heading">
+          <SectionHeading id="selected-work-heading">Selected Work</SectionHeading>
+          <div className="work-index">
+            {workStudies.map((work) => (
+              <Link className="work-index-row" href={`/work/${work.slug}`} key={work.slug}>
+                <span className="work-index-copy">
+                  <strong>{work.title}</strong>
+                  <span>{work.subtitle}</span>
                 </span>
-                <span className="row-role">{work.role}</span>
-                <span className="row-period">{work.period}</span>
-                <LocalImage className="row-arrow" src="arrow-right.svg" alt={portfolio.labels.openCaseStudy} />
-              </button>
+                <span className="work-index-meta">
+                  <span>{work.indexPeriod}</span>
+                  <svg viewBox="0 0 34 12" aria-hidden="true">
+                    <path d="M1 6h31M27 1l5 5-5 5" />
+                  </svg>
+                </span>
+              </Link>
             ))}
           </div>
         </section>
 
-        <section className="page-section side-quests">
-          <SectionTitle>{portfolio.labels.sideQuests}</SectionTitle>
-          <div className="rows">
-            {portfolio.sideQuests.map((quest) => (
-              <ExternalLink className="quest-row" href={quest.href} key={quest.name}>
-                <span className="row-name">
-                  <LocalImage src={quest.logo} />
-                  {quest.name}
-                </span>
-                <span className="row-role">{quest.description}</span>
-                <LocalImage className="row-arrow" src="arrow-up-right.svg" />
-              </ExternalLink>
+        <section className="folio-section experience" aria-labelledby="experience-heading">
+          <SectionHeading id="experience-heading">Experience</SectionHeading>
+          <div className="experience-list">
+            {profile.experience.map((item) => (
+              <div className="experience-row" key={`${item.company}-${item.period}`}>
+                <strong>{item.company}</strong>
+                <span>{item.role}</span>
+                <time>{item.period}</time>
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="page-section approach">
-          <SectionTitle>{portfolio.labels.approach}</SectionTitle>
-          <ol>
-            {portfolio.approach.map((item, index) => (
-              <li key={item.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              </li>
+        <section className="folio-section stack" aria-labelledby="stack-heading">
+          <SectionHeading id="stack-heading">Stack</SectionHeading>
+          <div className="stack-groups">
+            {profile.stack.map((group) => (
+              <div className="stack-group" key={group.category}>
+                <h3>{group.category}</h3>
+                <ul>
+                  {group.tools.map((tool) => (
+                    <li key={tool.name}>
+                      <span className="stack-tool" data-label={tool.name} tabIndex={0} aria-label={tool.name}>
+                        <Image src={tool.icon} alt="" width={24} height={24} />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ol>
+          </div>
         </section>
 
-        <section className="page-section stack">
-          <SectionTitle>{portfolio.labels.stack}</SectionTitle>
-          <ul>
-            {portfolio.stack.map((tool) => (
-              <li key={tool.name}>
-                <span className="tool" tabIndex={0} data-label={tool.name}>
-                  <LocalImage src={tool.icon} alt={tool.name} />
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="page-section contact">
-          <SectionTitle>{portfolio.labels.contact}</SectionTitle>
-          <div className="contact-row">
-            <div>
-              <a href={portfolio.email}>
-                <LocalImage src="email.svg" />
-                {portfolio.labels.sendEmail}
+        <section className="folio-section contact" aria-labelledby="contact-heading">
+          <SectionHeading id="contact-heading">Contact</SectionHeading>
+          <div className="contact-content">
+            <div className="contact-links">
+              <a className="icon-link" href={profile.contact.email} aria-label="Get in touch by email" data-label="Get in touch">
+                <ContactIcon kind="email" />
               </a>
-              <ExternalLink href={portfolio.resume}>
-                {portfolio.labels.readCv}
-                <LocalImage src="arrow-up-right.svg" />
-              </ExternalLink>
+              <a className="icon-link" href={profile.contact.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" data-label="LinkedIn">
+                <ContactIcon kind="linkedin" />
+              </a>
+              <a className="icon-link" href={profile.contact.github} target="_blank" rel="noreferrer" aria-label="GitHub" data-label="GitHub">
+                <ContactIcon kind="github" />
+              </a>
             </div>
-            <div className="socials">
-              {portfolio.socials.map((social) => (
-                <ExternalLink href={social.href} key={social.name}>
-                  <LocalImage src={social.icon} alt={social.name} />
-                </ExternalLink>
-              ))}
-            </div>
+            <p>{profile.contact.location}</p>
           </div>
         </section>
       </div>
-
-      {portfolio.work.map((study) => (
-        <CaseStudyDialog key={study.id} study={study} />
-      ))}
     </main>
   );
 }

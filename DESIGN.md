@@ -1,66 +1,193 @@
 ---
-name: gresfilip Replica
-description: Faithful single-page portfolio replica of the frozen 2026-08-27 competitor canon.
+name: Jiaming Zhang Working Folio
+description: A tactile, reading-first personal document for real work and thoughtful engineering.
 colors:
-  canvas: "#f9f7f5"
+  paper: "#f7f0e7"
+  ink: "#353331"
+  ink-soft: "#68625d"
+  ink-faint: "#6f6963"
+  line: "#c9beb2"
+  line-strong: "#a89d92"
 typography:
+  display:
+    fontFamily: "Geist, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(2.7rem, 6.1vw, 4rem)"
+    fontWeight: 440
+    lineHeight: 1.05
+    letterSpacing: "-0.04em"
+  headline:
+    fontFamily: "Geist, Helvetica Neue, Arial, sans-serif"
+    fontSize: "30px"
+    fontWeight: 480
+    lineHeight: 1.16
+    letterSpacing: "-0.035em"
+  title:
+    fontFamily: "Geist, Helvetica Neue, Arial, sans-serif"
+    fontSize: "19px"
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: "-0.025em"
   body:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Georgia, Times New Roman, serif"
+    fontSize: "17px"
+    fontWeight: 400
+    lineHeight: 1.72
+  label:
+    fontFamily: "Geist, Helvetica Neue, Arial, sans-serif"
+    fontSize: "11px"
+    fontWeight: 550
+    lineHeight: 1.4
+components:
+  section-heading:
+    textColor: "{colors.ink}"
+    typography: "{typography.title}"
+    padding: "0"
+  work-index-row:
+    textColor: "{colors.ink}"
+    padding: "10px 0 17px"
+  tooltip:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
+    typography: "{typography.label}"
+    padding: "4px 7px"
+  stack-tool:
+    textColor: "{colors.ink}"
+    size: "32px"
+  concept-figure:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink-soft}"
+    padding: "42px"
 ---
 
-# Design System: gresfilip Replica
+# Design System: Jiaming Zhang Working Folio
 
 ## Overview
 
-**Creative North Star: "Frozen Competitor Canon"**
+**Creative North Star: "The Working Folio"**
 
-This shipped replica follows the gresfilip competitor canon frozen on 2026-08-27. Snapshot seed `snapshot-gresfilip-20260827` is the reference for visual fidelity; preserve the existing composition instead of extending it into a new identity.
+The system feels like a considered personal document that remains in use: warm paper, softened graphite, literary reading type, and a few precise hand-drawn gestures. It presents real engineering work with calm confidence, without turning the person into a conversion funnel or the page into a résumé template.
+
+Expression comes from typography, whitespace, dotted rules, and restrained linework. The interface stays quiet enough for long-form reading, while slightly irregular strokes and organic conceptual diagrams keep it authored rather than institutional. It rejects ornamental scrapbook nostalgia, card grids, and decorative texture.
 
 **Key Characteristics:**
 
-- One restrained portfolio page with three native dialogs.
-- Compact editorial presentation centered on the work.
-- Local, deterministic content and imagery.
+- Warm paper field with softened graphite hierarchy.
+- Modern structural sans paired with a literary serif reading voice.
+- Slightly left-offset reading rhythm with wider directory and figure moments.
+- Sparse dashed rules, organic geometry, and one purposeful drawn-line motion.
+- Public-safe, evidence-led project storytelling without screenshots or invented proof.
 
 ## Colors
 
-The page uses the warm off-white canvas token as its defining neutral surface.
+The palette is a warm neutral manuscript: paper carries the atmosphere, graphite carries meaning, and taupe rules organize without becoming chrome.
 
-**The Canon Rule.** Preserve the frozen reference palette; do not introduce speculative accent colors.
+### Primary
+
+- **Warm Paper**: The uninterrupted page surface and inverse tooltip text.
+- **Soft Graphite**: Primary headings, links, focus rings, and authored linework.
+
+### Neutral
+
+- **Reading Graphite**: Sustained serif copy and secondary metadata.
+- **Accessible Quiet Ink**: Small labels and captions that must remain understated without falling below readable contrast.
+- **Soft Rule**: Figure boundaries and low-emphasis separators.
+- **Strong Rule**: Dotted leaders and structural dividers.
+
+**The Paper Field Rule.** The warm paper is the continuous canvas; do not break reading flow with white cards or tinted panels.
+
+**The Graphite Rule.** Hierarchy comes from weight and tone, never pure black or a speculative accent color.
 
 ## Typography
 
-**Display Font:** Geist (sans-serif fallback)
-**Body Font:** Geist (sans-serif fallback)
+**Display Font:** Geist (with Helvetica Neue and Arial fallbacks)  
+**Body Font:** Georgia (with Times New Roman fallback)
 
-**Character:** Neutral, compact, and content-led. Typography supports the replica rather than adding a separate stylistic voice.
+**Character:** Geist gives identity, navigation, and engineering structure a precise contemporary voice. Georgia slows the page into reading mode for explanations, dates, captions, and reflective copy.
+
+### Hierarchy
+
+- **Display** (440, fluid up to 4rem, 1.05): Homepage thesis; work-detail titles use the same voice at a larger fluid ceiling.
+- **Headline** (480, 30px, 1.16): Case-study chapter headings.
+- **Title** (500, 19px, 1.2): Section headings and compact structural labels.
+- **Body** (400, 17px, 1.72): Long-form project narrative, held to a narrow reading measure.
+- **Label** (550, 11px, 1.4): Metadata keys and tooltips; uppercase is reserved for compact metadata keys.
+
+**The Two-Voice Rule.** Sans structures and directs; serif explains and reflects. Do not introduce monospace or handwriting as a third general-purpose voice.
+
+**The Quiet Weight Rule.** Prefer medium and variable weights over blunt boldness; emphasis should feel written into the hierarchy, not applied as decoration.
 
 ## Layout
 
-Desktop content is 576px wide. The responsive acceptance targets are 1440x900 and 390x844; preserve the single-page hierarchy and readable flow at both sizes.
+The homepage uses a 780px folio column with a 660px opening and 610px introduction, centered with a subtly offset reading feel created by the narrower content measures. Dedicated work pages expand to 920px so conceptual figures can breathe while narrative copy remains at 680px.
+
+Desktop spacing is generous and vertical: homepage sections recur around 78px apart, while major work chapters use roughly 112–118px of separation. At 700px and below, the layout becomes one column, outer gutters become 20px, metadata stacks, and figures extend to the viewport gutter without changing story order. The document supports a 320px minimum width and is verified at 390px and 1440px.
+
+**The Reading Axis Rule.** Prose stays narrow; directories and evidence may widen only when the additional width improves scanning or comprehension.
 
 ## Elevation & Depth
 
-Keep the page visually restrained. The three dialogs use native dialog behavior; avoid ornamental depth that departs from the frozen canon.
+The system is flat by design and uses no shadows. Depth comes from measure changes, whitespace, border rhythm, and the contrast between structured sans and reading serif. Tooltips invert paper and ink for temporary foreground priority.
+
+**The Flat Paper Rule.** Do not lift sections into cards. A new surface must justify its existence through content hierarchy, not elevation.
 
 ## Shapes
 
-Preserve the implemented geometry and native dialog form rather than inventing a generalized radius system.
+Most interface geometry is square, open, and unboxed. One-pixel solid or dashed rules provide structure. Organic elliptical borders are reserved for conceptual nodes, where small rotations and asymmetric radii communicate authored explanation rather than polished product UI.
+
+Focus uses a clear 2px graphite outline with a 5px offset. Rounded rectangles and pills are not part of the general interface language; tooltips remain compact and rectangular.
+
+**The Meaningful Irregularity Rule.** Hand-drawn variation belongs to lines and conceptual geometry that explain something; never add doodles merely to decorate empty space.
 
 ## Components
 
-The shipped surface is one page plus three native dialogs. Portfolio content comes from `lib/portfolio-data.ts`; imagery and other replica assets come from `public/portfolio`.
+### Section Headings
+
+- **Structure:** A compact sans title and a same-row dashed leader that fills the remaining width.
+- **Color:** Graphite title with the strong taupe rule.
+- **Behavior:** The leader is hierarchy, not a standalone section divider.
+
+### Work Index Links
+
+- **Structure:** Unboxed two-column rows with title and summary on the left, date and arrow on the right.
+- **State:** Hover and keyboard focus move the arrow 5px with a short exponential ease-out; focus retains the global outline.
+- **Responsive:** The metadata column narrows on mobile while title and summary remain the reading priority.
+
+### Stack Tools and Contact Links
+
+- **Shape:** 32px icon targets for Stack and compact line icons for Contact, with no badge container.
+- **State:** Icons lift 2px and rotate slightly on hover or focus. Tooltips invert to graphite-on-paper roles and appear above the icon.
+- **Content:** Use mature localized brand marks where verified; omit tools whose icon cannot be represented consistently.
+
+### Concept Figures
+
+- **Structure:** Public-safe geometry placed directly on the paper between solid hairlines, with a short attached serif caption.
+- **Shape:** Organic ellipses distinguish conceptual entities; pipeline stages may use open horizontal rules.
+- **Responsive:** Multi-column explanations collapse into the same semantic order on mobile; arrows rotate to preserve direction.
+
+### Work Navigation
+
+- **Structure:** A dashed top rule with deterministic Back and Next links at opposite ends.
+- **State:** Links underline on hover and keyboard focus; mobile stacks them in reading order.
+
+### Hero Trace
+
+- **Motion:** One 720ms line draw with an exponential ease-out and short delay. Reduced-motion resolves immediately to the visible final line.
+- **Purpose:** It underlines the thesis once; it is not a reusable entrance animation for every section.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** treat `snapshot-gresfilip-20260827` as the visual canon.
-- **Do** keep data in `lib/portfolio-data.ts` and assets in `public/portfolio`.
-- **Do** verify the 1440x900 desktop and 390x844 mobile targets.
+- **Do** keep the warm paper field continuous and the primary text softened from pure black.
+- **Do** use typography, whitespace, measure, and sparse rules as the main hierarchy tools.
+- **Do** keep long-form prose narrow while allowing public-safe diagrams to widen.
+- **Do** preserve visible keyboard focus, readable small-text contrast, and an immediate reduced-motion alternative.
+- **Do** use conceptual diagrams only when they communicate confirmed, public-safe facts.
 
 ### Don't:
 
-- **Don't** widen the 576px desktop content column.
-- **Don't** add pages, custom modal systems, remote assets, or a new visual identity.
-- **Don't** reinterpret the competitor canon after its 2026-08-27 freeze.
+- **Don't** introduce cards, persistent navigation, hero CTAs, technology tag walls, or résumé-conversion patterns.
+- **Don't** add tape, torn edges, sticky notes, paper fibers, pervasive doodles, or reconstructed screenshots.
+- **Don't** use pure black, bright accent colors, gradients, decorative shadows, or ornamental texture.
+- **Don't** fabricate imagery, metrics, evidence, or confidential interface detail to make a case study feel complete.
+- **Don't** publish placeholder sections or assets; omit unfinished material until the real content exists.

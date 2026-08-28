@@ -1,0 +1,14 @@
+{
+  "title": "Offset Folio — Approved Homepage Composition",
+  "surface": "app/page.tsx",
+  "generatedAt": "2026-08-28",
+  "sourceTool": "built-in imagegen",
+  "reference": "homepage-comp-b-offset-folio.png",
+  "approved": true,
+  "promptSummary": "Preserve Offset Folio while reducing Selected Work title scale, increasing section-heading scale, replacing section underlines with same-row dotted leaders, removing the standalone How I Work-to-Stack divider, removing per-principle top rules, and greekening unresolved copy.",
+  "nonLiteral": [
+    "Hero introduction is unresolved placeholder copy.",
+    "Stack glyphs are composition placeholders, not verified official icons.",
+    "The future likeness-based logo is intentionally omitted until a reference photo exists."
+  ]
+}

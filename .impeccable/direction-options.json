@@ -1,0 +1,57 @@
+{
+  "title": "Choose Jiaming Zhang's visual world",
+  "question": "Keep the traceable personal folio, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Traceable Folio",
+      "kicker": "RECOMMENDED DIRECTION",
+      "lineage": "annotated RFCs, review markup, engineering audit trails, personal technical papers",
+      "thesis": "A personal document whose visible hand-drawn trace connects each claim to the work and judgment behind it.",
+      "palette": ["#F7F0E7", "#5D5751", "#8B8178", "#A3A08B"],
+      "materials": ["warm uncoated paper", "graphite annotations", "faded technical ink"],
+      "viewport": "A quiet nameplate and line-art portrait open into one confident statement; a hand-drawn trace leaves the portrait, underlines the statement, and becomes the first project diagram.",
+      "risk": "The trace becomes a gimmick if it decorates every paragraph instead of carrying real relationships."
+    },
+    {
+      "id": "challenger-coptic",
+      "label": "The Exposed Binding",
+      "kicker": "STRONG ALTERNATE",
+      "lineage": "Coptic books with visible chain-stitch spines and pages that open fully flat",
+      "thesis": "Nothing is hidden: one visible binding links experience, work, thinking, and future writing into a growing personal volume.",
+      "palette": ["#F7F0E7", "#5D5751", "#918575", "#B4AA9B"],
+      "materials": ["rag paper", "soft graphite", "exposed linen thread"],
+      "viewport": "A flat-open title spread places the portrait as a bookplate while a stitched vertical index reveals every section of the site.",
+      "risk": "The literal book mechanism may make an engineer's living profile feel like a craft portfolio or a finished memoir.",
+      "case": "Audience identification is strong and personal; product clarity is slightly weaker because the binding metaphor can lead the content.",
+      "hero": "https://impeccable.style/worlds/cards/craft-making-coptic-exposed-binding-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/craft-making-coptic-exposed-binding.webp"
+    },
+    {
+      "id": "challenger-botanical",
+      "label": "The Comparative Folio",
+      "kicker": "PROVOCATIVE ALTERNATE",
+      "lineage": "botanical folios that compare fixed-scale plates with captions and annotations",
+      "thesis": "Work is examined as a series of comparable plates, each showing the problem, intervention, evidence, and lasting lesson at one shared scale.",
+      "palette": ["#F7F0E7", "#5D5751", "#7F8974", "#9D8276"],
+      "materials": ["cream plate stock", "engraved linework", "faded specimen labels"],
+      "viewport": "The portrait and three tiny work plates share one baseline; hovering or focusing a plate reveals the decision that changed the outcome.",
+      "risk": "The organic specimen metaphor can falsely imply that a career follows neat natural stages.",
+      "case": "Fuses well with diagrams and low contrast, but identifies Jiaming less clearly as an engineer than the traceable folio.",
+      "hero": "https://impeccable.style/worlds/cards/editorial-sequence-montage-botanical-folio-season-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/editorial-sequence-montage-botanical-folio-season.webp"
+    }
+  ],
+  "reroll": true,
+  "canon": true,
+  "canonCard": {
+    "label": "The polished portfolio standard",
+    "lineage": "a conventional single-column personal portfolio",
+    "thesis": "A familiar hero, experience list, project cards, stack, and contact block executed with excellent typography.",
+    "palette": ["#F7F0E7", "#5D5751", "#8B8178"],
+    "materials": ["flat digital canvas", "clean rules", "brand icons"],
+    "viewport": "Name, role statement, short introduction, contact action, and the first experience row appear in a predictable reading order.",
+    "risk": "It is clear and usable but does not express how Jiaming connects work, evidence, and thought."
+  },
+  "steer": true
+}
