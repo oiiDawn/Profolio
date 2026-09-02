@@ -44,6 +44,28 @@ export const profile = {
     { company: "Huawei", role: "Full-stack Engineer", period: "Mar 2022–Nov 2023" },
     { company: "Troph Inc.", role: "Full-stack Engineer", period: "Oct 2020–May 2021" },
   ],
+  education: [
+    {
+      school: "The University of Queensland",
+      program: "Master of Engineering Science · Software Engineering",
+      period: "2024–2025",
+    },
+    {
+      school: "The University of Tokyo",
+      program: "Research Student · Electrical and Information Engineering",
+      period: "2020–2021",
+    },
+    {
+      school: "Kyushu University",
+      program: "Exchange Student · Electrical Engineering and Computer Science",
+      period: "2019–2020",
+    },
+    {
+      school: "Beihang University",
+      program: "B.Eng. · Software Engineering",
+      period: "2016–2020",
+    },
+  ],
   stack: [
     {
       category: "AI Tools",

@@ -86,6 +86,19 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="folio-section education" aria-labelledby="education-heading">
+          <SectionHeading id="education-heading">Education</SectionHeading>
+          <div className="education-list">
+            {profile.education.map((item) => (
+              <div className="education-row" key={`${item.school}-${item.period}`}>
+                <strong>{item.school}</strong>
+                <span className="education-program">{item.program}</span>
+                <time>{item.period}</time>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="folio-section stack" aria-labelledby="stack-heading">
           <SectionHeading id="stack-heading">Stack</SectionHeading>
           <div className="stack-groups">
