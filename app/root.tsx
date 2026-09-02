@@ -1,16 +1,18 @@
-/* This layout supplies the portfolio's typography, metadata, and durable visual direction contract. */
-import type { Metadata } from "next";
-import { GeistSans } from "geist/font";
+/* This root document owns shared metadata, typography, styles, hydration, and route rendering. */
+import "@fontsource-variable/geist";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "react-router";
 
+import type { Route } from "./+types/root";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Jiaming Zhang",
-  description: "Full-stack and Agent Engineer building reliable systems for complex, real-world workflows.",
-  icons: {
-    icon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%23f7f0e7%22/></svg>",
-  },
-};
+const favicon =
+  "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%23f7f0e7%22/></svg>";
 
 const directionContract = `
 THESIS: A personal working folio that reads like a considered document, refusing both resume-page conversion patterns and ornamental scrapbook nostalgia.
@@ -20,13 +22,27 @@ FIRST VIEWPORT: A slightly left-offset reading column opens with bilingual ident
 FORM: Offset reading folio from the approved Shape composition; homepage-comp-approved-offset-folio.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md`;
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export const links: Route.LinksFunction = () => [{ rel: "icon", href: favicon }];
+
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
       <body>
         <span hidden aria-hidden dangerouslySetInnerHTML={{ __html: `<!--${directionContract}-->` }} />
         {children}
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <Outlet />;
 }

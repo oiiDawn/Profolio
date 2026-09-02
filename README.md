@@ -1,6 +1,6 @@
 # Filip Gres portfolio snapshot
 
-Local Next.js reproduction of [gresfilip.com](https://gresfilip.com/), frozen on 2026-08-27.
+Local React Router portfolio based on [gresfilip.com](https://gresfilip.com/), frozen on 2026-08-27. The site is pre-rendered at build time, hydrates into an SPA, and deploys through Vercel's Vite preset as static output.
 
 ```bash
 pnpm install

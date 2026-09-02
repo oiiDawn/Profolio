@@ -1,8 +1,16 @@
-/* This page introduces Jiaming through a concise index of work, experience, tools, and contact paths. */
-import Link from "next/link";
-import Image from "next/image";
+/* This route introduces Jiaming through a concise index of work, experience, tools, and contact paths. */
+import { Link } from "react-router";
 
-import { profile, workStudies } from "@/lib/portfolio-data";
+import { profile, workStudies } from "../../lib/portfolio-data";
+import type { Route } from "./+types/home";
+
+export const meta: Route.MetaFunction = () => [
+  { title: "Jiaming Zhang" },
+  {
+    name: "description",
+    content: "Full-stack and Agent Engineer building reliable systems for complex, real-world workflows.",
+  },
+];
 
 function SectionHeading({ children, id }: { children: React.ReactNode; id?: string }) {
   return (
@@ -56,7 +64,7 @@ export default function HomePage() {
           <SectionHeading id="selected-work-heading">Selected Work</SectionHeading>
           <div className="work-index">
             {workStudies.map((work) => (
-              <Link className="work-index-row" href={`/work/${work.slug}`} key={work.slug}>
+              <Link className="work-index-row" to={`/work/${work.slug}`} key={work.slug}>
                 <span className="work-index-copy">
                   <strong>{work.title}</strong>
                   <span>{work.subtitle}</span>
@@ -95,7 +103,7 @@ export default function HomePage() {
                   {group.tools.map((tool) => (
                     <li key={tool.name}>
                       <span className="stack-tool" data-label={tool.name} tabIndex={0} aria-label={tool.name}>
-                        <Image src={tool.icon} alt="" width={24} height={24} />
+                        <img src={tool.icon} alt="" width={24} height={24} />
                       </span>
                     </li>
                   ))}

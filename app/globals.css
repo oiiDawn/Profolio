@@ -1,5 +1,6 @@
 /* Global styles define the paper-like reading world shared by the homepage and work narratives. */
 :root {
+  --font-geist-sans: "Geist Variable";
   --paper: #f7f0e7;
   --paper-deep: #eee4d8;
   --ink: #353331;
