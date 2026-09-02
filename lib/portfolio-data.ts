@@ -96,6 +96,12 @@ export const profile = {
   ],
 } as const;
 
+export const secretEntrance = {
+  code: "oiiDawn",
+  requiredClicks: 5,
+  clickWindowMs: 3_000,
+} as const;
+
 export const workStudies: WorkStudy[] = [
   {
     slug: "vivoflow",

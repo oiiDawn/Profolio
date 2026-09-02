@@ -1,8 +1,16 @@
-/* This route introduces Jiaming through a concise index of work, experience, tools, and contact paths. */
+/* This route introduces Jiaming and owns the hidden passage into his private portfolio layer. */
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 
-import { profile, workStudies } from "../../lib/portfolio-data";
+import { profile, secretEntrance, workStudies } from "../../lib/portfolio-data";
+import { InnerPlaceholder } from "../components/inner-placeholder";
 import type { Route } from "./+types/home";
+
+const CrackedGlassGateway = lazy(() =>
+  import("../components/cracked-glass-gateway").then(({ CrackedGlassGateway: Component }) => ({
+    default: Component,
+  })),
+);
 
 export const meta: Route.MetaFunction = () => [
   { title: "Jiaming Zhang" },
@@ -21,10 +29,111 @@ function SectionHeading({ children, id }: { children: React.ReactNode; id?: stri
   );
 }
 
+type GatewayPhase = "surface" | "code" | "breaching" | "inside";
+
+function vibrate(pattern: number | number[]) {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
 export default function HomePage() {
+  const [gatewayPhase, setGatewayPhase] = useState<GatewayPhase>("surface");
+  const [clickProgress, setClickProgress] = useState(0);
+  const [typedCode, setTypedCode] = useState("");
+  const [hasCodeError, setHasCodeError] = useState(false);
+  const surfaceRef = useRef<HTMLElement>(null);
+  const clickSequence = useRef({ count: 0, startedAt: 0 });
+  const clickResetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const codeResetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const codeInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (gatewayPhase === "code") {
+      codeInput.current?.focus();
+    }
+  }, [gatewayPhase]);
+
+  useEffect(
+    () => () => {
+      clearTimeout(clickResetTimer.current);
+      clearTimeout(codeResetTimer.current);
+    },
+    [],
+  );
+
+  function resetGateway() {
+    clearTimeout(clickResetTimer.current);
+    clearTimeout(codeResetTimer.current);
+    clickSequence.current = { count: 0, startedAt: 0 };
+    setClickProgress(0);
+    setTypedCode("");
+    setHasCodeError(false);
+    setGatewayPhase("surface");
+  }
+
+  function handleIdentityClick() {
+    if (gatewayPhase !== "surface") return;
+
+    const now = Date.now();
+    const sequenceExpired = now - clickSequence.current.startedAt > secretEntrance.clickWindowMs;
+    const startedAt = sequenceExpired || clickSequence.current.count === 0 ? now : clickSequence.current.startedAt;
+    const nextCount = sequenceExpired ? 1 : clickSequence.current.count + 1;
+    clickSequence.current = { count: nextCount, startedAt };
+    setClickProgress(nextCount);
+    vibrate(nextCount >= 3 ? 18 : 8);
+
+    clearTimeout(clickResetTimer.current);
+    clickResetTimer.current = setTimeout(() => {
+      clickSequence.current = { count: 0, startedAt: 0 };
+      setClickProgress(0);
+    }, secretEntrance.clickWindowMs - (now - startedAt));
+
+    if (nextCount === secretEntrance.requiredClicks) {
+      clearTimeout(clickResetTimer.current);
+      vibrate([24, 35, 48]);
+      setGatewayPhase("code");
+    }
+  }
+
+  function handleCodeChange(value: string) {
+    if (hasCodeError) return;
+
+    if (!secretEntrance.code.startsWith(value)) {
+      setTypedCode(value);
+      setHasCodeError(true);
+      vibrate(55);
+      codeResetTimer.current = setTimeout(() => {
+        setTypedCode("");
+        setHasCodeError(false);
+        codeInput.current?.focus();
+      }, 360);
+      return;
+    }
+
+    setTypedCode(value);
+    vibrate(10);
+
+    if (value === secretEntrance.code) {
+      codeInput.current?.blur();
+      setGatewayPhase("breaching");
+      vibrate([30, 45, 75]);
+    }
+  }
+
+  const enterInnerWorld = useCallback(() => setGatewayPhase("inside"), []);
+
+  if (gatewayPhase === "inside") {
+    return <InnerPlaceholder onReturn={resetGateway} />;
+  }
+
   return (
-    <main className="folio">
-      <div className="folio-column">
+    <main ref={surfaceRef} className={`folio gateway-surface gateway-surface--${gatewayPhase}`}>
+      <div
+        className="folio-column"
+        inert={gatewayPhase !== "surface"}
+        aria-hidden={gatewayPhase !== "surface"}
+      >
         <header className="opening">
           <div className="identity-lockup">
             <img
@@ -35,10 +144,19 @@ export default function HomePage() {
               height={64}
             />
             <div>
-              <p className="identity">
-                {profile.name} <span aria-hidden="true">·</span>{" "}
-                <span lang="zh-CN">{profile.chineseName}</span>
-              </p>
+              <button
+                className="identity identity-trigger"
+                type="button"
+                onClick={handleIdentityClick}
+              >
+                <span
+                  className={clickProgress ? "identity-trigger-label identity-trigger-label--shaking" : "identity-trigger-label"}
+                  key={clickProgress}
+                >
+                  {profile.name} <span className="identity-separator" aria-hidden="true">·</span>{" "}
+                  <span lang="zh-CN">{profile.chineseName}</span>
+                </span>
+              </button>
               <p className="role">{profile.role}</p>
             </div>
           </div>
@@ -137,6 +255,52 @@ export default function HomePage() {
           </div>
         </section>
       </div>
+
+      {(gatewayPhase === "code" || gatewayPhase === "breaching") && (
+        <div
+          className={`gateway-overlay${hasCodeError ? " gateway-overlay--error" : ""}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Secret code entry"
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && gatewayPhase === "code") resetGateway();
+          }}
+        >
+          <div className="gateway-code-panel">
+            <label htmlFor="secret-code">Enter the sequence</label>
+            <input
+              ref={codeInput}
+              id="secret-code"
+              type="text"
+              value={typedCode}
+              maxLength={secretEntrance.code.length}
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              disabled={gatewayPhase === "breaching"}
+              onChange={(event) => handleCodeChange(event.target.value)}
+            />
+            <span aria-live="polite">{hasCodeError ? "Sequence rejected. Try again." : ""}</span>
+          </div>
+
+          {gatewayPhase === "code" && (
+            <button className="gateway-cancel" type="button" onClick={resetGateway}>
+              Return to surface
+            </button>
+          )}
+        </div>
+      )}
+      {(gatewayPhase === "code" || gatewayPhase === "breaching") && (
+        <Suspense fallback={null}>
+          <CrackedGlassGateway
+            code={secretEntrance.code}
+            progress={typedCode.length / secretEntrance.code.length}
+            shattering={gatewayPhase === "breaching"}
+            targetRef={surfaceRef}
+            onComplete={enterInnerWorld}
+          />
+        </Suspense>
+      )}
     </main>
   );
 }
