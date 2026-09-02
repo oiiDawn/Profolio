@@ -11,7 +11,7 @@ colors:
 typography:
   display:
     fontFamily: "Geist, Helvetica Neue, Arial, sans-serif"
-    fontSize: "clamp(2.7rem, 6.1vw, 4rem)"
+    fontSize: "clamp(2.5rem, 5.4vw, 3.5rem)"
     fontWeight: 440
     lineHeight: 1.05
     letterSpacing: "-0.04em"
@@ -106,7 +106,7 @@ The palette is a warm neutral manuscript: paper carries the atmosphere, graphite
 
 ### Hierarchy
 
-- **Display** (440, fluid up to 4rem, 1.05): Homepage thesis; work-detail titles use the same voice at a larger fluid ceiling.
+- **Display** (440, fluid up to 3.5rem, 1.05): Homepage thesis; work-detail titles use the same voice at a larger fluid ceiling.
 - **Headline** (480, 30px, 1.16): Case-study chapter headings.
 - **Title** (500, 19px, 1.2): Section headings and compact structural labels.
 - **Body** (400, 17px, 1.72): Long-form project narrative, held to a narrow reading measure.
@@ -118,7 +118,7 @@ The palette is a warm neutral manuscript: paper carries the atmosphere, graphite
 
 ## Layout
 
-The homepage uses a 780px folio column with a 660px opening and 610px introduction, centered with a subtly offset reading feel created by the narrower content measures. Dedicated work pages expand to 920px so conceptual figures can breathe while narrative copy remains at 680px.
+The homepage and dedicated work pages share a two-level width system: 780px for structural content such as titles, metadata, facts, conceptual figures, and navigation; and 680px for subtitles, introductions, narrative copy, and figure captions.
 
 Desktop spacing is generous and vertical: homepage sections recur around 78px apart, while major work chapters use roughly 112–118px of separation. At 700px and below, the layout becomes one column, outer gutters become 20px, metadata stacks, and figures extend to the viewport gutter without changing story order. The document supports a 320px minimum width and is verified at 390px and 1440px.
 
@@ -148,9 +148,15 @@ Focus uses a clear 2px graphite outline with a 5px offset. Rounded rectangles an
 
 ### Work Index Links
 
-- **Structure:** Unboxed two-column rows with title and summary on the left, date and arrow on the right.
-- **State:** Hover and keyboard focus move the arrow 5px with a short exponential ease-out; focus retains the global outline.
+- **Structure:** Unboxed rows keep title and summary on the section-heading's left edge and the date on its right edge; the muted-gray arrow occupies a separate right-side overflow slot outside the transient background.
+- **State:** Hover and keyboard focus reveal a softly rounded paper-tone background around the text region and move the arrow 6px with a short exponential ease-out; focus retains the global outline.
 - **Responsive:** The metadata column narrows on mobile while title and summary remain the reading priority.
+
+### Experience Rows
+
+- **Structure:** Company, role, and period stay aligned to the section-heading axis while the transient background bleeds beyond it.
+- **State:** Hover uses the same softly rounded paper-tone background as the work index without adding link, button, focus, or pointer behavior.
+- **Responsive:** Role moves below company and period on mobile without changing reading order.
 
 ### Stack Tools and Contact Links
 

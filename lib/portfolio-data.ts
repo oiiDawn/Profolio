@@ -26,7 +26,11 @@ export const profile = {
   name: "Jiaming Zhang",
   chineseName: "张家铭",
   role: "Full-stack & Agent Engineer",
-  headline: "Turning complex, real-world workflows into reliable software.",
+  headline: {
+    lead: "Turning complex, real-world workflows into",
+    emphasis: "reliable software",
+    tail: ".",
+  },
   introduction:
     "I'm a Full-stack & Agent Engineer at Vivolight Medical. I work closely with the people and processes behind a problem, then take solutions from product discovery and domain modeling through architecture, implementation, deployment, and continuous iteration.",
   contact: {
