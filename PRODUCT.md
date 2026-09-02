@@ -49,7 +49,7 @@ Jiaming Zhang's professional identity is Full-stack & Agent Engineer. His strong
 - Typography uses distinct roles: a confident modern sans for display and structure, a literary serif for sustained reading, and sparse handwriting only for authored annotations. Bold, italic, and slightly irregular underlines may emphasize meaning without becoming decoration.
 - Motion should remain quiet and purposeful: short responses on links, underlines, and occasional illustrations, with no large scroll-driven transitions and full reduced-motion support.
 - Avoid literal scrapbook devices such as tape, torn edges, sticky notes, simulated paper fibers, or pervasive doodles.
-- A future line-art cartoon logo will be generated from Jiaming Zhang's real likeness. The current Filip `F` favicon must not ship.
+- Jiaming's line-art portrait logo is the site mark and browser icon. It should sit naturally on the warm paper field rather than read as a separate white tile.
 - The browser title is only `Jiaming Zhang`.
 - The metadata description is `Full-stack and Agent Engineer building reliable systems for complex, real-world workflows.`
 
@@ -59,7 +59,7 @@ Jiaming Zhang's professional identity is Full-stack & Agent Engineer. His strong
 - Public profile links are available for LinkedIn and GitHub, together with a public email address.
 - Kupo World reached more than 3,000 users and 20,000 page views in its first three days. Original screenshots, logo, design files, and comparison imagery still need to be retrieved.
 - VivoFlow and Huawei real interface imagery is intentionally unavailable for publication; future visuals must be conceptual and public-safe.
-- An English CV, selected GitHub repositories, final `How I Work` content, and the personal logo are not yet available and must not be fabricated.
+- An English CV, selected GitHub repositories, and final `How I Work` content are not yet available and must not be fabricated. The personal line-art logo is available in `public/portfolio/brand/`.
 
 ## Product Principles
 

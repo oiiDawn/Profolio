@@ -69,6 +69,19 @@ svg {
   margin: 0;
 }
 
+.identity-lockup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.identity-mark {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
 .identity {
   font-size: 19px;
   font-weight: 500;
@@ -632,6 +645,15 @@ svg {
 @media (max-width: 700px) {
   .folio {
     padding: 38px 20px 32px;
+  }
+
+  .identity-lockup {
+    gap: 13px;
+  }
+
+  .identity-mark {
+    width: 56px;
+    height: 56px;
   }
 
   .opening h1 {

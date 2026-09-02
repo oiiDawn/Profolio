@@ -26,10 +26,22 @@ export default function HomePage() {
     <main className="folio">
       <div className="folio-column">
         <header className="opening">
-          <p className="identity">
-            {profile.name} <span aria-hidden="true">·</span> <span lang="zh-CN">{profile.chineseName}</span>
-          </p>
-          <p className="role">{profile.role}</p>
+          <div className="identity-lockup">
+            <img
+              className="identity-mark"
+              src="/portfolio/brand/jiaming-mark.png"
+              alt=""
+              width={64}
+              height={64}
+            />
+            <div>
+              <p className="identity">
+                {profile.name} <span aria-hidden="true">·</span>{" "}
+                <span lang="zh-CN">{profile.chineseName}</span>
+              </p>
+              <p className="role">{profile.role}</p>
+            </div>
+          </div>
           <h1 aria-label={`${profile.headline.lead} ${profile.headline.emphasis}${profile.headline.tail}`}>
             {profile.headline.lead}{" "}
             <span className="headline-emphasis">{profile.headline.emphasis}</span>
