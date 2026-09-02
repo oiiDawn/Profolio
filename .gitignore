@@ -6,6 +6,8 @@ dist/
 coverage/
 playwright-report/
 test-results/
+.playwright-cli/
+output/playwright/
 .vitest/
 .pnpm-store/
 *.tsbuildinfo
