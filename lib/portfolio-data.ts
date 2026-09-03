@@ -9,6 +9,11 @@ export type WorkChapter = {
   caption?: string;
 };
 
+export type WorkStackGroup = {
+  category: "Frontend" | "Backend" | "AI" | "Data & Infrastructure";
+  tools: { name: string; icon: string }[];
+};
+
 export type WorkStudy = {
   slug: string;
   title: string;
@@ -19,6 +24,7 @@ export type WorkStudy = {
   indexPeriod: string;
   introduction: string;
   facts: { label: string; value: string }[];
+  stack: WorkStackGroup[];
   chapters: WorkChapter[];
 };
 
@@ -118,6 +124,40 @@ export const workStudies: WorkStudy[] = [
       { label: "First release", value: "Production-usable in under one month" },
       { label: "Reach", value: "Rolled out across a 300+ person company" },
     ],
+    stack: [
+      {
+        category: "Frontend",
+        tools: [
+          { name: "TypeScript", icon: "/portfolio/stack/typescript.svg" },
+          { name: "React", icon: "/portfolio/stack/react.svg" },
+          { name: "Next.js", icon: "/portfolio/stack/nextdotjs.svg" },
+        ],
+      },
+      {
+        category: "Backend",
+        tools: [
+          { name: "NestJS", icon: "/portfolio/stack/nestjs.svg" },
+          { name: "Prisma", icon: "/portfolio/stack/prisma.svg" },
+          { name: "OpenAPI", icon: "/portfolio/stack/openapiinitiative.svg" },
+        ],
+      },
+      {
+        category: "AI",
+        tools: [
+          { name: "Python", icon: "/portfolio/stack/python.svg" },
+          { name: "LangGraph", icon: "/portfolio/stack/langgraph.svg" },
+        ],
+      },
+      {
+        category: "Data & Infrastructure",
+        tools: [
+          { name: "MySQL", icon: "/portfolio/stack/mysql.svg" },
+          { name: "Docker", icon: "/portfolio/stack/docker.svg" },
+          { name: "Alibaba Cloud", icon: "/portfolio/stack/alibabacloud.svg" },
+          { name: "Turborepo", icon: "/portfolio/stack/turborepo.svg" },
+        ],
+      },
+    ],
     chapters: [
       {
         title: "Finding the problem inside the process",
@@ -179,6 +219,26 @@ export const workStudies: WorkStudy[] = [
       { label: "Throughput", value: "Dozens of CI pipelines per day" },
       { label: "Measured result", value: "90%+ faster response for the most-used analytics view" },
     ],
+    stack: [
+      {
+        category: "Frontend",
+        tools: [
+          { name: "TypeScript", icon: "/portfolio/stack/typescript.svg" },
+          { name: "Vue.js", icon: "/portfolio/stack/vuedotjs.svg" },
+        ],
+      },
+      {
+        category: "Backend",
+        tools: [{ name: "Django", icon: "/portfolio/stack/django.svg" }],
+      },
+      {
+        category: "Data & Infrastructure",
+        tools: [
+          { name: "MySQL", icon: "/portfolio/stack/mysql.svg" },
+          { name: "PostgreSQL", icon: "/portfolio/stack/postgresql.svg" },
+        ],
+      },
+    ],
     chapters: [
       {
         title: "Making resource impact visible",
@@ -220,6 +280,27 @@ export const workStudies: WorkStudy[] = [
       { label: "Team", value: "Three people; project lead reporting to the owner" },
       { label: "First three days", value: "3,000+ users and 20,000+ page views" },
       { label: "Distribution", value: "Organic spread across Weibo, NGA, and Twitter" },
+    ],
+    stack: [
+      {
+        category: "Frontend",
+        tools: [
+          { name: "TypeScript", icon: "/portfolio/stack/typescript.svg" },
+          { name: "React", icon: "/portfolio/stack/react.svg" },
+        ],
+      },
+      {
+        category: "Backend",
+        tools: [{ name: "Node.js", icon: "/portfolio/stack/nodedotjs.svg" }],
+      },
+      {
+        category: "Data & Infrastructure",
+        tools: [
+          { name: "MongoDB", icon: "/portfolio/stack/mongodb.svg" },
+          { name: "Docker", icon: "/portfolio/stack/docker.svg" },
+          { name: "Alibaba Cloud", icon: "/portfolio/stack/alibabacloud.svg" },
+        ],
+      },
     ],
     chapters: [
       {

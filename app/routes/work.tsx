@@ -60,6 +60,29 @@ export default function WorkPage({ params }: Route.ComponentProps) {
           ))}
         </div>
 
+        <section className="work-stack" aria-labelledby={`${work.slug}-stack-heading`}>
+          <h2 className="section-heading" id={`${work.slug}-stack-heading`}>
+            <span>Stack</span>
+            <i aria-hidden="true" />
+          </h2>
+          <div className="stack-groups">
+            {work.stack.map((group) => (
+              <div className="stack-group" key={group.category}>
+                <h3>{group.category}</h3>
+                <ul>
+                  {group.tools.map((tool) => (
+                    <li key={tool.name}>
+                      <span className="stack-tool" data-label={tool.name} tabIndex={0} aria-label={tool.name}>
+                        <img src={tool.icon} alt="" width={24} height={24} />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <nav className="work-navigation" aria-label="Selected work navigation">
           <Link to="/#selected-work-heading">← Back to Selected Work</Link>
           <Link to={`/work/${next.slug}`}>Next project: {next.title} →</Link>

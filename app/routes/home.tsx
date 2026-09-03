@@ -6,11 +6,11 @@ import { profile, secretEntrance, workStudies } from "../../lib/portfolio-data";
 import { InnerPlaceholder } from "../components/inner-placeholder";
 import type { Route } from "./+types/home";
 
-const CrackedGlassGateway = lazy(() =>
+const loadCrackedGlassGateway = () =>
   import("../components/cracked-glass-gateway").then(({ CrackedGlassGateway: Component }) => ({
     default: Component,
-  })),
-);
+  }));
+const CrackedGlassGateway = lazy(loadCrackedGlassGateway);
 
 export const meta: Route.MetaFunction = () => [
   { title: "Jiaming Zhang" },
@@ -29,7 +29,7 @@ function SectionHeading({ children, id }: { children: React.ReactNode; id?: stri
   );
 }
 
-type GatewayPhase = "surface" | "code" | "breaching" | "inside";
+type GatewayPhase = "surface" | "darkening" | "code" | "breaching" | "inside";
 
 function vibrate(pattern: number | number[]) {
   if ("vibrate" in navigator) {
@@ -37,12 +37,17 @@ function vibrate(pattern: number | number[]) {
   }
 }
 
+function matchingPrefixLength(value: string, code: string) {
+  let length = 0;
+  while (length < value.length && value[length] === code[length]) length += 1;
+  return length;
+}
+
 export default function HomePage() {
   const [gatewayPhase, setGatewayPhase] = useState<GatewayPhase>("surface");
   const [clickProgress, setClickProgress] = useState(0);
   const [typedCode, setTypedCode] = useState("");
   const [hasCodeError, setHasCodeError] = useState(false);
-  const surfaceRef = useRef<HTMLElement>(null);
   const clickSequence = useRef({ count: 0, startedAt: 0 });
   const clickResetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const codeResetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -92,7 +97,9 @@ export default function HomePage() {
     if (nextCount === secretEntrance.requiredClicks) {
       clearTimeout(clickResetTimer.current);
       vibrate([24, 35, 48]);
-      setGatewayPhase("code");
+      void loadCrackedGlassGateway();
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setGatewayPhase(reducedMotion ? "code" : "darkening");
     }
   }
 
@@ -122,13 +129,14 @@ export default function HomePage() {
   }
 
   const enterInnerWorld = useCallback(() => setGatewayPhase("inside"), []);
+  const crackProgress = matchingPrefixLength(typedCode, secretEntrance.code) / secretEntrance.code.length;
 
   if (gatewayPhase === "inside") {
     return <InnerPlaceholder onReturn={resetGateway} />;
   }
 
   return (
-    <main ref={surfaceRef} className={`folio gateway-surface gateway-surface--${gatewayPhase}`}>
+    <main className={`folio gateway-surface gateway-surface--${gatewayPhase}`}>
       <div
         className="folio-column"
         inert={gatewayPhase !== "surface"}
@@ -256,6 +264,13 @@ export default function HomePage() {
         </section>
       </div>
 
+      {gatewayPhase === "darkening" && (
+        <div
+          className="gateway-overlay gateway-overlay--darkening"
+          aria-hidden="true"
+          onAnimationEnd={() => setGatewayPhase("code")}
+        />
+      )}
       {(gatewayPhase === "code" || gatewayPhase === "breaching") && (
         <div
           className={`gateway-overlay${hasCodeError ? " gateway-overlay--error" : ""}`}
@@ -266,11 +281,19 @@ export default function HomePage() {
             if (event.key === "Escape" && gatewayPhase === "code") resetGateway();
           }}
         >
-          <div className="gateway-code-panel">
-            <label htmlFor="secret-code">Enter the sequence</label>
+          <label className="gateway-terminal" htmlFor="secret-code">
+            <span className="sr-only">Enter the sequence</span>
+            <span
+              className={`terminal-line${hasCodeError ? " terminal-line--error" : ""}`}
+              aria-hidden="true"
+            >
+              <span>{typedCode}</span>
+              {gatewayPhase === "code" && <span className="terminal-cursor" />}
+            </span>
             <input
               ref={codeInput}
               id="secret-code"
+              className="terminal-input"
               type="text"
               value={typedCode}
               maxLength={secretEntrance.code.length}
@@ -280,23 +303,26 @@ export default function HomePage() {
               disabled={gatewayPhase === "breaching"}
               onChange={(event) => handleCodeChange(event.target.value)}
             />
-            <span aria-live="polite">{hasCodeError ? "Sequence rejected. Try again." : ""}</span>
-          </div>
+          </label>
+          <span className="sr-only" aria-live="polite">
+            {hasCodeError ? "Sequence rejected. Try again." : ""}
+          </span>
 
           {gatewayPhase === "code" && (
             <button className="gateway-cancel" type="button" onClick={resetGateway}>
-              Return to surface
+              esc · return
             </button>
           )}
         </div>
       )}
-      {(gatewayPhase === "code" || gatewayPhase === "breaching") && (
+      {(gatewayPhase === "breaching" ||
+        (gatewayPhase === "code" && crackProgress > 0 && !hasCodeError)) && (
         <Suspense fallback={null}>
           <CrackedGlassGateway
             code={secretEntrance.code}
-            progress={typedCode.length / secretEntrance.code.length}
+            terminalText={typedCode}
+            progress={crackProgress}
             shattering={gatewayPhase === "breaching"}
-            targetRef={surfaceRef}
             onComplete={enterInnerWorld}
           />
         </Suspense>

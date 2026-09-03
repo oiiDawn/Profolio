@@ -1,26 +1,20 @@
-/* This gateway maps secret-code progress onto cracked-glass' deterministic fracture timeline. */
-import { useEffect, useMemo, useState } from "react";
+/* This gateway maps accepted code progress onto deterministic terminal glass. */
+import { useEffect, useMemo, useRef, useState } from "react";
 import { generateFracture } from "cracked-glass";
 import { CrackedGlass } from "cracked-glass/react";
 import type { DeepPartial, EffectParams } from "cracked-glass";
-import type { RefObject } from "react";
 
 type CrackedGlassGatewayProps = {
   code: string;
+  terminalText: string;
   progress: number;
   shattering: boolean;
-  targetRef: RefObject<HTMLElement | null>;
   onComplete: () => void;
 };
 
-type Scene = {
-  width: number;
-  height: number;
-  imageUrl: string;
-};
-
-const CRACK_END = 0.46;
-const SHATTER_DURATION_MS = 1_080;
+const CRACK_END = 0.28;
+const CRACK_TRANSITION_MS = 140;
+const SHATTER_DURATION_MS = 1_050;
 
 function codeSeed(code: string) {
   let seed = 2_166_136_261;
@@ -33,7 +27,7 @@ function codeSeed(code: string) {
 
 const fractureFx: DeepPartial<EffectParams> = {
   quality: "draft",
-  timeline: { crackStart: 0.02, crackEnd: CRACK_END, shatterStart: 0.5 },
+  timeline: { crackStart: 0.02, crackEnd: CRACK_END, shatterStart: 0.32 },
   refraction: { offsetPx: 2.4, rotateDeg: 0.7, scaleAmp: 0.008, tiltDeg: 1.2 },
   optics: { brightnessAmp: 0.1, contrastAmp: 0.06, blurPx: 0.2, lightAngleDeg: -38 },
   chroma: {
@@ -44,7 +38,7 @@ const fractureFx: DeepPartial<EffectParams> = {
     colorA: "rgba(164, 203, 255, 0.45)",
     colorB: "rgba(255, 174, 150, 0.38)",
   },
-  facet: { strength: 0.28, tint: "rgba(225, 238, 255, 0.06)", opacity: 0.72 },
+  facet: { strength: 0.38, tint: "rgba(196, 224, 255, 0.11)", opacity: 0.8 },
   crackStyle: {
     coreColor: "rgba(255, 255, 255, 0.92)",
     coreWidth: 1.15,
@@ -91,64 +85,43 @@ const fractureFx: DeepPartial<EffectParams> = {
 
 export function CrackedGlassGateway({
   code,
+  terminalText,
   progress,
   shattering,
-  targetRef,
   onComplete,
 }: CrackedGlassGatewayProps) {
-  const [scene, setScene] = useState<Scene | null>(null);
-  const [captureFailed, setCaptureFailed] = useState(false);
+  const [viewport] = useState(() => ({
+    width: typeof window === "undefined" ? 1 : window.innerWidth,
+    height: typeof window === "undefined" ? 1 : window.innerHeight,
+  }));
   const [time, setTime] = useState(0);
+  const timeRef = useRef(0);
   const reducedMotion =
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
+    if (shattering) return;
+
+    const targetTime = Math.min(1, Math.max(0, progress)) * CRACK_END;
     if (reducedMotion) return;
 
-    const surface = targetRef.current;
-    if (!surface) return;
-    const captureTarget = surface;
-    let cancelled = false;
+    const startTime = timeRef.current;
+    const startedAt = performance.now();
+    let animationFrame = 0;
 
-    async function captureScene() {
-      try {
-        const { snapdom } = await import("@zumer/snapdom");
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        const canvas = await snapdom.toCanvas(captureTarget, {
-          clip: "viewport",
-          width,
-          height,
-          dpr: 1,
-          backgroundColor: "#f7f0e7",
-          exclude: [".gateway-overlay", ".cracked-glass-gateway"],
-          excludeMode: "hide",
-          reconcile: true,
-          fast: true,
-        });
-        if (cancelled) return;
-        setScene({
-          width,
-          height,
-          imageUrl: canvas.toDataURL("image/webp", 0.9),
-        });
-      } catch {
-        if (!cancelled) setCaptureFailed(true);
-      }
-    }
+    const advance = (now: number) => {
+      const elapsed = Math.min(1, (now - startedAt) / CRACK_TRANSITION_MS);
+      const eased = 1 - (1 - elapsed) ** 3;
+      const nextTime = startTime + (targetTime - startTime) * eased;
+      timeRef.current = nextTime;
+      setTime(nextTime);
 
-    void captureScene();
-    return () => {
-      cancelled = true;
+      if (elapsed < 1) animationFrame = requestAnimationFrame(advance);
     };
-  }, [reducedMotion, targetRef]);
 
-  useEffect(() => {
-    const target = targetRef.current;
-    if (!scene || !target) return;
-    target.classList.add("gateway-surface--snapshot-ready");
-    return () => target.classList.remove("gateway-surface--snapshot-ready");
-  }, [scene, targetRef]);
+    animationFrame = requestAnimationFrame(advance);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [progress, reducedMotion, shattering]);
 
   useEffect(() => {
     if (!shattering) return;
@@ -156,23 +129,30 @@ export function CrackedGlassGateway({
       onComplete();
       return;
     }
-    if (captureFailed) {
-      onComplete();
-      return;
-    }
-    if (!scene) return;
 
-    const startTime = Math.min(1, Math.max(0, progress)) * CRACK_END;
+    const startTime = timeRef.current;
     const startedAt = performance.now();
+    const crackDuration = startTime < CRACK_END ? CRACK_TRANSITION_MS : 0;
+    const totalDuration = crackDuration + SHATTER_DURATION_MS;
     let animationFrame = 0;
 
     const advance = (now: number) => {
-      const elapsed = Math.min(1, (now - startedAt) / SHATTER_DURATION_MS);
-      const eased = 1 - (1 - elapsed) ** 3;
-      const nextTime = startTime + (1 - startTime) * eased;
+      const elapsed = Math.min(totalDuration, now - startedAt);
+      let nextTime: number;
+
+      if (elapsed < crackDuration) {
+        const crackProgress = elapsed / crackDuration;
+        const eased = 1 - (1 - crackProgress) ** 3;
+        nextTime = startTime + (CRACK_END - startTime) * eased;
+      } else {
+        const shatterProgress = (elapsed - crackDuration) / SHATTER_DURATION_MS;
+        nextTime = CRACK_END + (1 - CRACK_END) * shatterProgress;
+      }
+
+      timeRef.current = nextTime;
       setTime(nextTime);
 
-      if (elapsed < 1) {
+      if (elapsed < totalDuration) {
         animationFrame = requestAnimationFrame(advance);
       } else {
         onComplete();
@@ -181,64 +161,59 @@ export function CrackedGlassGateway({
 
     animationFrame = requestAnimationFrame(advance);
     return () => cancelAnimationFrame(animationFrame);
-  }, [captureFailed, onComplete, progress, reducedMotion, scene, shattering]);
+  }, [onComplete, reducedMotion, shattering]);
 
   const pattern = useMemo(() => {
-    if (!scene) return null;
-    const compact = scene.width <= 700;
+    const compact = viewport.width <= 700;
     const density = Math.min(3, Math.floor(code.length / 3));
     return generateFracture({
       mode: "radial",
-      width: scene.width,
-      height: scene.height,
+      width: viewport.width,
+      height: viewport.height,
       seed: codeSeed(code),
       instanceId: `secret-${codeSeed(code).toString(36)}`,
-      impact: { x: scene.width / 2, y: scene.height / 2 },
+      impact: { x: viewport.width / 2, y: viewport.height / 2 },
       impactHole: compact ? 0.82 : 1.05,
-      edgeDetail: compact ? 1 : 2,
+      edgeDetail: 1,
       jaggedness: 0.72,
       deviation: 0.58,
-      micro: { count: compact ? 46 : 86, sizeRange: [0.8, 3.2] },
-      stubs: { maxPerCrack: compact ? 2 : 3, atJunctions: true },
+      micro: { count: compact ? 30 : 48, sizeRange: [0.8, 3.2] },
+      stubs: { maxPerCrack: 2, atJunctions: true },
       rays: {
-        count: compact ? 6 + Math.min(1, density) : 7 + density,
+        count: compact ? 6 : 6 + density,
         angleJitter: 0.72,
         waviness: 0.64,
         doubling: !compact,
         doublingStartRing: 2,
       },
       rings: {
-        count: compact ? 4 : 4 + Math.min(2, density),
+        count: compact ? 4 : 4 + Math.min(1, density),
         spacing: "geometric",
         jitter: 0.66,
         partial: 0.78,
       },
     });
-  }, [code, scene]);
+  }, [code, viewport]);
 
-  const crackTime = Math.min(1, Math.max(0, progress)) * CRACK_END;
-  const displayedTime = shattering ? Math.max(time, crackTime) : crackTime;
-
-  if (!scene || !pattern || reducedMotion || displayedTime === 0) return null;
+  if (reducedMotion) return null;
 
   return (
-    <div
-      className={`cracked-glass-gateway${shattering ? " cracked-glass-gateway--shattering" : ""}`}
-      aria-hidden="true"
-    >
+    <div className="cracked-glass-gateway" aria-hidden="true">
       <CrackedGlass
         className="cracked-glass-stage"
-        t={displayedTime}
+        t={time}
         pattern={pattern}
         fx={fractureFx}
         renderContent={() => (
-          <img
-            className="cracked-glass-surface-copy"
-            src={scene.imageUrl}
-            alt=""
-          />
+          <div className="glass-terminal-surface">{terminalText}</div>
         )}
       />
+      {!shattering && (
+        <span className="glass-terminal-caret">
+          <span>{terminalText}</span>
+          <span className="terminal-cursor" />
+        </span>
+      )}
     </div>
   );
 }
