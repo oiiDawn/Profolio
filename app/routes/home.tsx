@@ -3,7 +3,6 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router";
 
 import { profile, secretEntrance, workStudies } from "../../lib/portfolio-data";
-import { InnerPlaceholder } from "../components/inner-placeholder";
 import type { Route } from "./+types/home";
 
 const loadCrackedGlassGateway = () =>
@@ -11,6 +10,11 @@ const loadCrackedGlassGateway = () =>
     default: Component,
   }));
 const CrackedGlassGateway = lazy(loadCrackedGlassGateway);
+const loadInnerWorld = () =>
+  import("../components/inner-world").then(({ InnerWorld: Component }) => ({
+    default: Component,
+  }));
+const InnerWorld = lazy(loadInnerWorld);
 
 export const meta: Route.MetaFunction = () => [
   { title: "Jiaming Zhang" },
@@ -98,6 +102,7 @@ export default function HomePage() {
       clearTimeout(clickResetTimer.current);
       vibrate([24, 35, 48]);
       void loadCrackedGlassGateway();
+      void loadInnerWorld();
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       setGatewayPhase(reducedMotion ? "code" : "darkening");
     }
@@ -132,7 +137,11 @@ export default function HomePage() {
   const crackProgress = matchingPrefixLength(typedCode, secretEntrance.code) / secretEntrance.code.length;
 
   if (gatewayPhase === "inside") {
-    return <InnerPlaceholder onReturn={resetGateway} />;
+    return (
+      <Suspense fallback={<main className="inner-world" aria-label="Loading inner world" />}>
+        <InnerWorld onReturn={resetGateway} />
+      </Suspense>
+    );
   }
 
   return (
